@@ -60,3 +60,12 @@ Temporary Items
 
 # GMRT build directory
 Build
+
+# GameMaker additional
+datafiles/
+options/*/*.old.yy
+*.yymp
+
+# Claude Code
+CLAUDE.md
+.claude/

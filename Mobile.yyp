@@ -8,10 +8,16 @@
     "children":[],
     "name":"Default",
   },
-  "defaultScriptType":0,
-  "Folders":[],
+  "defaultScriptType":1,
+  "Folders":[
+    {"$GMFolder":"","%Name":"Scripts","folderPath":"folders/Scripts.yy","name":"Scripts","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Objects","folderPath":"folders/Objects.yy","name":"Objects","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Rooms","folderPath":"folders/Rooms.yy","name":"Rooms","resourceType":"GMFolder","resourceVersion":"2.0",},
+  ],
   "ForcedPrefabProjectReferences":[],
-  "IncludedFiles":[],
+  "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"DICEROYAL.md","CopyToMask":-1,"filePath":"datafiles","name":"DICEROYAL.md","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+  ],
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
@@ -19,12 +25,17 @@
   },
   "name":"Mobile",
   "resources":[
-    {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"obj_game","path":"objects/obj_game/obj_game.yy",},},
+    {"id":{"name":"rm_game","path":"rooms/rm_game/rm_game.yy",},},
+    {"id":{"name":"scr_constants","path":"scripts/scr_constants/scr_constants.yy",},},
+    {"id":{"name":"scr_draw_die","path":"scripts/scr_draw_die/scr_draw_die.yy",},},
+    {"id":{"name":"scr_draw_grid","path":"scripts/scr_draw_grid/scr_draw_grid.yy",},},
+    {"id":{"name":"scr_init_grid","path":"scripts/scr_init_grid/scr_init_grid.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"roomId":{"name":"rm_game","path":"rooms/rm_game/rm_game.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

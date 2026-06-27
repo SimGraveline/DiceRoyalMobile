@@ -1,0 +1,39 @@
+// --- Display ---
+#macro GAME_WIDTH  384
+#macro GAME_HEIGHT 832
+
+// --- Grid ---
+#macro CELL_SIZE   40
+#macro GRID_COLS   8
+#macro GRID_ROWS   12
+#macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
+#macro GRID_HEIGHT ((GRID_ROWS + 1) * CELL_SIZE)
+
+// --- Grid position (centered horizontally) ---
+#macro GRID_X      ((GAME_WIDTH - GRID_WIDTH) / 2)
+#macro GRID_Y      ((GAME_HEIGHT - GRID_HEIGHT) / 2)
+
+// --- Dead zone ---
+#macro DEAD_ZONE_ROW  12
+
+// --- Pair spawn ---
+#macro SPAWN_COL_LEFT   3
+#macro SPAWN_COL_RIGHT  4
+#macro SPAWN_ROW        12
+
+// --- Gameplay ---
+#macro DROP_SPEED_INITIAL  1.0
+#macro SOFT_DROP_MULTIPLIER  1.25
+
+// --- Spawn restrictions ---
+#macro PAIR_MIN_VALUE  1
+#macro PAIR_MAX_VALUE  6
+
+// --- Score ---
+#macro SCORE_STACK     10
+#macro SCORE_BASE      100
+#macro COMBO_MULTIPLIER  1.5
+
+// --- UI: Hold & Next boxes ---
+#macro BOX_WIDTH   (CELL_SIZE * 3)
+#macro BOX_HEIGHT  (CELL_SIZE * 1.5)
