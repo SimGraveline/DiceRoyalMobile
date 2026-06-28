@@ -11,6 +11,17 @@ function scr_game_init() {
 	global.lock_active = false;
 	global.last_pair_col = SPAWN_COL_LEFT;
 	global.game_over = false;
+	global.paused = false;
+	global.ghost_enabled = true;
+	global.score = 0;
+	global.level = 0;
+	global.combo_count = 0;
+	global.hold_val1 = -1;
+	global.hold_val2 = -1;
+	global.hold_used = false;
+
+	// Gamepad state
+	global.gamepad_stick_up_prev = false;
 
 	// Touch state
 	global.touch_active = false;
@@ -19,5 +30,6 @@ function scr_game_init() {
 	global.touch_dragging = false;
 	global.touch_drag_col = 0;
 
+	scr_pair_generate_next();
 	scr_pair_spawn();
 }

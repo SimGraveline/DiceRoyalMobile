@@ -36,15 +36,15 @@
 
 ## Phase 5 — Features de gameplay
 - [x] Soft drop / hard drop
-- [ ] Next pair (queue + affichage)
-- [ ] Hold / swap (spawn hérite position et orientation de la paire active)
-- [ ] Ghost preview
-- [ ] Score et combos
+- [x] Next pair (queue + affichage)
+- [x] Hold / swap (spawn hérite position et orientation de la paire active)
+- [x] Ghost preview (trainée + preview, toggle on/off)
+- [x] Score et combos (stack points + élimination × valeur × combo)
 - [ ] Level et augmentation de vitesse
 - [ ] High score (sauvegarde persistante)
 
 ## Phase 6 — Écrans et UI
-- [ ] Layout de l'écran de jeu (titre, score, level, boxes, boutons)
+- [x] Layout de l'écran de jeu (titre, score, level, boxes, boutons, pause basic)
 - [ ] Splash screen
 - [ ] Pause screen (resume, restart, quit, ghost/hold toggles, scores)
 - [ ] Help screen (contrôles mobile, checkbox "don't show again" + persistance locale)
@@ -55,7 +55,7 @@
 
 ## Phase 7 — Contrôles additionnels
 - [x] Mobile touch (swipes, tap zones)
-- [ ] Gamepad
+- [x] Gamepad
 
 ## Phase 8 — Polish
 - [ ] Presentation (pluie de dés, DxR background, transitions fade, zoom dé, juice dying, bling high score)
@@ -65,3 +65,6 @@
 - [ ] Images plateformes (splash screen, icônes — GX.games, HTML5, Windows, macOS, Ubuntu, tvOS, iOS, Android)
 - [ ] Évaluer intégrations leaderboard en ligne (Firebase/Firestore)
 - [ ] Évaluer intégrations sociales (Facebook, etc.)
+
+## Questions en suspens
+- **Gravité vs snap** — En ce moment, les dés stackés qui perdent leur support snappent instantanément (scr_grid_gravity), mais la paire active qui perd son support tombe lentement au drop speed (scr_pair_update). Incohérent. Sim préfère la gravité visible (pas le snap) parce que ça donne un meilleur game feel et du temps de réaction au joueur, mais appliquer la gravité partout ouvre des problèmes de complexité (dés en chute pendant que le joueur joue, collisions mid-air, etc.). Pas de solution retenue pour l'instant.

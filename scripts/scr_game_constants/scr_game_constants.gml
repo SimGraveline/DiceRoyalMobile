@@ -47,11 +47,27 @@
 #macro ROTATE_SPLIT  0.5
 #macro RESTART_ZONE  0.1
 
+// --- Ghost ---
+#macro GHOST_TRAIL_ALPHA  0.2
+#macro GHOST_PREVIEW_ALPHA  0.4
+
 // --- Drawing ---
 #macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
 #macro GAME_OVER_Y  16
 
-// --- UI: Hold & Next boxes ---
-#macro BOX_WIDTH   (CELL_SIZE * 3)
-#macro BOX_HEIGHT  (CELL_SIZE * 1.5)
+// --- UI ---
+#macro UI_TITLE_Y      (UI_BTN_MARGIN + UI_BTN_SIZE + UI_BTN_MARGIN)
+#macro UI_SCORE_Y      (UI_TITLE_Y + UI_BTN_SIZE)
+#macro UI_BTN_SIZE     32
+#macro UI_BTN_MARGIN   8
+#macro UI_BTN_PAUSE_X  UI_BTN_MARGIN
+#macro UI_BTN_PAUSE_Y  UI_BTN_MARGIN
+#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN)
+#macro UI_BTN_HELP_Y   UI_BTN_MARGIN
+#macro BOX_WIDTH       (CELL_SIZE * 3)
+#macro BOX_HEIGHT      (CELL_SIZE * 1.5)
+#macro BOX_Y           (GRID_Y + GRID_HEIGHT + CELL_SIZE)
+#macro BOX_HOLD_X      (GRID_X)
+#macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
+#macro BOX_LABEL_OFFSET  8

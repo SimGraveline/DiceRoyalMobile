@@ -10,10 +10,12 @@ function scr_pair_detach() {
 	// Write landed die(s) to grid and check matches/joins
 	if (_master_landed) {
 		global.grid[_master_col][_master_row] = global.pair_val1;
+		global.score += SCORE_STACK;
 		scr_grid_check_join(_master_col, _master_row);
 	}
 	if (_slave_landed) {
 		global.grid[_slave_col][_slave_row] = global.pair_val2;
+		global.score += SCORE_STACK;
 		scr_grid_check_join(_slave_col, _slave_row);
 	}
 	scr_grid_match();
@@ -66,6 +68,7 @@ function scr_pair_detach() {
 			}
 			global.grid[_solo_col][_solo_row] = _solo_val;
 		}
+		global.score += SCORE_STACK;
 
 		scr_grid_check_join(_solo_col, _solo_row);
 		scr_grid_match();

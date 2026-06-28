@@ -31,11 +31,13 @@ The game supports mobile touch, gamepad and keyboard inputs.
 - Tap (bottom 1/4) = Hold / Swap
 
 ### Gamepad (Xbox scheme)
-- Left stick / D-Pad = Move / Hard drop / Soft drop
-- A = Rotate CW
-- X = Rotate CCW
+- Left stick / D-Pad = Move / Soft drop / Hard drop (up)
+- B / Y = Rotate CW
+- A / X = Rotate CCW
 - LB / RB = Hold
 - Start = Pause
+- Select = Restart
+- Select + Start = Quit
 
 ### Keyboard
 - A/D or Arrows = Move

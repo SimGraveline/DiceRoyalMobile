@@ -104,6 +104,8 @@ function scr_pair_update() {
 // --- Spawn next pair at previous X ---
 function scr_pair_spawn_next() {
 	global.drop_timer = 0;
+	global.combo_count = 0;
+	global.hold_used = false;
 	scr_pair_spawn();
 	global.pair_col = global.last_pair_col;
 

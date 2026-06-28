@@ -56,10 +56,10 @@ Dying dice do not fall — they float in place if their support is removed. They
 ### Score
 
 Player scores points by:
-- Stacking a pair: X points
-- Eliminating dice: Y points per die, multiplied by dice value (except 1's: flat Y points)
+- Stacking a die: 10 points per die when it is written to the grid
+- Eliminating dice: 100 points per die, multiplied by die value (except 1's: flat 100 points)
 
-Combo multiplier: all subsequent eliminations in a chain are multiplied by Z x dice value.
+Combo multiplier: each wave of eliminations after gravity increases the multiplier exponentially (×1 first wave, ×1.5 second, ×2.25 third, etc.). The combo counter resets when a new pair spawns.
 
 The game saves the high score persistently (may not be displayed in the prototype, TBD).
 
@@ -148,11 +148,13 @@ The in-game UI only displays mobile controls.
 - Tap bottom quarter = Hold / Swap
 
 ### Gamepad (Xbox scheme)
-- Left stick or D-Pad = Move / Hard drop / Soft drop
-- A = Rotate CW
-- X = Rotate CCW
+- Left stick or D-Pad = Move / Soft drop / Hard drop (up)
+- B or Y = Rotate CW
+- A or X = Rotate CCW
 - LB or RB = Hold
 - Start = Pause
+- Select = Restart
+- Select + Start = Quit
 
 ### Keyboard
 - A/D or arrows = Move
