@@ -71,34 +71,32 @@ function scr_pair_update() {
 		global.lock_active = false;
 	}
 
+	// --- Hard drop ---
+	if (global.input_hard_drop) {
+		while (true) {
+			var _mb = scr_grid_cell_blocked(global.pair_col, global.pair_row - 1);
+			var _sc = global.pair_col + global.pair_offset_col;
+			var _sr = global.pair_row + global.pair_offset_row;
+			var _sb = scr_grid_cell_blocked(_sc, _sr - 1);
+			if (_mb || _sb) break;
+			global.pair_row -= 1;
+		}
+		scr_pair_detach();
+		global.lock_active = false;
+		return;
+	}
+
 	// --- Drop ---
 	if (!_touching) {
 		global.drop_timer += delta_time / DELTA_TO_SECONDS;
 		var _speed = DROP_SPEED_INITIAL;
+		if (global.input_soft_drop) {
+			_speed = DROP_SPEED_INITIAL / SOFT_DROP_MULTIPLIER;
+		}
 
 		if (global.drop_timer >= _speed) {
 			global.drop_timer -= _speed;
 			global.pair_row -= 1;
-		}
-	}
-}
-
-// --- Solo fall ---
-function scr_solo_update() {
-	if (!global.solo_active) return;
-
-	global.drop_timer += delta_time / DELTA_TO_SECONDS;
-
-	if (global.drop_timer >= DROP_SPEED_INITIAL) {
-		global.drop_timer -= DROP_SPEED_INITIAL;
-
-		if (scr_grid_cell_blocked(global.solo_col, global.solo_row - 1)) {
-			global.grid[global.solo_col][global.solo_row] = global.solo_val;
-			scr_grid_check_join(global.solo_col, global.solo_row);
-			scr_grid_match();
-			global.solo_active = false;
-		} else {
-			global.solo_row -= 1;
 		}
 	}
 }

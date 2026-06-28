@@ -39,11 +39,11 @@ Dying dice do not fall — they float in place if their support is removed. They
 
 **Lock delay:** When one die of a pair touches something (grid floor or stacked die), a lock timer begins (default: 0.5s, adjustable). During this window, the player can still move and rotate the pair. Each successful action resets the timer, up to a maximum number of resets (default: 10, adjustable). When the timer expires, the pair detaches. Lock delay duration and reset count are potential levers for difficulty scaling.
 
-**Detach:** When the lock delay expires, the pair detaches. The landed die is written to the grid. The other die continues falling independently as a "solo faller" with no player control. After detach, the player loses control of both dice.
+**Detach:** When the lock delay expires (or a hard drop occurs), the pair detaches. The landed die is written to the grid. The other die snaps instantly to the lowest available position in its column. If either die is adjacent to a dying die of the same value, it joins the dying chain instead of stacking normally. After detach, a new pair spawns immediately — the player does not wait for dying or chain resolution to finish.
 
 **Wall kick:** If rotation is blocked by a wall, the pair shifts one cell to allow it. If the shifted position is also blocked, the rotation is denied. Rotation blocked by a stacked die in the grid is always denied (no kick) to prevent dice from overlapping.
 
-**Soft drop:** Temporarily boosts the drop speed (default: 125%, adjustable). The player can still move and rotate during a soft drop but cannot trigger another until the current one ends.
+**Soft drop:** Boosts the drop speed while held (default: 10x, adjustable). The player can still move and rotate during a soft drop.
 
 **Hard drop:** Instantly snaps the pair to the first available stacking position. The player cannot control the pair during a hard drop.
 
@@ -79,12 +79,12 @@ All values are adjustable per level. Default values are starting points for play
 
 | Lever | Effect | Default |
 |---|---|---|
-| Drop speed | Time between automatic drops (lower = faster) | 0.5s |
+| Drop speed | Time between automatic drops (lower = faster) | 0.75s |
 | Lock delay duration | Time before a touching pair detaches | 0.5s |
 | Lock delay resets | Max actions that reset the lock timer | 10 |
 | Spawn odds | Weight per die value (1-6), controls spawn probability | Equal (1 each) |
-| Soft drop multiplier | Speed boost factor during soft drop | 1.25x |
-| Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) | TBD |
+| Soft drop multiplier | Speed boost factor during soft drop | 10x |
+| Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) | 1.0s |
 
 ## Screens
 

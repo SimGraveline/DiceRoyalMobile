@@ -9,10 +9,6 @@ function scr_game_init() {
 	global.lock_timer = 0;
 	global.lock_resets = 0;
 	global.lock_active = false;
-	global.solo_active = false;
-	global.solo_col = 0;
-	global.solo_row = 0;
-	global.solo_val = 0;
 	global.last_pair_col = SPAWN_COL_LEFT;
 	global.game_over = false;
 

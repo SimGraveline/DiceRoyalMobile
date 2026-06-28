@@ -35,7 +35,7 @@ function scr_pair_detach() {
 		_solo_val = global.pair_val2;
 	}
 
-	// Check if solo die should join a dying chain instead of falling
+	// Solo die: check dying join first, otherwise snap to lowest position
 	if (_solo_col >= 0) {
 		var _should_join = false;
 		var _neighbors = [
@@ -59,17 +59,16 @@ function scr_pair_detach() {
 
 		if (_should_join) {
 			global.grid[_solo_col][_solo_row] = _solo_val;
-			scr_grid_check_join(_solo_col, _solo_row);
-			scr_grid_match();
-			global.solo_active = false;
 		} else {
-			global.solo_active = true;
-			global.solo_col = _solo_col;
-			global.solo_row = _solo_row;
-			global.solo_val = _solo_val;
+			// Snap to lowest available position
+			while (!scr_grid_cell_blocked(_solo_col, _solo_row - 1)) {
+				_solo_row -= 1;
+			}
+			global.grid[_solo_col][_solo_row] = _solo_val;
 		}
-	} else {
-		global.solo_active = false;
+
+		scr_grid_check_join(_solo_col, _solo_row);
+		scr_grid_match();
 	}
 
 	global.last_pair_col = _master_col;

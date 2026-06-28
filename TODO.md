@@ -35,7 +35,7 @@
 - [x] Game over check quand la grille est au repos
 
 ## Phase 5 — Features de gameplay
-- [ ] Soft drop / hard drop
+- [x] Soft drop / hard drop
 - [ ] Next pair (queue + affichage)
 - [ ] Hold / swap (spawn hérite position et orientation de la paire active)
 - [ ] Ghost preview

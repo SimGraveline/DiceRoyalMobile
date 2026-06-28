@@ -20,16 +20,19 @@ function scr_game_input_touch() {
 		var _dx = device_mouse_x(0) - global.touch_start_x;
 		var _dy = device_mouse_y(0) - global.touch_start_y;
 
-		// Horizontal drag → movement
-		if (abs(_dx) >= DRAG_THRESHOLD) {
+		if (abs(_dx) > abs(_dy) && abs(_dx) >= DRAG_THRESHOLD) {
+			// Horizontal dominant → drag movement
 			global.touch_dragging = true;
-			var _col_offset = floor(_dx / CELL_SIZE);
+			var _col_offset = floor(_dx / DRAG_SENSITIVITY);
 			var _target_col = global.touch_drag_col + _col_offset;
 			if (_target_col < global.pair_col) {
 				global.input_left = true;
 			} else if (_target_col > global.pair_col) {
 				global.input_right = true;
 			}
+		} else if (_dy > SWIPE_MIN_DISTANCE) {
+			// Vertical down held → soft drop
+			global.input_soft_drop = true;
 		}
 	}
 
@@ -39,13 +42,9 @@ function scr_game_input_touch() {
 		var _dist = sqrt(_dx * _dx + _dy * _dy);
 
 		if (!global.touch_dragging) {
-			if (_dist >= SWIPE_MIN_DISTANCE && abs(_dy) > abs(_dx)) {
-				// Vertical swipe
-				if (_dy < 0) {
-					global.input_hard_drop = true;
-				} else {
-					global.input_soft_drop = true;
-				}
+			if (_dist >= SWIPE_MIN_DISTANCE && abs(_dy) > abs(_dx) && _dy < 0) {
+				// Vertical swipe up → hard drop
+				global.input_hard_drop = true;
 			} else if (_dist < SWIPE_MIN_DISTANCE) {
 				// Tap — check zone
 				var _tap_y = global.touch_start_y / GAME_HEIGHT;

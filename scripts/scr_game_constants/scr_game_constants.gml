@@ -23,7 +23,7 @@
 
 // --- Gameplay ---
 #macro DROP_SPEED_INITIAL  0.75
-#macro SOFT_DROP_MULTIPLIER  1.25
+#macro SOFT_DROP_MULTIPLIER  10.00
 #macro DAS_DELAY  0.2
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
@@ -42,6 +42,7 @@
 // --- Touch ---
 #macro SWIPE_MIN_DISTANCE  30
 #macro DRAG_THRESHOLD  10
+#macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
 #macro TAP_ZONE_SPLIT  0.75
 #macro ROTATE_SPLIT  0.5
 #macro RESTART_ZONE  0.1
