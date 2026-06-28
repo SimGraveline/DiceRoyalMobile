@@ -1,0 +1,1 @@
+#macro STR_GAME_OVER  "GAME OVER"

@@ -7,27 +7,67 @@ function scr_pair_detach() {
 	var _master_landed = scr_grid_cell_blocked(_master_col, _master_row - 1);
 	var _slave_landed = scr_grid_cell_blocked(_slave_col, _slave_row - 1);
 
-	// Write landed die(s) to grid
+	// Write landed die(s) to grid and check matches/joins
 	if (_master_landed) {
 		global.grid[_master_col][_master_row] = global.pair_val1;
+		scr_grid_check_join(_master_col, _master_row);
 	}
 	if (_slave_landed) {
 		global.grid[_slave_col][_slave_row] = global.pair_val2;
+		scr_grid_check_join(_slave_col, _slave_row);
 	}
+	scr_grid_match();
 
 	// Determine solo faller
 	global.pair_active = false;
 
+	var _solo_col = -1;
+	var _solo_row = -1;
+	var _solo_val = 0;
+
 	if (!_master_landed) {
-		global.solo_active = true;
-		global.solo_col = _master_col;
-		global.solo_row = _master_row;
-		global.solo_val = global.pair_val1;
+		_solo_col = _master_col;
+		_solo_row = _master_row;
+		_solo_val = global.pair_val1;
 	} else if (!_slave_landed) {
-		global.solo_active = true;
-		global.solo_col = _slave_col;
-		global.solo_row = _slave_row;
-		global.solo_val = global.pair_val2;
+		_solo_col = _slave_col;
+		_solo_row = _slave_row;
+		_solo_val = global.pair_val2;
+	}
+
+	// Check if solo die should join a dying chain instead of falling
+	if (_solo_col >= 0) {
+		var _should_join = false;
+		var _neighbors = [
+			[_solo_col - 1, _solo_row],
+			[_solo_col + 1, _solo_row],
+			[_solo_col, _solo_row - 1],
+			[_solo_col, _solo_row + 1]
+		];
+
+		for (var _i = 0; _i < 4; _i++) {
+			var _nc = _neighbors[_i][0];
+			var _nr = _neighbors[_i][1];
+			if (_nc < 0 || _nc >= GRID_COLS || _nr < 0 || _nr > GRID_ROWS) continue;
+			if (global.grid_dying[_nc][_nr] > 0) {
+				if (global.grid[_nc][_nr] == _solo_val || _solo_val == 1) {
+					_should_join = true;
+					break;
+				}
+			}
+		}
+
+		if (_should_join) {
+			global.grid[_solo_col][_solo_row] = _solo_val;
+			scr_grid_check_join(_solo_col, _solo_row);
+			scr_grid_match();
+			global.solo_active = false;
+		} else {
+			global.solo_active = true;
+			global.solo_col = _solo_col;
+			global.solo_row = _solo_row;
+			global.solo_val = _solo_val;
+		}
 	} else {
 		global.solo_active = false;
 	}

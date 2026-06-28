@@ -24,13 +24,15 @@
 - [x] Spawn de la prochaine paire à la position X précédente
 
 ## Phase 4 — Matching et chain drop (point d'échec historique #2)
-- [ ] Détection des chaînes orthogonales (2×2, 3×3, etc.)
-- [ ] État "dying" sur les dés éliminés
-- [ ] Gravité : les dés au-dessus des morts tombent
-- [ ] Chain resolution en boucle jusqu'au repos
-- [ ] Cas spécial des 1
-- [ ] Mécanique des dés mourants (placer un dé de même valeur orthogonalement à un dying)
-- [ ] Game over check quand la grille est au repos
+- [x] Détection des chaînes orthogonales (count >= valeur du dé, valeur >= 2)
+- [x] État "dying" avec timer per-dé et fade out visuel
+- [x] Propagation dying aux voisins de même valeur (cascade)
+- [x] Gravité instantanée : dying flottent, non-dying tombent
+- [x] Chain resolution en boucle jusqu'au repos
+- [x] Cas spécial des 1 (voisin de n'importe quel dying → tous les 1 meurent)
+- [x] Mécanique des dés mourants (placer ou être adjacent à un dying de même valeur)
+- [x] Solo faller rejoint une chaîne dying si adjacent
+- [x] Game over check quand la grille est au repos
 
 ## Phase 5 — Features de gameplay
 - [ ] Soft drop / hard drop

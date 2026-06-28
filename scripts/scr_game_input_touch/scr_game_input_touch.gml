@@ -1,4 +1,13 @@
 function scr_game_input_touch() {
+	// Game over: tap near top of screen to restart
+	if (global.game_over && device_mouse_check_button_released(0, mb_left)) {
+		var _tap_y = device_mouse_y(0) / GAME_HEIGHT;
+		if (_tap_y <= RESTART_ZONE) {
+			global.input_restart = true;
+		}
+		return;
+	}
+
 	if (device_mouse_check_button_pressed(0, mb_left) && global.pair_active) {
 		global.touch_active = true;
 		global.touch_start_x = device_mouse_x(0);
@@ -41,7 +50,12 @@ function scr_game_input_touch() {
 				// Tap — check zone
 				var _tap_y = global.touch_start_y / GAME_HEIGHT;
 				if (_tap_y <= TAP_ZONE_SPLIT) {
-					global.input_rotate_cw = true;
+					var _tap_x = global.touch_start_x / GAME_WIDTH;
+					if (_tap_x >= ROTATE_SPLIT) {
+						global.input_rotate_cw = true;
+					} else {
+						global.input_rotate_ccw = true;
+					}
 				} else {
 					global.input_hold = true;
 				}

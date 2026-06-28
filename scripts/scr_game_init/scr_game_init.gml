@@ -14,6 +14,7 @@ function scr_game_init() {
 	global.solo_row = 0;
 	global.solo_val = 0;
 	global.last_pair_col = SPAWN_COL_LEFT;
+	global.game_over = false;
 
 	// Touch state
 	global.touch_active = false;

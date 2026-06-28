@@ -22,16 +22,11 @@ function scr_pair_rotate(_clockwise) {
 		return true;
 	}
 
-	// Wall kick — shift pair by one cell
+	// Wall kick — shift pair by one cell (walls only, not floor or grid)
 	var _kick = 0;
 	if (_slave_col < 0) _kick = 1;
 	else if (_slave_col >= GRID_COLS) _kick = -1;
-	else if (_slave_row < 0) {
-		global.pair_row += 1;
-		global.pair_offset_col = _oc;
-		global.pair_offset_row = _or;
-		return true;
-	} else {
+	else {
 		return false;
 	}
 

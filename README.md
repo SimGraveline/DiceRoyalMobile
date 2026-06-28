@@ -20,7 +20,31 @@ Prototype / Proof of concept.
 
 ## Controls
 
-The game supports mobile touch, gamepad and keyboard inputs. See the in-game help screen for details.
+The game supports mobile touch, gamepad and keyboard inputs.
+
+### Mobile
+- Drag horizontal = Move
+- Swipe up = Hard drop
+- Swipe down = Soft drop
+- Tap right (top 3/4) = Rotate CW
+- Tap left (top 3/4) = Rotate CCW
+- Tap (bottom 1/4) = Hold / Swap
+
+### Gamepad (Xbox scheme)
+- Left stick / D-Pad = Move / Hard drop / Soft drop
+- A = Rotate CW
+- X = Rotate CCW
+- LB / RB = Hold
+- Start = Pause
+
+### Keyboard
+- A/D or Arrows = Move
+- W or Up = Hard drop
+- S or Down = Soft drop
+- Space = Rotate CW
+- Shift = Rotate CCW
+- H = Hold
+- ESC = Pause
 
 ## License
 

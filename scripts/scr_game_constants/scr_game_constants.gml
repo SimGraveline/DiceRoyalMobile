@@ -22,12 +22,13 @@
 #macro SPAWN_ROW        12
 
 // --- Gameplay ---
-#macro DROP_SPEED_INITIAL  0.50
+#macro DROP_SPEED_INITIAL  0.75
 #macro SOFT_DROP_MULTIPLIER  1.25
 #macro DAS_DELAY  0.2
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
 #macro LOCK_RESETS_MAX  10
+#macro DYING_DURATION  1.0
 
 // --- Spawn restrictions ---
 #macro PAIR_MIN_VALUE  1
@@ -42,10 +43,13 @@
 #macro SWIPE_MIN_DISTANCE  30
 #macro DRAG_THRESHOLD  10
 #macro TAP_ZONE_SPLIT  0.75
+#macro ROTATE_SPLIT  0.5
+#macro RESTART_ZONE  0.1
 
 // --- Drawing ---
 #macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
+#macro GAME_OVER_Y  16
 
 // --- UI: Hold & Next boxes ---
 #macro BOX_WIDTH   (CELL_SIZE * 3)

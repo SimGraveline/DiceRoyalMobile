@@ -23,11 +23,13 @@ Game logic lives in standalone scripts. Objects contain minimal code and delegat
 
 ### Rules
 
-Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals): two 2's, three 3's, four 4's, five 5's or six 6's.
+Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals). A chain is valid when the number of connected dice is equal to or greater than the die value: two or more 2's, three or more 3's, four or more 4's, five or more 5's, six or more 6's.
 
-Eliminated dice play a "dying" animation. During that animation, any die placed orthogonally to a dying die of the same value is also eliminated (along with all connected dice of that value). 1's are a special case: a single 1 placed orthogonally to any dying die eliminates all 1's on the grid.
+Eliminated dice enter a "dying" state with a visible fade-out animation. Dying propagates: any non-dying die orthogonally adjacent to a dying die of the same value also becomes dying, along with all of its connected same-value dice. This propagation cascades until no more dice can be reached. Each die that enters dying gets its own independent timer.
 
-Dice sitting on dying dice fall once the dying dice are removed, creating chain reactions and combos.
+1's are a special case: they never match on their own. A 1 orthogonally adjacent to any dying die (regardless of value) triggers the elimination of all 1's on the grid.
+
+Dying dice do not fall — they float in place if their support is removed. They remain solid (occupy their cell) until their timer expires. Once a dying die's timer expires, it is removed from the grid and its cell becomes empty. Non-dying dice above empty cells fall instantly (gravity). Gravity can create new chains, triggering further dying cycles (combos).
 
 ### Mechanics
 
@@ -69,7 +71,20 @@ Pairs of 1:1 and 2:2 can never spawn. All other combinations have even odds. Spa
 
 ### Level
 
-Predefined score thresholds increase the in-game level, which increases drop speed (adjustable). Spawn odds may also be adjusted per level based on playtesting.
+Predefined score thresholds increase the in-game level. Each level can adjust any combination of the difficulty levers below.
+
+### Difficulty Levers
+
+All values are adjustable per level. Default values are starting points for playtesting.
+
+| Lever | Effect | Default |
+|---|---|---|
+| Drop speed | Time between automatic drops (lower = faster) | 0.5s |
+| Lock delay duration | Time before a touching pair detaches | 0.5s |
+| Lock delay resets | Max actions that reset the lock timer | 10 |
+| Spawn odds | Weight per die value (1-6), controls spawn probability | Equal (1 each) |
+| Soft drop multiplier | Speed boost factor during soft drop | 1.25x |
+| Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) | TBD |
 
 ## Screens
 
@@ -125,11 +140,12 @@ A "3-2-1-STACK" countdown plays before gameplay begins:
 The in-game UI only displays mobile controls.
 
 ### Mobile
-- Swipe left/right = Move
+- Drag horizontal = Move (finger controls pair position directly)
 - Swipe up = Hard drop
 - Swipe down = Soft drop
-- Tap top two-thirds = Rotate CW (except pause and help buttons)
-- Tap bottom third = Hold / Swap
+- Tap right (top three-quarters) = Rotate CW (except pause and help buttons)
+- Tap left (top three-quarters) = Rotate CCW
+- Tap bottom quarter = Hold / Swap
 
 ### Gamepad (Xbox scheme)
 - Left stick or D-Pad = Move / Hard drop / Soft drop

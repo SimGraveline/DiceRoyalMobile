@@ -94,6 +94,8 @@ function scr_solo_update() {
 
 		if (scr_grid_cell_blocked(global.solo_col, global.solo_row - 1)) {
 			global.grid[global.solo_col][global.solo_row] = global.solo_val;
+			scr_grid_check_join(global.solo_col, global.solo_row);
+			scr_grid_match();
 			global.solo_active = false;
 		} else {
 			global.solo_row -= 1;
