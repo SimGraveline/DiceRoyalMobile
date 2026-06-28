@@ -9,18 +9,19 @@
 - [x] Rendu d'un dé (draw, pas de sprite)
 
 ## Phase 2 — Paire et mouvement
-- [ ] Spawn d'une paire au centre
-- [ ] Mouvement gauche/droite
-- [ ] Rotation CW/CCW avec wall kick
-- [ ] Chute automatique (drop speed ajustable)
-- [ ] Contrôles clavier (pour tester)
+- [x] Contrôles clavier (pour tester)
+- [x] Spawn d'une paire au centre
+- [x] Chute automatique (drop speed ajustable)
+- [x] Mouvement gauche/droite
+- [x] Rotation CW/CCW avec wall kick
 
 ## Phase 3 — Stacking et detach (point d'échec historique #1)
-- [ ] Spawn rules (1:1 et 2:2 interdits, odds ajustables)
-- [ ] Détection de collision avec le sol et les dés stackés
-- [ ] Detach de la paire : un dé touche → paire se sépare → l'autre dé continue de tomber
-- [ ] Écriture des dés dans la grille array
-- [ ] Spawn de la prochaine paire à la position X précédente
+- [x] Spawn rules (1:1 et 2:2 interdits, odds ajustables)
+- [x] Détection de collision avec le sol et les dés stackés
+- [x] Lock delay (buffer avant detach, reset sur action, levier de difficulté)
+- [x] Detach de la paire : lock expire → dé atterri s'écrit → l'autre tombe en solo
+- [x] Écriture des dés dans la grille array
+- [x] Spawn de la prochaine paire à la position X précédente
 
 ## Phase 4 — Matching et chain drop (point d'échec historique #2)
 - [ ] Détection des chaînes orthogonales (2×2, 3×3, etc.)
@@ -51,7 +52,7 @@
 - [ ] Transitions et retour de focus
 
 ## Phase 7 — Contrôles additionnels
-- [ ] Mobile touch (swipes, tap zones)
+- [x] Mobile touch (swipes, tap zones)
 - [ ] Gamepad
 
 ## Phase 8 — Polish
@@ -60,4 +61,5 @@
 
 ## Phase 9 — Metadata
 - [ ] Images plateformes (splash screen, icônes — GX.games, HTML5, Windows, macOS, Ubuntu, tvOS, iOS, Android)
+- [ ] Évaluer intégrations leaderboard en ligne (Firebase/Firestore)
 - [ ] Évaluer intégrations sociales (Facebook, etc.)

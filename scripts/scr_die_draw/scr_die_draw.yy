@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_draw_die",
+  "%Name":"scr_die_draw",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_draw_die",
+  "name":"scr_die_draw",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",

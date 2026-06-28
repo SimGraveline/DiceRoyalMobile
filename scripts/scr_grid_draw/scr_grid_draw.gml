@@ -1,4 +1,4 @@
-function scr_draw_grid() {
+function scr_grid_draw() {
 	var _x = GRID_X;
 	var _y = GRID_Y;
 
@@ -27,7 +27,7 @@ function scr_draw_grid() {
 		for (var _row = 0; _row < GRID_ROWS + 1; _row++) {
 			var _val = global.grid[_col][_row];
 			if (_val > 0) {
-				scr_draw_die(_col, _row, _val);
+				scr_die_draw(_col, _row, _val);
 			}
 		}
 	}

@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_constants",
+  "%Name":"scr_pair_rotate",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_constants",
+  "name":"scr_pair_rotate",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",

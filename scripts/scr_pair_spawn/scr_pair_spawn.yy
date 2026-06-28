@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_init_grid",
+  "%Name":"scr_pair_spawn",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_init_grid",
+  "name":"scr_pair_spawn",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",

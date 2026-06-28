@@ -35,9 +35,11 @@ Dice sitting on dying dice fall once the dying dice are removed, creating chain 
 
 **Pair movement:** A pair spawns at the top center of the grid (positions 4,13 and 5,13). The left die is the "master"; the right die rotates around it into four orthogonal positions. Pairs move in fixed one-cell increments and snap to the grid. After stacking, the next pair spawns at the previous pair's X position.
 
-**Detach:** When one die of a pair lands on something, the pair detaches. The other die continues falling independently. After detach, the player loses control of both dice.
+**Lock delay:** When one die of a pair touches something (grid floor or stacked die), a lock timer begins (default: 0.5s, adjustable). During this window, the player can still move and rotate the pair. Each successful action resets the timer, up to a maximum number of resets (default: 10, adjustable). When the timer expires, the pair detaches. Lock delay duration and reset count are potential levers for difficulty scaling.
 
-**Wall kick:** If rotation is blocked by a wall or stacked die, the pair shifts one cell to allow it. If the shifted position is also blocked, the rotation is denied.
+**Detach:** When the lock delay expires, the pair detaches. The landed die is written to the grid. The other die continues falling independently as a "solo faller" with no player control. After detach, the player loses control of both dice.
+
+**Wall kick:** If rotation is blocked by a wall, the pair shifts one cell to allow it. If the shifted position is also blocked, the rotation is denied. Rotation blocked by a stacked die in the grid is always denied (no kick) to prevent dice from overlapping.
 
 **Soft drop:** Temporarily boosts the drop speed (default: 125%, adjustable). The player can still move and rotate during a soft drop but cannot trigger another until the current one ends.
 
@@ -58,6 +60,8 @@ Player scores points by:
 Combo multiplier: all subsequent eliminations in a chain are multiplied by Z x dice value.
 
 The game saves the high score persistently (may not be displayed in the prototype, TBD).
+
+An online leaderboard feature is to be evaluated.
 
 ### Spawn Rules
 

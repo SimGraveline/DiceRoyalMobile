@@ -1,1 +1,2 @@
-scr_draw_grid();
+scr_grid_draw();
+scr_pair_draw();
