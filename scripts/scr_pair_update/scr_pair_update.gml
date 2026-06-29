@@ -89,9 +89,9 @@ function scr_pair_update() {
 	// --- Drop ---
 	if (!_touching) {
 		global.drop_timer += delta_time / DELTA_TO_SECONDS;
-		var _speed = DROP_SPEED_INITIAL;
+		var _speed = global.drop_speed;
 		if (global.input_soft_drop) {
-			_speed = DROP_SPEED_INITIAL / SOFT_DROP_MULTIPLIER;
+			_speed = global.drop_speed / SOFT_DROP_MULTIPLIER;
 		}
 
 		if (global.drop_timer >= _speed) {

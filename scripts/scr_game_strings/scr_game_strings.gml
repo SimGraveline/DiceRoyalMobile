@@ -7,3 +7,8 @@
 #macro STR_PAUSE  "||"
 #macro STR_PAUSED  "PAUSED"
 #macro STR_HELP   "?"
+#macro STR_COUNTDOWN_GO    "STACK!"
+#macro STR_INI_FILENAME    "diceroyal.ini"
+#macro STR_INI_SECTION     "save"
+#macro STR_INI_KEY_SCORE   "high_score"
+#macro STR_INI_KEY_NAME    "high_score_name"

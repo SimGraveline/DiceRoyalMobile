@@ -7,9 +7,11 @@ function scr_game_input_keyboard() {
 	// Actions — single press
 	global.input_hard_drop  = keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up);
 	global.input_rotate_cw  = keyboard_check_pressed(vk_space);
-	global.input_rotate_ccw = keyboard_check_pressed(vk_shift);
-	global.input_hold       = keyboard_check_pressed(ord("H"));
+	global.input_rotate_ccw = keyboard_check_pressed(vk_control);
+	global.input_hold       = keyboard_check_pressed(vk_shift);
 	global.input_pause      = keyboard_check_pressed(vk_escape);
+	global.input_grid_lines = keyboard_check_pressed(vk_tab);
+	global.input_mute_music = keyboard_check_pressed(ord("M"));
 	global.input_restart    = keyboard_check_pressed(ord("R")); // DEBUG
 	global.input_exit		= keyboard_check_pressed(ord("Q")); // DEBUG
 }

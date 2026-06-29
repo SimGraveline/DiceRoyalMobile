@@ -4,11 +4,11 @@ function scr_pair_draw_ghost() {
 	var _colors = [
 		c_black,   // 0 = unused
 		c_white,   // 1
-		c_red,     // 2
-		c_blue,    // 3
+		c_yellow,  // 2
+		c_red,     // 3
 		c_green,   // 4
-		c_yellow,  // 5
-		c_purple   // 6
+		c_blue,    // 5
+		c_black    // 6
 	];
 
 	var _mc = global.pair_col;
@@ -52,17 +52,19 @@ function scr_pair_draw_ghost() {
 
 	if (_final_mr == _mr && _final_sr == _sr) return;
 
+	var _ghost_w = sprite_get_width(spr_dice_ghost);
+	var _xscale = CELL_SIZE / _ghost_w;
+
 	// Draw trail + preview for master
 	var _m_x = GRID_X + (_mc * CELL_SIZE);
 	var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE;
 	var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
+	var _m_trail_h = (_m_land_y + CELL_SIZE) - _m_top_y;
 
 	draw_set_alpha(GHOST_TRAIL_ALPHA);
 	draw_set_color(_colors[global.pair_val1]);
-	draw_rectangle(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
-
-	draw_set_alpha(GHOST_PREVIEW_ALPHA);
-	draw_rectangle(_m_x, _m_land_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
+	draw_roundrect(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
+	draw_sprite_ext(spr_dice_ghost, global.pair_val1, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
 
 	// Draw trail + preview for slave
 	var _s_x = GRID_X + (_sc * CELL_SIZE);
@@ -71,10 +73,8 @@ function scr_pair_draw_ghost() {
 
 	draw_set_alpha(GHOST_TRAIL_ALPHA);
 	draw_set_color(_colors[global.pair_val2]);
-	draw_rectangle(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
-
-	draw_set_alpha(GHOST_PREVIEW_ALPHA);
-	draw_rectangle(_s_x, _s_land_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
+	draw_roundrect(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
+	draw_sprite_ext(spr_dice_ghost, global.pair_val2, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
 
 	draw_set_alpha(1.0);
 }

@@ -44,9 +44,29 @@ The game supports mobile touch, gamepad and keyboard inputs.
 - W or Up = Hard drop
 - S or Down = Soft drop
 - Space = Rotate CW
-- Shift = Rotate CCW
-- H = Hold
+- Ctrl = Rotate CCW
+- Shift = Hold
 - ESC = Pause
+- M = Mute/unmute music
+- Tab = Toggle grid lines
+
+## Levels
+
+The game has 11 levels. Drop speed increases with each level.
+
+| Level | Score | Drop speed |
+|---|---|---|
+| 1 | 0 | 1.00s |
+| 2 | 10,000 | 0.95s |
+| 3 | 30,000 | 0.85s |
+| 4 | 60,000 | 0.70s |
+| 5 | 100,000 | 0.50s |
+| 6 | 150,000 | 0.25s |
+| 7 | 210,000 | 0.10s |
+| 8 | 280,000 | 0.075s |
+| 9 | 360,000 | 0.05s |
+| 10 | 450,000 | 0.025s |
+| 11 | 550,000 | 0.01s |
 
 ## License
 

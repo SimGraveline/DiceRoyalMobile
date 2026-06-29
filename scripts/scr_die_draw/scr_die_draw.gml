@@ -23,17 +23,8 @@ function scr_die_draw(_col, _row, _value) {
 
 	draw_set_alpha(_alpha);
 
-	// Die body
-	draw_set_color(_colors[_value]);
-	draw_rectangle(_x + DIE_PADDING, _y + DIE_PADDING, _x + CELL_SIZE - DIE_PADDING - 1, _y + CELL_SIZE - DIE_PADDING - 1, false);
-
-	// Value text
-	draw_set_color(c_black);
-	draw_set_halign(fa_center);
-	draw_set_valign(fa_middle);
-	draw_text(_x + (CELL_SIZE / 2), _y + (CELL_SIZE / 2), string(_value));
-	draw_set_halign(fa_left);
-	draw_set_valign(fa_top);
+	var _scale = CELL_SIZE / sprite_get_width(spr_dice);
+	draw_sprite_ext(spr_dice, _value, _x, _y, _scale, _scale, 0, c_white, _alpha);
 
 	draw_set_alpha(1.0);
 }

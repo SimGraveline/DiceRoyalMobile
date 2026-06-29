@@ -21,8 +21,12 @@
 #macro SPAWN_COL_RIGHT  4
 #macro SPAWN_ROW        12
 
+// --- Level system ---
+#macro LEVEL_COUNT  11
+#macro LEVEL_THRESHOLDS  global.__level_thresholds
+#macro LEVEL_SPEEDS     global.__level_speeds
+
 // --- Gameplay ---
-#macro DROP_SPEED_INITIAL  0.75
 #macro SOFT_DROP_MULTIPLIER  10.00
 #macro DAS_DELAY  0.2
 #macro DAS_REPEAT 0.05
@@ -51,14 +55,48 @@
 #macro GHOST_TRAIL_ALPHA  0.2
 #macro GHOST_PREVIEW_ALPHA  0.4
 
+// --- Colors ---
+#macro COLOR_BG           $662300
+#macro COLOR_GRID_BG      $CF8964
+#macro COLOR_GRID_OUTLINE $04BFEF
+#macro COLOR_BOX_FILL     $8FE6FD
+#macro COLOR_BOX_OUTLINE  $CF8964
+
+// --- Background ---
+#macro BG_SPEED           0.5
+#macro BG_SCALE           0.5
+#macro BG_SPACING_X       80
+#macro BG_SPACING_Y       90
+#macro BG_ALPHA           0.25
+#macro BG_CHANGE_RATE     3
+#macro BG_SHAKE_ODDS      100
+#macro BG_SHAKE_THRESHOLD 95
+#macro BG_SHAKE_MIN       0.95
+#macro BG_SHAKE_MAX       1.05
+#macro BG_SHAKE_RESET_RATE 1
+
+// --- Countdown ---
+#macro COUNTDOWN_STEPS      3
+#macro COUNTDOWN_STEP_DUR   0.5
+#macro COUNTDOWN_SCALE_MIN  0.1
+#macro COUNTDOWN_SCALE_MAX  1.0
+
+// --- Gamepad ---
+#macro GAMEPAD_INDEX     0
+#macro GAMEPAD_DEADZONE  0.5
+
 // --- Drawing ---
 #macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
 #macro GAME_OVER_Y  16
+#macro UI_SHADOW_OFFSET    5
+#macro GRID_OUTLINE_WIDTH  6
+#macro GRID_LINE_WIDTH     2
+#macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-#macro UI_TITLE_Y      (UI_BTN_MARGIN + UI_BTN_SIZE + UI_BTN_MARGIN)
-#macro UI_SCORE_Y      (UI_TITLE_Y + UI_BTN_SIZE)
+#macro UI_TITLE_Y      24
+#macro UI_SCORE_Y      80
 #macro UI_BTN_SIZE     32
 #macro UI_BTN_MARGIN   8
 #macro UI_BTN_PAUSE_X  UI_BTN_MARGIN

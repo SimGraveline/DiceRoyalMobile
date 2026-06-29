@@ -71,15 +71,29 @@ Pairs of 1:1 and 2:2 can never spawn. All other combinations have even odds. Spa
 
 ### Level
 
-Predefined score thresholds increase the in-game level. Each level can adjust any combination of the difficulty levers below.
+Predefined cumulative score thresholds increase the in-game level. Each level increases drop speed. The cost to reach the next level scales with the current level number (level N requires N × 10,000 additional points). Speed decreases by an accelerating delta for levels 1-6 (-0.05, -0.10, -0.15, -0.20, -0.25), then uses manual values for levels 7-11.
+
+| Level | Score threshold | Drop speed |
+|---|---|---|
+| 1 | 0 | 1.00s |
+| 2 | 10,000 | 0.95s |
+| 3 | 30,000 | 0.85s |
+| 4 | 60,000 | 0.70s |
+| 5 | 100,000 | 0.50s |
+| 6 | 150,000 | 0.25s |
+| 7 | 210,000 | 0.10s |
+| 8 | 280,000 | 0.075s |
+| 9 | 360,000 | 0.05s |
+| 10 | 450,000 | 0.025s |
+| 11 | 550,000 | 0.01s |
 
 ### Difficulty Levers
 
-All values are adjustable per level. Default values are starting points for playtesting.
+All values are adjustable per level. Default values are starting points for playtesting. Currently only drop speed changes per level.
 
 | Lever | Effect | Default |
 |---|---|---|
-| Drop speed | Time between automatic drops (lower = faster) | 0.75s |
+| Drop speed | Time between automatic drops (lower = faster) | Per level table above |
 | Lock delay duration | Time before a touching pair detaches | 0.5s |
 | Lock delay resets | Max actions that reset the lock timer | 10 |
 | Spawn odds | Weight per die value (1-6), controls spawn probability | Equal (1 each) |
@@ -108,6 +122,7 @@ Accessed via the pause button. Displays current score and high score. Options:
 - Quit (return to splash)
 - Ghost on/off
 - Hold on/off
+- Music on/off
 
 **Note:** UI adjustment needed if hold is disabled (hold box becomes empty). To be addressed later.
 
@@ -129,9 +144,11 @@ Displayed when the grid is at rest and a die remains above the dead zone. Contai
 
 ### Countdown
 
-A "3-2-1-STACK" countdown plays before gameplay begins:
+A "3-2-1-STACK!" countdown plays before gameplay begins. Each step lasts 0.5s with a scale animation (zoom in 0.1→1, zoom out 1→0.1). Currently plays:
+- Game start
+
+Future (not yet implemented):
 - Splash to game
-- Pause to game (resume)
 - Help to game
 - Returning from lost focus (low priority)
 
@@ -161,9 +178,11 @@ The in-game UI only displays mobile controls.
 - W or up = Hard drop
 - S or down = Soft drop
 - Space = Rotate CW
-- Shift (L/R) = Rotate CCW
-- H = Hold
+- Ctrl (L/R) = Rotate CCW
+- Shift (L/R) = Hold
 - ESC = Pause
+- M = Mute/unmute music
+- Tab = Toggle grid lines
 
 ## Dimensions
 
@@ -181,11 +200,11 @@ The mockup (DICEROYAL.jpg) communicates layout intent, not exact dimensions.
 | Level display | Centered between Hold and Next boxes |
 | Pause button | Top-left corner |
 | Help button ("?") | Top-right corner |
-| Fonts | TBD |
+| Fonts | Bungee (UI), Bungee title (game title), Bungee buttons (pause/help) |
 
 ## Audio
 
-A game theme starts at the splash screen and loops indefinitely. Other sounds: stacking a pair, eliminating dice, combos, beating the high score. Sounds cannot overlap to avoid audio clutter.
+Two versions of the game theme exist: a vocal version for the splash screen and an instrumental version for gameplay. Both loop indefinitely. The player can mute/unmute music (M key, or from pause menu). SFX (stacking, eliminating, combos, beating the high score) are independent from music mute. Sounds cannot overlap to avoid audio clutter.
 
 ## Presentation
 

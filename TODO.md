@@ -6,7 +6,7 @@
 - [x] Grille 2D array (source de vérité)
 - [x] Rendu de la grille avec draw functions
 - [x] Rendu de la dead zone line
-- [x] Rendu d'un dé (draw, pas de sprite)
+- [x] Rendu d'un dé (sprite spr_dice avec subimages par valeur)
 
 ## Phase 2 — Paire et mouvement
 - [x] Contrôles clavier (pour tester)
@@ -40,17 +40,17 @@
 - [x] Hold / swap (spawn hérite position et orientation de la paire active)
 - [x] Ghost preview (trainée + preview, toggle on/off)
 - [x] Score et combos (stack points + élimination × valeur × combo)
-- [ ] Level et augmentation de vitesse
-- [ ] High score (sauvegarde persistante)
+- [x] Level et augmentation de vitesse (11 niveaux, seuils progressifs)
+- [x] High score (sauvegarde persistante, score jaune quand battu)
 
 ## Phase 6 — Écrans et UI
 - [x] Layout de l'écran de jeu (titre, score, level, boxes, boutons, pause basic)
 - [ ] Splash screen
-- [ ] Pause screen (resume, restart, quit, ghost/hold toggles, scores)
+- [ ] Pause screen (resume, restart, quit, ghost/hold/music toggles, scores)
 - [ ] Help screen (contrôles mobile, checkbox "don't show again" + persistance locale)
 - [ ] Game over screen (score, high score, mention record battu, replay, quit)
 - [ ] Logo screens
-- [ ] Countdown 3-2-1-STACK
+- [x] Countdown 3-2-1-STACK (scale animation, au lancement)
 - [ ] Transitions et retour de focus
 
 ## Phase 7 — Contrôles additionnels
@@ -58,8 +58,13 @@
 - [x] Gamepad
 
 ## Phase 8 — Polish
-- [ ] Presentation (pluie de dés, DxR background, transitions fade, zoom dé, juice dying, bling high score)
-- [ ] Audio (thème, sons de stack/clear/combo/high score)
+- [x] DxR background animé (scroll diagonal, changement de direction, shake per-logo)
+- [x] Sprites pour les dés (spr_dice) et ghost preview (spr_dice_ghost)
+- [x] UI polish (text shadows, rounded corners grid/boxes, couleurs custom, fonts multiples)
+- [x] Thème instrumental en loop (mute par défaut, toggle M)
+- [ ] Presentation (pluie de dés, transitions fade, zoom dé, juice dying, bling high score)
+- [x] Audio SFX partiels (snd_dice_stack, snd_chain_dying, snd_highscore)
+- [ ] Audio SFX restants (combo, autres)
 
 ## Phase 9 — Metadata
 - [ ] Images plateformes (splash screen, icônes — GX.games, HTML5, Windows, macOS, Ubuntu, tvOS, iOS, Android)

@@ -74,5 +74,6 @@ function scr_pair_detach() {
 		scr_grid_match();
 	}
 
+	audio_play_sound(snd_dice_stack, 0, false);
 	global.last_pair_col = _master_col;
 }

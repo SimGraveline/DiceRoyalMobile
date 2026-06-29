@@ -1,6 +1,6 @@
 function scr_game_input_gamepad() {
-	var _pad_index = 0;
-	var _stick_deadzone = 0.5;
+	var _pad_index = GAMEPAD_INDEX;
+	var _stick_deadzone = GAMEPAD_DEADZONE;
 
 	if (!gamepad_is_connected(_pad_index)) return;
 
