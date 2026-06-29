@@ -35,8 +35,9 @@ The game supports mobile touch, gamepad and keyboard inputs.
 - B / Y = Rotate CW
 - A / X = Rotate CCW
 - LB / RB = Hold
-- Start = Pause
-- Select = Restart
+- Start = Pause / Confirm
+- Select = Help
+- RT + LT = Restart
 - Select + Start = Quit
 
 ### Keyboard
@@ -47,6 +48,8 @@ The game supports mobile touch, gamepad and keyboard inputs.
 - Ctrl = Rotate CCW
 - Shift = Hold
 - ESC = Pause
+- Enter = Confirm
+- F1 = Help
 - M = Mute/unmute music
 - Tab = Toggle grid lines
 

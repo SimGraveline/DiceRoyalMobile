@@ -75,6 +75,38 @@
 #macro BG_SHAKE_MAX       1.05
 #macro BG_SHAKE_RESET_RATE 1
 
+// --- Splash dice rain ---
+#macro RAIN_SPAWN_RATE     0.05
+#macro RAIN_MAX_DICE       50
+#macro RAIN_ALPHA_MIN      0.33
+#macro RAIN_ALPHA_MAX      0.66
+#macro RAIN_FADE_RATE      0.005
+#macro RAIN_SPEED_MIN      1
+#macro RAIN_SPEED_MAX      5
+#macro RAIN_SCALE           0.5
+#macro RAIN_SHAKE_CHANCE   20
+#macro RAIN_SHAKE_MIN      0.90
+#macro RAIN_SHAKE_MAX      1.10
+#macro RAIN_DESTROY_BUFFER 100
+
+// --- Fade transition ---
+#macro FADE_SCALE_RATE   0.06
+#macro FADE_ALPHA_RATE   0.08
+#macro FADE_SCALE_START  3.0
+#macro FADE_SCALE_MID    0.5
+#macro FADE_SCALE_END    4.0
+
+// --- Logos ---
+#macro LOGO_DURATION_1   2.0
+#macro LOGO_DURATION_2   2.0
+#macro LOGO_TEXT_OFFSET   20
+#macro LOGO_COUNT         2
+#macro LOGO_SCALE_GM      0.7
+#macro LOGO_SCALE_GG      0.5
+
+// --- Game over ---
+#macro GAME_OVER_TAP_DELAY  1.0
+
 // --- Countdown ---
 #macro COUNTDOWN_STEPS      3
 #macro COUNTDOWN_STEP_DUR   0.5
@@ -95,7 +127,7 @@
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-#macro UI_TITLE_Y      24
+#macro UI_TITLE_Y      36
 #macro UI_SCORE_Y      80
 #macro UI_BTN_SIZE     32
 #macro UI_BTN_MARGIN   8

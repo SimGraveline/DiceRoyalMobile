@@ -12,6 +12,14 @@ function scr_game_init() {
 	global.last_pair_col = SPAWN_COL_LEFT;
 	global.game_over = false;
 	global.paused = false;
+	global.help_active = false;
+	global.pause_cursor = 0;
+	global.pause_highlight = false;
+	global.pause_stick_prev = false;
+	global.pause_mouse_x = 0;
+	global.pause_mouse_y = 0;
+	global.fade_active = false;
+	global.countdown_active = false;
 	global.ghost_enabled = true;
 	global.grid_lines = false;
 	global.score = 0;
@@ -37,9 +45,44 @@ function scr_game_init() {
 	global.touch_dragging = false;
 	global.touch_drag_col = 0;
 
+	global.game_state = STATE_LOGOS;
+	scr_screen_logos_init();
 	scr_game_bg_init();
 	scr_audio_init();
 	scr_pair_generate_next();
 	scr_pair_spawn();
-	scr_countdown_start();
+}
+
+function scr_game_restart() {
+	audio_stop_all();
+	scr_grid_init();
+
+	global.drop_timer = 0;
+	global.das_timer = 0;
+	global.das_direction = 0;
+	global.lock_timer = 0;
+	global.lock_resets = 0;
+	global.lock_active = false;
+	global.last_pair_col = SPAWN_COL_LEFT;
+	global.game_over = false;
+	global.paused = false;
+	global.grid_lines = false;
+	global.score = 0;
+	global.level = 1;
+	global.drop_speed = 1.00;
+	scr_save_load();
+	global.high_score_beaten = false;
+	global.combo_count = 0;
+	global.hold_val1 = -1;
+	global.hold_val2 = -1;
+	global.hold_used = false;
+	global.touch_active = false;
+
+	global.game_state = STATE_GAME;
+	scr_audio_init();
+	scr_pair_generate_next();
+	scr_pair_spawn();
+	if (!global.fade_active) {
+		scr_countdown_start();
+	}
 }

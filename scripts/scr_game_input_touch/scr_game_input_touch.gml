@@ -1,11 +1,24 @@
 function scr_game_input_touch() {
-	// Game over: tap near top of screen to restart
-	if (global.game_over && device_mouse_check_button_released(0, mb_left)) {
-		var _tap_y = device_mouse_y(0) / GAME_HEIGHT;
-		if (_tap_y <= RESTART_ZONE) {
-			global.input_restart = true;
-		}
+	// Tap anywhere: splash
+	if (global.game_state == STATE_SPLASH && device_mouse_check_button_released(0, mb_left)) {
+		global.input_confirm = true;
 		return;
+	}
+
+	// UI button taps
+	if (device_mouse_check_button_released(0, mb_left)) {
+		var _mx = device_mouse_x(0);
+		var _my = device_mouse_y(0);
+		if (_mx >= UI_BTN_PAUSE_X && _mx <= UI_BTN_PAUSE_X + UI_BTN_SIZE
+		 && _my >= UI_BTN_PAUSE_Y && _my <= UI_BTN_PAUSE_Y + UI_BTN_SIZE) {
+			global.input_pause = true;
+			return;
+		}
+		if (_mx >= UI_BTN_HELP_X && _mx <= UI_BTN_HELP_X + UI_BTN_SIZE
+		 && _my >= UI_BTN_HELP_Y && _my <= UI_BTN_HELP_Y + UI_BTN_SIZE) {
+			global.input_help = true;
+			return;
+		}
 	}
 
 	if (device_mouse_check_button_pressed(0, mb_left) && global.pair_active) {

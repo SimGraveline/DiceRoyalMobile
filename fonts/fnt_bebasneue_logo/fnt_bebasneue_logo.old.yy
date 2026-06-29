@@ -1,6 +1,6 @@
 {
   "$GMFont":"",
-  "%Name":"fnt_bebasneue",
+  "%Name":"fnt_bebasneue_logo",
   "AntiAlias":1,
   "applyKerning":0,
   "ascender":43,
@@ -117,7 +117,7 @@
   "last":0,
   "lineHeight":58,
   "maintainGms1Font":false,
-  "name":"fnt_bebasneue",
+  "name":"fnt_bebasneue_logo",
   "parent":{
     "name":"Fonts",
     "path":"folders/Fonts.yy",

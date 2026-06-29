@@ -104,53 +104,52 @@ All values are adjustable per level. Default values are starting points for play
 
 ### Logo Screens
 
-Studio and game logos displayed on launch.
+Two logo screens displayed on launch (timings adjustable):
+1. "proudly made with" (fnt_inkfree_logo) + GameMaker logo (spr_logo_gamemaker) — 2 seconds
+2. "GRAVE GAMES" + studio logo (spr_logo_gravegames) with shadow + "PRESENTS" (fnt_bebasneue_logo) — 2 seconds
 
 ### Splash Screen
 
-Title screen displayed after logos. Game theme music starts here and loops indefinitely.
+Title screen displayed after logos. Shows "DICE ROYAL" (fnt_bungee_splash) centered with "Tap to Stack!" (fnt_inkfree_logo) blinking below. Background features a dice rain effect (spr_dice_rain sprites falling with random speed, alpha fade, and per-die shake). Tap/Enter/Start to begin, triggering a fade transition (die zoom in/out) to the game screen.
 
 ### Game Screen
 
-Contains the grid, score, level display, hold box, next box, pause button and help button.
+Contains the grid, score, level display, hold box, next box, pause button and help button. Game state is managed via `global.game_state` ("logos" → "splash" → "game").
 
 ### Pause Screen
 
-Accessed via the pause button. Displays current score and high score. Options:
+Accessed via pause button (touch), ESC (keyboard), or Start (gamepad). Not available during countdown. Displays "PAUSED" title and menu options on a semi-transparent blue rectangle:
 - Resume
-- Restart
+- Restart (soft restart, no logos)
 - Quit (return to splash)
-- Ghost on/off
-- Hold on/off
-- Music on/off
+- [X] Mute Music / [ ] Mute Music (toggle, reflects current state)
 
-**Note:** UI adjustment needed if hold is disabled (hold box becomes empty). To be addressed later.
+Navigation: touch tap on option, or keyboard arrows/gamepad stick + Enter/A. Options are white until keyboard/gamepad navigation is detected, then focused option highlights in cream (COLOR_BOX_FILL).
+
+Future additions: Ghost on/off, Hold on/off.
 
 ### Help Screen
 
-Accessed via the "?" button. Displays mobile controls only (swipe directions, tap zones), even though gamepad and keyboard are supported.
+Accessed via "?" button (touch), F1 (keyboard), or Select (gamepad). The "?" button becomes "X" when help is active. Displays "HOW TO PLAY" (fnt_bungee_title) with rules (cream color) and mobile controls (white) on a semi-transparent blue rectangle. Closes via X button, F1, Select, or ESC. Game is paused while help is open.
 
-On the first game after each app launch, the help screen appears automatically with a "Don't show again" checkbox. Once checked, the automatic display is permanently disabled. The checkbox is not shown when the help screen is accessed manually via "?".
+Future: auto-show on first game after launch with "Don't show again" checkbox + persistence.
 
 ### Game Over Screen
 
-Displayed when the grid is at rest and a die remains above the dead zone. Contains:
-- "Game Over" title
-- Current score
-- High score
-- A mention if the high score was beaten
-- Replay button (starts a new game)
-- Quit button (return to splash)
+Displayed when the grid is at rest and a die remains above the dead zone. A 1-second delay prevents accidental input. Shows on a semi-transparent blue rectangle:
+- "GAME OVER" title (fnt_bungee_title, red)
+- "NEW BEST!" (yellow, pulsing) — only if high score was beaten
+- Current Score (cream label + white value)
+- High Score (cream label + white value)
+- Restart / Quit menu (same navigation as pause)
 
 ### Countdown
 
-A "3-2-1-STACK!" countdown plays before gameplay begins. Each step lasts 0.5s with a scale animation (zoom in 0.1→1, zoom out 1→0.1). Currently plays:
-- Game start
+A "3-2-1-STACK!" countdown plays before gameplay begins. Each step lasts 0.5s with a scale animation (zoom in 0.1→1, zoom out 1→0.1) using fnt_bungee_countdown. Plays at game start and after soft restart.
 
-Future (not yet implemented):
-- Splash to game
-- Help to game
-- Returning from lost focus (low priority)
+### Fade Transition
+
+A die sprite (spr_screen_fade, 1664×1664) zooms in while fading to opaque, then zooms out while fading to transparent. Used between splash and game screens. The countdown starts only after the fade completes.
 
 ## Controls
 
@@ -169,8 +168,9 @@ The in-game UI only displays mobile controls.
 - B or Y = Rotate CW
 - A or X = Rotate CCW
 - LB or RB = Hold
-- Start = Pause
-- Select = Restart
+- Start = Pause / Confirm
+- Select = Help
+- RT + LT = Restart
 - Select + Start = Quit
 
 ### Keyboard
@@ -181,6 +181,8 @@ The in-game UI only displays mobile controls.
 - Ctrl (L/R) = Rotate CCW
 - Shift (L/R) = Hold
 - ESC = Pause
+- Enter = Confirm
+- F1 = Help
 - M = Mute/unmute music
 - Tab = Toggle grid lines
 

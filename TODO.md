@@ -45,13 +45,14 @@
 
 ## Phase 6 — Écrans et UI
 - [x] Layout de l'écran de jeu (titre, score, level, boxes, boutons, pause basic)
-- [ ] Splash screen
-- [ ] Pause screen (resume, restart, quit, ghost/hold/music toggles, scores)
-- [ ] Help screen (contrôles mobile, checkbox "don't show again" + persistance locale)
-- [ ] Game over screen (score, high score, mention record battu, replay, quit)
-- [ ] Logo screens
+- [x] Splash screen (dice rain, "Tap to Stack!" clignotant)
+- [x] Pause screen (resume, restart, quit, mute music toggle, navigation clavier/gamepad/touch)
+- [x] Help screen (HOW TO PLAY, règles, contrôles mobile, toggle ?)
+- [x] Game over screen (score, high score, NEW BEST pulse, restart/quit menu)
+- [x] Logo screens (GameMaker + Grave Games, timings ajustables)
 - [x] Countdown 3-2-1-STACK (scale animation, au lancement)
-- [ ] Transitions et retour de focus
+- [x] Transition fade (dé zoom in/out entre splash et game)
+- [ ] Retour de focus
 
 ## Phase 7 — Contrôles additionnels
 - [x] Mobile touch (swipes, tap zones)
@@ -62,7 +63,9 @@
 - [x] Sprites pour les dés (spr_dice) et ghost preview (spr_dice_ghost)
 - [x] UI polish (text shadows, rounded corners grid/boxes, couleurs custom, fonts multiples)
 - [x] Thème instrumental en loop (mute par défaut, toggle M)
-- [ ] Presentation (pluie de dés, transitions fade, zoom dé, juice dying, bling high score)
+- [x] Dice rain (splash screen background)
+- [x] Transition fade (dé zoom in/out)
+- [ ] Presentation restante (juice dying, bling high score)
 - [x] Audio SFX partiels (snd_dice_stack, snd_chain_dying, snd_highscore)
 - [ ] Audio SFX restants (combo, autres)
 
