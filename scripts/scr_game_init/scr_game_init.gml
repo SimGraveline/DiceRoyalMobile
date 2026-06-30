@@ -57,6 +57,7 @@ function scr_game_restart() {
 	audio_stop_all();
 	scr_grid_init();
 
+	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1];
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;
@@ -66,6 +67,13 @@ function scr_game_restart() {
 	global.last_pair_col = SPAWN_COL_LEFT;
 	global.game_over = false;
 	global.paused = false;
+	global.help_active = false;
+	global.pause_cursor = 0;
+	global.pause_highlight = false;
+	global.pause_stick_prev = false;
+	global.pause_mouse_x = 0;
+	global.pause_mouse_y = 0;
+	global.ghost_enabled = true;
 	global.grid_lines = false;
 	global.score = 0;
 	global.level = 1;
@@ -76,7 +84,12 @@ function scr_game_restart() {
 	global.hold_val1 = -1;
 	global.hold_val2 = -1;
 	global.hold_used = false;
+	global.gamepad_stick_up_prev = false;
 	global.touch_active = false;
+	global.touch_start_x = 0;
+	global.touch_start_y = 0;
+	global.touch_dragging = false;
+	global.touch_drag_col = 0;
 
 	global.game_state = STATE_GAME;
 	scr_audio_init();

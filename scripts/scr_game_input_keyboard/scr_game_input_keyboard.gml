@@ -15,5 +15,5 @@ function scr_game_input_keyboard() {
 	global.input_confirm    = keyboard_check_pressed(vk_enter);
 	global.input_help       = keyboard_check_pressed(vk_f1);
 	global.input_restart    = keyboard_check_pressed(ord("R")); // DEBUG
-	global.input_exit		= keyboard_check_pressed(ord("Q")); // DEBUG
+	global.input_exit       = keyboard_check_pressed(ord("Q")); // DEBUG
 }

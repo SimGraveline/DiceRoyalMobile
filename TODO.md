@@ -46,6 +46,7 @@
 ## Phase 6 — Écrans et UI
 - [x] Layout de l'écran de jeu (titre, score, level, boxes, boutons, pause basic)
 - [x] Splash screen (dice rain, "Tap to Stack!" clignotant)
+- [ ] Thème vocal (snd_theme) sur le splash screen
 - [x] Pause screen (resume, restart, quit, mute music toggle, navigation clavier/gamepad/touch)
 - [x] Help screen (HOW TO PLAY, règles, contrôles mobile, toggle ?)
 - [x] Game over screen (score, high score, NEW BEST pulse, restart/quit menu)
@@ -66,8 +67,15 @@
 - [x] Dice rain (splash screen background)
 - [x] Transition fade (dé zoom in/out)
 - [ ] Presentation restante (juice dying, bling high score)
+- [ ] Mute SFX
 - [x] Audio SFX partiels (snd_dice_stack, snd_chain_dying, snd_highscore)
 - [ ] Audio SFX restants (combo, autres)
+- [ ] Fix de la taille de la zone du hold (20%)
+- [ ] Ajout de dés de face 7-8-9
+- [ ] Améliorer la courbe de progression
+- [ ] Permettre des combos spécial, i.e.; suite 1-2-3-4-5-6-7-8-9.
+- [ ] Ajout de dés spéciaux !, ?, random
+- [ ] Tweak du ghost à la verticale
 
 ## Phase 9 — Metadata
 - [ ] Images plateformes (splash screen, icônes — GX.games, HTML5, Windows, macOS, Ubuntu, tvOS, iOS, Android)

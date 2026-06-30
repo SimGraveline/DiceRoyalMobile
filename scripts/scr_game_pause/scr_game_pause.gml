@@ -84,7 +84,7 @@ function scr_pause_menu_hit(_mouse_y) {
 	var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_QUIT,
 	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF];
 	draw_set_font(fnt_bungee);
-	var _line_h = string_height("M") * 1.8;
+	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _total_h = array_length(_items) * _line_h;
 	draw_set_font(fnt_bungee_title);
 	var _title_h = string_height(STR_PAUSED);
@@ -163,13 +163,13 @@ function scr_game_over_menu_select(_index) {
 function scr_game_over_menu_hit(_mouse_y) {
 	var _items = [STR_MENU_RESTART, STR_MENU_QUIT];
 	draw_set_font(fnt_bungee);
-	var _line_h = string_height("M") * 1.8;
+	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _menu_h = array_length(_items) * _line_h;
 
 	draw_set_font(fnt_bungee_title);
 	var _title_h = string_height(STR_GAME_OVER);
 	draw_set_font(fnt_bungee);
-	var _score_line_h = string_height("M") * 1.5;
+	var _score_line_h = string_height("M") * UI_SCORE_LINE_H_FACTOR;
 	var _scores_h = _score_line_h * 4;
 	if (global.high_score_beaten) {
 		_scores_h += string_height(STR_NEW_BEST);

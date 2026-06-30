@@ -3,7 +3,7 @@ function scr_pair_weighted_random() {
 	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
 		_total += global.spawn_weights[_i];
 	}
-	var _roll = random(_total - 1);
+	var _roll = random(_total);
 	var _sum = 0;
 	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
 		_sum += global.spawn_weights[_i];

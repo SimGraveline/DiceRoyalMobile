@@ -120,7 +120,6 @@
 // --- Drawing ---
 #macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
-#macro GAME_OVER_Y  16
 #macro UI_SHADOW_OFFSET    5
 #macro GRID_OUTLINE_WIDTH  6
 #macro GRID_LINE_WIDTH     2
@@ -141,3 +140,5 @@
 #macro BOX_HOLD_X      (GRID_X)
 #macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
 #macro BOX_LABEL_OFFSET  8
+#macro UI_MENU_LINE_H_FACTOR   1.8
+#macro UI_SCORE_LINE_H_FACTOR  1.5

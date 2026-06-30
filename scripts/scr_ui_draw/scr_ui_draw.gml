@@ -129,7 +129,7 @@ function scr_ui_draw() {
 		draw_set_font(fnt_bungee_title);
 		var _title_h = string_height(STR_PAUSED);
 		draw_set_font(fnt_bungee);
-		var _line_h = string_height("M") * 1.8;
+		var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 		var _menu_h = array_length(_items) * _line_h;
 		var _gap = _title_h * 0.5;
 		var _block_h = _title_h + _gap + _menu_h;
@@ -164,8 +164,8 @@ function scr_ui_draw() {
 		draw_set_font(fnt_bungee_title);
 		var _title_h = string_height(STR_GAME_OVER);
 		draw_set_font(fnt_bungee);
-		var _score_line_h = string_height("M") * 1.5;
-		var _line_h = string_height("M") * 1.8;
+		var _score_line_h = string_height("M") * UI_SCORE_LINE_H_FACTOR;
+		var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 		var _new_best_h = 0;
 		if (global.high_score_beaten) {
 			_new_best_h = _score_line_h;

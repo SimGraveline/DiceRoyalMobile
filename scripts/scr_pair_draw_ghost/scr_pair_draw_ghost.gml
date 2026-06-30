@@ -4,11 +4,11 @@ function scr_pair_draw_ghost() {
 	var _colors = [
 		c_black,   // 0 = unused
 		c_white,   // 1
-		c_yellow,  // 2
-		c_red,     // 3
+		c_red,     // 2
+		c_blue,    // 3
 		c_green,   // 4
-		c_blue,    // 5
-		c_black    // 6
+		c_yellow,  // 5
+		c_purple   // 6
 	];
 
 	var _mc = global.pair_col;
