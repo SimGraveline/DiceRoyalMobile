@@ -9,7 +9,7 @@ function scr_game_pause() {
 function scr_game_pause_update() {
 	if (!global.paused || global.help_active) return;
 
-	var _menu_count = 4;
+	var _menu_count = 5;
 	var _moved = false;
 
 	// Navigation — keyboard
@@ -77,12 +77,15 @@ function scr_pause_menu_select(_index) {
 		scr_screen_splash_init();
 	} else if (_index == 3) {
 		scr_audio_toggle_music();
+	} else if (_index == 4) {
+		scr_audio_toggle_sfx();
 	}
 }
 
 function scr_pause_menu_hit(_mouse_y) {
 	var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_QUIT,
-	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF];
+	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF,
+	              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF];
 	draw_set_font(fnt_bungee);
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _total_h = array_length(_items) * _line_h;
@@ -174,7 +177,7 @@ function scr_game_over_menu_hit(_mouse_y) {
 	if (global.high_score_beaten) {
 		_scores_h += string_height(STR_NEW_BEST);
 	}
-	var _gap = _title_h * 0.3;
+	var _gap = _title_h * UI_GAME_OVER_GAP_FACTOR;
 	var _block_h = _title_h + _scores_h + _gap + _menu_h;
 	var _top = GAME_HEIGHT / 2 - _block_h / 2;
 	var _menu_top = _top + _title_h + _scores_h + _gap;

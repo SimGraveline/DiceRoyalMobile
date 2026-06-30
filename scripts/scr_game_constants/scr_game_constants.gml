@@ -35,19 +35,61 @@
 #macro DYING_DURATION  1.0
 
 // --- Spawn restrictions ---
-#macro PAIR_MIN_VALUE  1
-#macro PAIR_MAX_VALUE  6
+#macro PAIR_MIN_VALUE   1
+#macro PAIR_MAX_VALUE   9
+#macro SPAWN_RETRY_MAX  20
+
+// --- Special die values ---
+#macro DIE_BOMB    10
+#macro DIE_MIMIC   11
+#macro DIE_RANDOM  12
+
+// --- Dice unlock levels ---
+#macro DICE_7_UNLOCK_LEVEL        7
+#macro DICE_8_UNLOCK_LEVEL        8
+#macro DICE_9_UNLOCK_LEVEL        9
+#macro DICE_MIMIC_UNLOCK_LEVEL    4
+#macro DICE_BOMB_UNLOCK_LEVEL     3
+#macro DICE_RANDOM_UNLOCK_LEVEL   2
+
+// --- Special dice spawn chances (1 in N) ---
+#macro DICE_MIMIC_CHANCE   15
+#macro DICE_BOMB_CHANCE    15
+#macro DICE_RANDOM_CHANCE  15
+#macro RANDOM_CYCLE_SPEED  1.00
+
+// --- Dice colors ---
+#macro COLOR_DIE_7      $00A5FF
+#macro COLOR_DIE_8      $90536F
+#macro COLOR_DIE_9      $6B25E3
+#macro COLOR_DIE_BOMB   $606060
+#macro COLOR_DIE_MIMIC  $D3D3D3
+
+// --- Level up VFX ---
+#macro LEVEL_PULSE_DURATION     1.0
+#macro LEVEL_PULSE_SCALE_BOOST  0.4
+
+// --- Audio ---
+#macro MUSIC_VOLUME              0.4
+#macro SPLASH_MUSIC_FADE_MS      700
+
+// --- Animation ---
+#macro DIE_BOMB_ANIM_MS          500
 
 // --- Score ---
-#macro SCORE_STACK     10
-#macro SCORE_BASE      100
+#macro SCORE_STACK       10
+#macro SCORE_BASE        100
 #macro COMBO_MULTIPLIER  1.5
+#macro SCORE_SUITE_6     6000
+#macro SCORE_SUITE_7     7000
+#macro SCORE_SUITE_8     8000
+#macro SCORE_SUITE_9     10000
 
 // --- Touch ---
 #macro SWIPE_MIN_DISTANCE  30
 #macro DRAG_THRESHOLD  10
 #macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
-#macro TAP_ZONE_SPLIT  0.75
+#macro TAP_ZONE_SPLIT  0.80
 #macro ROTATE_SPLIT  0.5
 #macro RESTART_ZONE  0.1
 
@@ -140,5 +182,6 @@
 #macro BOX_HOLD_X      (GRID_X)
 #macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
 #macro BOX_LABEL_OFFSET  8
-#macro UI_MENU_LINE_H_FACTOR   1.8
-#macro UI_SCORE_LINE_H_FACTOR  1.5
+#macro UI_MENU_LINE_H_FACTOR      1.8
+#macro UI_SCORE_LINE_H_FACTOR     1.5
+#macro UI_GAME_OVER_GAP_FACTOR    0.3

@@ -1,4 +1,20 @@
 function scr_ui_draw_die(_x, _y, _value) {
+	if (_value == DIE_BOMB) {
+		var _frame = floor(current_time / DIE_BOMB_ANIM_MS) mod 2;
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_bomb);
+		draw_sprite_ext(spr_dice_bomb, _frame, _x, _y, _scale, _scale, 0, c_white, 1.0);
+		return;
+	}
+	if (_value == DIE_MIMIC) {
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_mimic);
+		draw_sprite_ext(spr_dice_mimic, 0, _x, _y, _scale, _scale, 0, c_white, 1.0);
+		return;
+	}
+	if (_value == DIE_RANDOM) {
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice);
+		draw_sprite_ext(spr_dice, global.pair_random_val, _x, _y, _scale, _scale, 0, c_white, 1.0);
+		return;
+	}
 	var _scale = CELL_SIZE / sprite_get_width(spr_dice);
 	draw_sprite_ext(spr_dice, _value, _x, _y, _scale, _scale, 0, c_white, 1.0);
 }
@@ -90,11 +106,35 @@ function scr_ui_draw() {
 	// Level — centered between hold and next, vertically centered with boxes
 	var _level_x = GAME_WIDTH / 2;
 	var _level_cy = BOX_Y + BOX_HEIGHT / 2;
+
+	var _level_scale = 1.0;
+	var _level_col = c_white;
+	var _level_shadow_col = c_black;
+	if (global.level_pulse_timer > 0) {
+		var _pulse_progress = global.level_pulse_timer / LEVEL_PULSE_DURATION;
+		_level_scale = 1 + LEVEL_PULSE_SCALE_BOOST * sin(_pulse_progress * pi);
+		_level_col = c_red;
+		_level_shadow_col = c_white;
+	}
+
 	draw_set_halign(fa_center);
-	draw_set_valign(fa_bottom);
-	scr_ui_draw_text(_level_x, _level_cy, STR_LEVEL, c_white);
-	draw_set_valign(fa_top);
-	scr_ui_draw_text(_level_x, _level_cy, string(global.level), c_white);
+	draw_set_valign(fa_middle);
+	var _s = UI_SHADOW_OFFSET * _level_scale;
+
+	var _label_h = string_height(STR_LEVEL);
+	var _value_h = string_height(string(global.level));
+	var _label_cy = _level_cy - _label_h / 2;
+	var _value_cy = _level_cy + _value_h / 2;
+
+	draw_set_color(_level_shadow_col);
+	draw_text_transformed(_level_x - _s, _label_cy + _s, STR_LEVEL, _level_scale, _level_scale, 0);
+	draw_set_color(_level_col);
+	draw_text_transformed(_level_x, _label_cy, STR_LEVEL, _level_scale, _level_scale, 0);
+
+	draw_set_color(_level_shadow_col);
+	draw_text_transformed(_level_x - _s, _value_cy + _s, string(global.level), _level_scale, _level_scale, 0);
+	draw_set_color(_level_col);
+	draw_text_transformed(_level_x, _value_cy, string(global.level), _level_scale, _level_scale, 0);
 
 	// Paused
 	if (global.help_active) {
@@ -124,7 +164,8 @@ function scr_ui_draw() {
 		scr_ui_draw_text(GAME_WIDTH / 2, _top + _title_h + _gap + _rules_h + _gap, STR_HELP_CONTROLS, c_white);
 	} else if (global.paused) {
 		var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_QUIT,
-		              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF];
+		              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF,
+		              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF];
 
 		draw_set_font(fnt_bungee_title);
 		var _title_h = string_height(STR_PAUSED);
@@ -172,7 +213,7 @@ function scr_ui_draw() {
 		}
 		var _scores_h = _new_best_h + _score_line_h * 4;
 		var _menu_h = array_length(_items) * _line_h;
-		var _gap = _title_h * 0.3;
+		var _gap = _title_h * UI_GAME_OVER_GAP_FACTOR;
 		var _block_h = _title_h + _scores_h + _gap + _menu_h;
 		var _pad = _title_h * 0.5;
 		var _top = GAME_HEIGHT / 2 - _block_h / 2;

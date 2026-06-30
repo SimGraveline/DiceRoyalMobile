@@ -9,12 +9,12 @@ function scr_pair_detach() {
 
 	// Write landed die(s) to grid and check matches/joins
 	if (_master_landed) {
-		global.grid[_master_col][_master_row] = global.pair_val1;
+		scr_die_place(_master_col, _master_row, global.pair_val1);
 		global.score += SCORE_STACK;
 		scr_grid_check_join(_master_col, _master_row);
 	}
 	if (_slave_landed) {
-		global.grid[_slave_col][_slave_row] = global.pair_val2;
+		scr_die_place(_slave_col, _slave_row, global.pair_val2);
 		global.score += SCORE_STACK;
 		scr_grid_check_join(_slave_col, _slave_row);
 	}
@@ -60,13 +60,12 @@ function scr_pair_detach() {
 		}
 
 		if (_should_join) {
-			global.grid[_solo_col][_solo_row] = _solo_val;
+			scr_die_place(_solo_col, _solo_row, _solo_val);
 		} else {
-			// Snap to lowest available position
 			while (!scr_grid_cell_blocked(_solo_col, _solo_row - 1)) {
 				_solo_row -= 1;
 			}
-			global.grid[_solo_col][_solo_row] = _solo_val;
+			scr_die_place(_solo_col, _solo_row, _solo_val);
 		}
 		global.score += SCORE_STACK;
 
@@ -74,6 +73,6 @@ function scr_pair_detach() {
 		scr_grid_match();
 	}
 
-	audio_play_sound(snd_dice_stack, 0, false);
+	scr_audio_play_sfx(snd_dice_stack);
 	global.last_pair_col = _master_col;
 }

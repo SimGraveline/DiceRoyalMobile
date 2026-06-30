@@ -4,7 +4,7 @@ A falling block puzzle game inspired by Tetris, Puyo Puyo and Devil Dice, develo
 
 ## About
 
-Dice Royal is a mobile puzzle game where players align dice of the same value to eliminate them and score points. Match two 2's, three 3's, four 4's, five 5's or six 6's to clear them from the grid. Chain reactions and combos create deeper strategic gameplay.
+Dice Royal is a mobile puzzle game where players align dice of the same value to eliminate them and score points. Match two 2's, three 3's, four 4's, five 5's or six 6's to clear them from the grid. Chain reactions and combos create deeper strategic gameplay. Special dice — Mimic, Bomb and Random — unlock as the level increases and add new ways to clear the grid.
 
 This repository contains the mobile version, built in GameMaker with GX.games as the target export platform.
 
@@ -57,19 +57,19 @@ The game supports mobile touch, gamepad and keyboard inputs.
 
 The game has 11 levels. Drop speed increases with each level.
 
-| Level | Score | Drop speed |
-|---|---|---|
-| 1 | 0 | 1.00s |
-| 2 | 10,000 | 0.95s |
-| 3 | 30,000 | 0.85s |
-| 4 | 60,000 | 0.70s |
-| 5 | 100,000 | 0.50s |
-| 6 | 150,000 | 0.25s |
-| 7 | 210,000 | 0.10s |
-| 8 | 280,000 | 0.075s |
-| 9 | 360,000 | 0.05s |
-| 10 | 450,000 | 0.025s |
-| 11 | 550,000 | 0.01s |
+| Level | Score | Drop speed | Unlock |
+|---|---|---|---|
+| 1 | 0 | 0.75s | Dice 1–6 |
+| 2 | 5,000 | 0.60s | Random |
+| 3 | 10,000 | 0.50s | Bomb |
+| 4 | 15,000 | 0.40s | Mimic |
+| 5 | 20,000 | 0.30s | — |
+| 6 | 25,000 | 0.25s | — |
+| 7 | 30,000 | 0.20s | Die 7 |
+| 8 | 35,000 | 0.15s | Die 8 |
+| 9 | 40,000 | 0.10s | Die 9 |
+| 10 | 45,000 | 0.05s | — |
+| 11 | 50,000 | 0.01s | — |
 
 ## License
 

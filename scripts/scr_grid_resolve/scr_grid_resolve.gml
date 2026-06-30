@@ -16,6 +16,7 @@ function scr_grid_resolve() {
 					}
 					global.grid_dying[_col][_row] = 0;
 					global.grid[_col][_row] = 0;
+					global.grid_special[_col][_row] = 0;
 					_any_expired = true;
 				}
 			}

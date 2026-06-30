@@ -53,6 +53,12 @@ function scr_game_update() {
 		return;
 	}
 
+	if (global.fade_active) {
+		scr_screen_fade_update();
+		scr_game_bg_update();
+		return;
+	}
+
 	if (global.game_over) {
 		global.game_over_tap_timer -= delta_time / DELTA_TO_SECONDS;
 		global.game_over_blink_timer += delta_time / DELTA_TO_SECONDS;
@@ -107,13 +113,25 @@ function scr_game_update() {
 		}
 	}
 
+	// --- Random die cycling (always active for next box display) ---
+	global.pair_random_timer += delta_time / DELTA_TO_SECONDS;
+	if (global.pair_random_timer >= RANDOM_CYCLE_SPEED) {
+		global.pair_random_timer -= RANDOM_CYCLE_SPEED;
+		var _max_rnd = PAIR_MIN_VALUE;
+		for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
+			if (global.spawn_weights[_i] > 0) _max_rnd = _i;
+		}
+		global.pair_random_val++;
+		if (global.pair_random_val > _max_rnd) global.pair_random_val = PAIR_MIN_VALUE;
+	}
+
 	scr_grid_resolve();
 	scr_level_update();
 	scr_game_bg_update();
 
 	if (!global.high_score_beaten && global.score > global.high_score) {
 		global.high_score_beaten = true;
-		audio_play_sound(snd_highscore, 0, false);
+		scr_audio_play_sfx(snd_highscore);
 	}
 
 	scr_screen_fade_update();

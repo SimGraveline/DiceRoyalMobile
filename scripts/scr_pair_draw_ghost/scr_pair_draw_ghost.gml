@@ -2,13 +2,18 @@ function scr_pair_draw_ghost() {
 	if (!global.pair_active || !global.ghost_enabled) return;
 
 	var _colors = [
-		c_black,   // 0 = unused
-		c_white,   // 1
-		c_red,     // 2
-		c_blue,    // 3
-		c_green,   // 4
-		c_yellow,  // 5
-		c_purple   // 6
+		c_black,           // 0 = unused
+		c_white,           // 1
+		c_yellow,          // 2
+		c_red,             // 3
+		c_green,           // 4
+		c_blue,            // 5
+		c_black,           // 6
+		COLOR_DIE_7,       // 7
+		COLOR_DIE_8,       // 8
+		COLOR_DIE_9,       // 9
+		COLOR_DIE_BOMB,   // 10 = Bomb
+		COLOR_DIE_MIMIC   // 11 = Mimic
 	];
 
 	var _mc = global.pair_col;
@@ -54,27 +59,34 @@ function scr_pair_draw_ghost() {
 
 	var _ghost_w = sprite_get_width(spr_dice_ghost);
 	var _xscale = CELL_SIZE / _ghost_w;
+	var _vertical = (_oc == 0);
 
-	// Draw trail + preview for master
-	var _m_x = GRID_X + (_mc * CELL_SIZE);
-	var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE;
-	var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
-	var _m_trail_h = (_m_land_y + CELL_SIZE) - _m_top_y;
+	// In vertical orientation, only the bottom die projects a ghost
+	var _draw_master = !_vertical || (_mr <= _sr);
+	var _draw_slave  = !_vertical || (_sr < _mr);
 
-	draw_set_alpha(GHOST_TRAIL_ALPHA);
-	draw_set_color(_colors[global.pair_val1]);
-	draw_roundrect(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
-	draw_sprite_ext(spr_dice_ghost, global.pair_val1, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+	var _mval = (global.pair_val1 == DIE_RANDOM) ? global.pair_random_val : global.pair_val1;
+	var _sval = (global.pair_val2 == DIE_RANDOM) ? global.pair_random_val : global.pair_val2;
 
-	// Draw trail + preview for slave
-	var _s_x = GRID_X + (_sc * CELL_SIZE);
-	var _s_top_y = GRID_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE;
-	var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
+	if (_draw_master) {
+		var _m_x = GRID_X + (_mc * CELL_SIZE);
+		var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE;
+		var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
+		draw_set_alpha(GHOST_TRAIL_ALPHA);
+		draw_set_color(_colors[_mval]);
+		draw_roundrect(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
+		draw_sprite_ext(spr_dice_ghost, _mval, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+	}
 
-	draw_set_alpha(GHOST_TRAIL_ALPHA);
-	draw_set_color(_colors[global.pair_val2]);
-	draw_roundrect(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
-	draw_sprite_ext(spr_dice_ghost, global.pair_val2, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+	if (_draw_slave) {
+		var _s_x = GRID_X + (_sc * CELL_SIZE);
+		var _s_top_y = GRID_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE;
+		var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
+		draw_set_alpha(GHOST_TRAIL_ALPHA);
+		draw_set_color(_colors[_sval]);
+		draw_roundrect(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
+		draw_sprite_ext(spr_dice_ghost, _sval, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+	}
 
 	draw_set_alpha(1.0);
 }

@@ -2,7 +2,7 @@ function scr_game_init() {
 	randomize();
 	scr_grid_init();
 
-	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1];
+	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1, 0, 0, 0];
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;
@@ -24,16 +24,20 @@ function scr_game_init() {
 	global.grid_lines = false;
 	global.score = 0;
 	global.level = 1;
-	global.drop_speed = 1.00;
+	global.level_pulse_timer = 0;
 	scr_save_load();
 	global.high_score_beaten = false;
 
-	LEVEL_THRESHOLDS = [0, 10000, 30000, 60000, 100000, 150000, 210000, 280000, 360000, 450000, 550000];
-	LEVEL_SPEEDS     = [1.00, 0.95, 0.85, 0.70, 0.50, 0.25, 0.10, 0.075, 0.05, 0.025, 0.01];
+	LEVEL_THRESHOLDS = [0, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
+	LEVEL_SPEEDS     = [0.75, 0.60, 0.50, 0.40, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0.01];
+	global.drop_speed = LEVEL_SPEEDS[0];
 	global.combo_count = 0;
 	global.hold_val1 = -1;
 	global.hold_val2 = -1;
 	global.hold_used = false;
+	global.pair_random_val = 1;
+	global.pair_random_timer = 0;
+	global.splash_music_id = -1;
 
 	// Gamepad state
 	global.gamepad_stick_up_prev = false;
@@ -57,7 +61,7 @@ function scr_game_restart() {
 	audio_stop_all();
 	scr_grid_init();
 
-	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1];
+	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1, 0, 0, 0];
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;
@@ -77,13 +81,16 @@ function scr_game_restart() {
 	global.grid_lines = false;
 	global.score = 0;
 	global.level = 1;
-	global.drop_speed = 1.00;
+	global.drop_speed = LEVEL_SPEEDS[0];
+	global.level_pulse_timer = 0;
 	scr_save_load();
 	global.high_score_beaten = false;
 	global.combo_count = 0;
 	global.hold_val1 = -1;
 	global.hold_val2 = -1;
 	global.hold_used = false;
+	global.pair_random_val = 1;
+	global.pair_random_timer = 0;
 	global.gamepad_stick_up_prev = false;
 	global.touch_active = false;
 	global.touch_start_x = 0;

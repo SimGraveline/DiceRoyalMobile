@@ -23,7 +23,9 @@ Game logic lives in standalone scripts. Objects contain minimal code and delegat
 
 ### Rules
 
-Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals). A chain is valid when the number of connected dice is equal to or greater than the die value: two or more 2's, three or more 3's, four or more 4's, five or more 5's, six or more 6's.
+Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals). A chain is valid when the number of connected dice is equal to or greater than the die value: two or more 2's, three or more 3's, four or more 4's, five or more 5's, six or more 6's, seven or more 7's, eight or more 8's, nine or more 9's.
+
+Die values 7, 8 and 9 are not available at the start of the game. They unlock progressively with level: 7 at level 3, 8 at level 6, 9 at level 9.
 
 Eliminated dice enter a "dying" state with a visible fade-out animation. Dying propagates: any non-dying die orthogonally adjacent to a dying die of the same value also becomes dying, along with all of its connected same-value dice. This propagation cascades until no more dice can be reached. Each die that enters dying gets its own independent timer.
 
@@ -58,6 +60,16 @@ Dying dice do not fall — they float in place if their support is removed. They
 Player scores points by:
 - Stacking a die: 10 points per die when it is written to the grid
 - Eliminating dice: 100 points per die, multiplied by die value (except 1's: flat 100 points)
+- Suite elimination: bonus points for forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value (minimum N=6)
+
+| Suite length | Bonus |
+|---|---|
+| 6 | 6,000 |
+| 7 | 7,000 |
+| 8 | 8,000 |
+| 9 | 10,000 |
+
+Suite dice enter dying state normally and can trigger cascade propagation.
 
 Combo multiplier: each wave of eliminations after gravity increases the multiplier exponentially (×1 first wave, ×1.5 second, ×2.25 third, etc.). The combo counter resets when a new pair spawns.
 
@@ -65,27 +77,41 @@ The game saves the high score persistently (may not be displayed in the prototyp
 
 An online leaderboard feature is to be evaluated.
 
+### Special Dice
+
+Three special die types can appear in pairs starting at specific levels. At most one special die can appear per pair; the other die is always a normal die.
+
+| Die | Name | Unlock level | Spawn odds | Behavior |
+|---|---|---|---|---|
+| Mimic | Dé Mimic | 4 | 1/15 | On landing, copies the value of the die directly below it. If no normal die is below (or it lands on the floor), it stays in an idle state until a die falls on top of it or beneath it (gravity). |
+| Bomb | Dé Bomb | 3 | 1/15 | On landing, reads the value of the die directly below it and immediately eliminates all dice of that value on the grid. If no normal die is below, it stays idle until activated by a die landing on top of it or beneath it. |
+| Random | Dé Random | 2 | 1/15 | While active in the pair, cycles through all currently unlocked die values (1–N) at a 1.0s interval, visible in the pair and the next box. Locks to the current displayed value on landing. |
+
+Special die weights are computed dynamically from the normal pool so that each special die's probability is exactly 1/CHANCE regardless of how many normal die values are currently unlocked.
+
+Special dice never form matches on their own. A Mimic that stays idle (no normal die resolved) or a Bomb that stays idle are treated as inert until activated.
+
 ### Spawn Rules
 
-Pairs of 1:1 and 2:2 can never spawn. All other combinations have even odds. Spawn probabilities must be adjustable variables that can evolve as the game progresses.
+Pairs of 1:1 and 2:2 can never spawn. Spawn probabilities per die value are adjustable and can evolve as the game progresses. At most one special die can appear per pair.
 
 ### Level
 
-Predefined cumulative score thresholds increase the in-game level. Each level increases drop speed. The cost to reach the next level scales with the current level number (level N requires N × 10,000 additional points). Speed decreases by an accelerating delta for levels 1-6 (-0.05, -0.10, -0.15, -0.20, -0.25), then uses manual values for levels 7-11.
+Predefined cumulative score thresholds increase the in-game level. Each level increases drop speed. Level 11 is the cap at 50,000 points.
 
-| Level | Score threshold | Drop speed |
-|---|---|---|
-| 1 | 0 | 1.00s |
-| 2 | 10,000 | 0.95s |
-| 3 | 30,000 | 0.85s |
-| 4 | 60,000 | 0.70s |
-| 5 | 100,000 | 0.50s |
-| 6 | 150,000 | 0.25s |
-| 7 | 210,000 | 0.10s |
-| 8 | 280,000 | 0.075s |
-| 9 | 360,000 | 0.05s |
-| 10 | 450,000 | 0.025s |
-| 11 | 550,000 | 0.01s |
+| Level | Score threshold | Drop speed | Die unlock |
+|---|---|---|---|
+| 1 | 0 | 0.75s | 1–6 |
+| 2 | 5,000 | 0.60s | + Random |
+| 3 | 10,000 | 0.50s | + Bomb |
+| 4 | 15,000 | 0.40s | + Mimic |
+| 5 | 20,000 | 0.30s | — |
+| 6 | 25,000 | 0.25s | — |
+| 7 | 30,000 | 0.20s | + 7 |
+| 8 | 35,000 | 0.15s | + 8 |
+| 9 | 40,000 | 0.10s | + 9 |
+| 10 | 45,000 | 0.05s | — |
+| 11 | 50,000 | 0.01s | — |
 
 ### Difficulty Levers
 
@@ -123,6 +149,7 @@ Accessed via pause button (touch), ESC (keyboard), or Start (gamepad). Not avail
 - Restart (soft restart, no logos)
 - Quit (return to splash)
 - [X] Mute Music / [ ] Mute Music (toggle, reflects current state)
+- [X] Mute SFX / [ ] Mute SFX (toggle, reflects current state)
 
 Navigation: touch tap on option, or keyboard arrows/gamepad stick + Enter/A. Options are white until keyboard/gamepad navigation is detected, then focused option highlights in cream (COLOR_BOX_FILL).
 
@@ -192,13 +219,13 @@ The mockup (DICEROYAL.jpg) communicates layout intent, not exact dimensions.
 
 | Element | Size / Position |
 |---|---|
-| Die | 32 x 32 px |
-| Grid cells | 32 x 32 px |
-| Grid | 256 x 416 px (including 13th cell), centered on screen |
-| Dead zone line | 32 px from top of grid |
+| Die | 40 x 40 px |
+| Grid cells | 40 x 40 px |
+| Grid | 320 x 520 px (including 13th cell), centered on screen |
+| Dead zone line | 40 px from top of grid |
 | Title | Centered above grid |
 | Score | Centered below title |
-| Hold / Next boxes | 72 x 48 px, below grid, with labels underneath |
+| Hold / Next boxes | 120 x 60 px, below grid, with labels underneath |
 | Level display | Centered between Hold and Next boxes |
 | Pause button | Top-left corner |
 | Help button ("?") | Top-right corner |

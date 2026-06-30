@@ -6,6 +6,8 @@ function scr_screen_splash_init() {
 	global.rain_dice = [];
 	global.rain_spawn_timer = 0;
 	global.splash_blink_timer = 0;
+	global.splash_music_id = audio_play_sound(snd_theme, 1, true);
+	if (global.music_muted) audio_pause_sound(global.splash_music_id);
 }
 
 function scr_screen_splash_update() {
@@ -43,6 +45,9 @@ function scr_screen_splash_update() {
 
 	// Input
 	if (global.input_confirm && !global.fade_active) {
+		if (global.splash_music_id != -1 && audio_exists(global.splash_music_id)) {
+			audio_sound_gain(global.splash_music_id, 0, SPLASH_MUSIC_FADE_MS);
+		}
 		scr_screen_fade_start(STATE_GAME);
 	}
 }

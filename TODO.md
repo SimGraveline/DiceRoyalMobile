@@ -46,7 +46,7 @@
 ## Phase 6 — Écrans et UI
 - [x] Layout de l'écran de jeu (titre, score, level, boxes, boutons, pause basic)
 - [x] Splash screen (dice rain, "Tap to Stack!" clignotant)
-- [ ] Thème vocal (snd_theme) sur le splash screen
+- [x] Thème vocal (snd_theme) sur le splash screen (fade out au début du fade visuel)
 - [x] Pause screen (resume, restart, quit, mute music toggle, navigation clavier/gamepad/touch)
 - [x] Help screen (HOW TO PLAY, règles, contrôles mobile, toggle ?)
 - [x] Game over screen (score, high score, NEW BEST pulse, restart/quit menu)
@@ -67,15 +67,19 @@
 - [x] Dice rain (splash screen background)
 - [x] Transition fade (dé zoom in/out)
 - [ ] Presentation restante (juice dying, bling high score)
-- [ ] Mute SFX
+- [x] Mute SFX (toggle dans pause menu, wrapper scr_audio_play_sfx)
 - [x] Audio SFX partiels (snd_dice_stack, snd_chain_dying, snd_highscore)
 - [ ] Audio SFX restants (combo, autres)
-- [ ] Fix de la taille de la zone du hold (20%)
-- [ ] Ajout de dés de face 7-8-9
-- [ ] Améliorer la courbe de progression
-- [ ] Permettre des combos spécial, i.e.; suite 1-2-3-4-5-6-7-8-9.
-- [ ] Ajout de dés spéciaux !, ?, random
-- [ ] Tweak du ghost à la verticale
+- [x] Fix de la taille de la zone du hold (20%)
+- [x] Ajout de dés de face 7-8-9
+- [x] Améliorer la courbe de progression
+- [x] Suite 1→N ou N→1 horizontale/verticale (scores 6000/7000/8000/10000)
+- [x] Dés spéciaux : Mimic (lvl 4, 1/15), Bomb (lvl 3, 1/15), Random (lvl 2, 1/15)
+- [x] Son snd_level au level up
+- [x] Fix paire qui descend avant le countdown (gate fade_active dans scr_game_update)
+- [X] Tweak du ghost à la verticale
+- [ ] Level up VFX (agrandir texte LEVEL+# de 40%, rouge, shadow blanc, pendant 1s) — implémenté mais visuellement incorrect, à revoir
+- [ ] Repenser la Bombe... 8 cases autour explose plutôt que tous les dés de la même valeur.
 
 ## Phase 9 — Metadata
 - [ ] Images plateformes (splash screen, icônes — GX.games, HTML5, Windows, macOS, Ubuntu, tvOS, iOS, Android)

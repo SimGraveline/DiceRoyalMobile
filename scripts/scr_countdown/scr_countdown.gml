@@ -17,6 +17,8 @@ function scr_countdown_update() {
 		global.countdown_step -= 1;
 		if (global.countdown_step < 0) {
 			global.countdown_active = false;
+			global.drop_speed = LEVEL_SPEEDS[0];
+			scr_audio_start_game_music();
 		} else {
 			global.countdown_timer = global.countdown_step_duration;
 		}

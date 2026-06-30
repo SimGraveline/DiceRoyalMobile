@@ -9,10 +9,39 @@ function scr_grid_gravity() {
 			} else if (global.grid[_col][_row] != 0) {
 				if (_write != _row) {
 					global.grid[_col][_write] = global.grid[_col][_row];
+					global.grid_special[_col][_write] = global.grid_special[_col][_row];
 					global.grid[_col][_row] = 0;
+					global.grid_special[_col][_row] = 0;
 					_moved = true;
 				}
 				_write++;
+			}
+		}
+	}
+
+	// Activate idle special dice after gravity
+	if (_moved) {
+		for (var _gc = 0; _gc < GRID_COLS; _gc++) {
+			for (var _gr = 1; _gr <= GRID_ROWS; _gr++) {
+				var _special = global.grid_special[_gc][_gr];
+				var _below   = global.grid[_gc][_gr - 1];
+				// Idle ? or ! landed on a die below
+				if (_special == DIE_MIMIC && global.grid[_gc][_gr] == DIE_MIMIC) {
+					if (_below >= 1 && _below <= PAIR_MAX_VALUE) {
+						global.grid[_gc][_gr] = _below;
+					}
+				} else if (_special == DIE_BOMB && global.grid[_gc][_gr] == DIE_BOMB) {
+					if (_below >= 1 && _below <= PAIR_MAX_VALUE) {
+						scr_die_bomb_activate(_gc, _gr, _below);
+					}
+				}
+				// Die fell on top of idle ! (die at _gr, ! at _gr-1)
+				var _val = global.grid[_gc][_gr];
+				if (_val >= 1 && _val <= PAIR_MAX_VALUE && global.grid_dying[_gc][_gr] == 0) {
+					if (global.grid[_gc][_gr - 1] == DIE_BOMB && global.grid_special[_gc][_gr - 1] == DIE_BOMB) {
+						scr_die_bomb_activate(_gc, _gr - 1, _val);
+					}
+				}
 			}
 		}
 	}
