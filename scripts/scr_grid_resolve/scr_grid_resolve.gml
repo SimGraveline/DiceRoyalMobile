@@ -8,11 +8,13 @@ function scr_grid_resolve() {
 				global.grid_dying[_col][_row] -= delta_time / DELTA_TO_SECONDS;
 				if (global.grid_dying[_col][_row] <= 0) {
 					var _val = global.grid[_col][_row];
-					var _combo = power(COMBO_MULTIPLIER, global.combo_count);
-					if (_val == 1) {
-						global.score += floor(SCORE_BASE * _combo);
-					} else {
-						global.score += floor(SCORE_BASE * _val * _combo);
+					if (_val != DIE_BRICK && _val != DIE_BOMB) {
+						var _combo = power(COMBO_MULTIPLIER, global.combo_count);
+						if (_val == 1) {
+							global.score += floor(SCORE_BASE * _combo);
+						} else {
+							global.score += floor(SCORE_BASE * _val * _combo);
+						}
 					}
 					global.grid_dying[_col][_row] = 0;
 					global.grid[_col][_row] = 0;

@@ -1,6 +1,14 @@
 function scr_pair_update() {
 	if (!global.pair_active) return;
 
+	if (global.junk_track_pending) {
+		global.junk_track_timer += delta_time / DELTA_TO_SECONDS;
+		if (global.pair_row < SPAWN_ROW || global.junk_track_timer >= JUNK_TRACK_TIMEOUT) {
+			global.junk_track_pending = false;
+			scr_junk_drop_track_spawn();
+		}
+	}
+
 	// --- Check if pair is resting on something ---
 	var _master_on_ground = scr_grid_cell_blocked(global.pair_col, global.pair_row - 1);
 	var _slave_col = global.pair_col + global.pair_offset_col;
@@ -107,6 +115,8 @@ function scr_pair_spawn_next() {
 	global.combo_count = 0;
 	global.hold_used = false;
 	scr_pair_spawn();
+	global.junk_track_pending = true;
+	global.junk_track_timer = 0;
 	global.pair_col = global.last_pair_col;
 
 	var _slave_col = global.pair_col + global.pair_offset_col;

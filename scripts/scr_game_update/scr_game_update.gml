@@ -27,10 +27,10 @@ function scr_game_update() {
 	if (global.help_active && (global.input_help || global.input_pause)) {
 		global.help_active = false;
 		global.paused = false;
-	} else if (global.input_help && !global.game_over && !global.countdown_active) {
+	} else if (global.input_help && !global.game_over && !global.countdown_active && !global.fade_active) {
 		global.help_active = true;
 		global.paused = true;
-	} else if (global.input_pause && !global.game_over && !global.countdown_active) {
+	} else if (global.input_pause && !global.game_over && !global.countdown_active && !global.fade_active) {
 		scr_game_pause();
 	}
 
@@ -107,16 +107,20 @@ function scr_game_update() {
 						scr_save_write();
 					}
 				}
-			} else {
+			} else if (global.junk_state == "none") {
 				scr_pair_spawn_next();
 			}
 		}
+
+		scr_junk_drop_check_start();
+		scr_junk_drop_update();
 	}
 
 	// --- Random die cycling (always active for next box display) ---
 	global.pair_random_timer += delta_time / DELTA_TO_SECONDS;
-	if (global.pair_random_timer >= RANDOM_CYCLE_SPEED) {
-		global.pair_random_timer -= RANDOM_CYCLE_SPEED;
+	var _random_cycle_speed = (global.level >= RANDOM_CYCLE_SPEED_FAST_LEVEL) ? RANDOM_CYCLE_SPEED_FAST : RANDOM_CYCLE_SPEED_BASE;
+	if (global.pair_random_timer >= _random_cycle_speed) {
+		global.pair_random_timer -= _random_cycle_speed;
 		var _max_rnd = PAIR_MIN_VALUE;
 		for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
 			if (global.spawn_weights[_i] > 0) _max_rnd = _i;

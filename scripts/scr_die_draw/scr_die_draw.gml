@@ -1,24 +1,13 @@
-function scr_die_draw(_col, _row, _value) {
-	var _colors = [
-		c_black,      // 0 = unused
-		c_white,      // 1
-		c_yellow,     // 2
-		c_red,        // 3
-		c_green,      // 4
-		c_blue,       // 5
-		c_black,      // 6
-		COLOR_DIE_7,  // 7
-		COLOR_DIE_8,  // 8
-		COLOR_DIE_9   // 9
-	];
-
+function scr_die_draw(_col, _row, _value, _alpha_override = -1) {
 	var _x = GRID_X + (_col * CELL_SIZE);
 	var _y = GRID_Y + ((GRID_ROWS - _row) * CELL_SIZE);
 
 	// Dying fade out
 	var _alpha = 1.0;
 	var _in_grid = (_col >= 0 && _col < GRID_COLS && _row >= 0 && _row <= GRID_ROWS);
-	if (_in_grid && global.grid_dying[_col][_row] > 0) {
+	if (_alpha_override >= 0) {
+		_alpha = _alpha_override;
+	} else if (_in_grid && global.grid_dying[_col][_row] > 0) {
 		_alpha = global.grid_dying[_col][_row] / DYING_DURATION;
 	}
 
@@ -40,6 +29,15 @@ function scr_die_draw(_col, _row, _value) {
 		var _frame = floor(current_time / DIE_BOMB_ANIM_MS) mod 2;
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_bomb);
 		draw_sprite_ext(spr_dice_bomb, _frame, _x, _y, _scale, _scale, 0, c_white, _alpha);
+		draw_set_alpha(1.0);
+		return;
+	}
+
+	// Special die: Brick
+	var _is_brick = (_value == DIE_BRICK) || (_in_grid && global.grid_special[_col][_row] == DIE_BRICK);
+	if (_is_brick) {
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_brick);
+		draw_sprite_ext(spr_dice_brick, 0, _x, _y, _scale, _scale, 0, c_white, _alpha);
 		draw_set_alpha(1.0);
 		return;
 	}

@@ -23,9 +23,9 @@ Game logic lives in standalone scripts. Objects contain minimal code and delegat
 
 ### Rules
 
-Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals). A chain is valid when the number of connected dice is equal to or greater than the die value: two or more 2's, three or more 3's, four or more 4's, five or more 5's, six or more 6's, seven or more 7's, eight or more 8's, nine or more 9's.
+Players eliminate dice by chaining identical values orthogonally (up, down, left, right — no diagonals). A chain is valid when the number of connected dice is equal to or greater than the die value: two or more 2's, three or more 3's, four or more 4's, five or more 5's, six or more 6's.
 
-Die values 7, 8 and 9 are not available at the start of the game. They unlock progressively with level: 7 at level 3, 8 at level 6, 9 at level 9.
+*Design note: die values 7, 8 and 9 exist in the underlying implementation (unlock levels, scoring, suites) but are currently disabled. Once Bomb, Mimic, Brick and Junk Drop were in place, "bigger number, longer chain" stopped adding anything the other mechanics didn't already do better, and a 9-sided die didn't fit the game's dice theme. May be revisited.*
 
 Eliminated dice enter a "dying" state with a visible fade-out animation. Dying propagates: any non-dying die orthogonally adjacent to a dying die of the same value also becomes dying, along with all of its connected same-value dice. This propagation cascades until no more dice can be reached. Each die that enters dying gets its own independent timer.
 
@@ -39,13 +39,13 @@ Dying dice do not fall — they float in place if their support is removed. They
 
 **Pair movement:** A pair spawns at the top center of the grid (positions 4,13 and 5,13). The left die is the "master"; the right die rotates around it into four orthogonal positions. Pairs move in fixed one-cell increments and snap to the grid. After stacking, the next pair spawns at the previous pair's X position.
 
-**Lock delay:** When one die of a pair touches something (grid floor or stacked die), a lock timer begins (default: 0.5s, adjustable). During this window, the player can still move and rotate the pair. Each successful action resets the timer, up to a maximum number of resets (default: 10, adjustable). When the timer expires, the pair detaches. Lock delay duration and reset count are potential levers for difficulty scaling.
+**Lock delay:** When one die of a pair touches something (grid floor or stacked die), a lock timer begins. During this window, the player can still move and rotate the pair. Each successful action resets the timer, up to a maximum number of resets. When the timer expires, the pair detaches. Lock delay duration and reset count are tunable difficulty levers.
 
 **Detach:** When the lock delay expires (or a hard drop occurs), the pair detaches. The landed die is written to the grid. The other die snaps instantly to the lowest available position in its column. If either die is adjacent to a dying die of the same value, it joins the dying chain instead of stacking normally. After detach, a new pair spawns immediately — the player does not wait for dying or chain resolution to finish.
 
 **Wall kick:** If rotation is blocked by a wall, the pair shifts one cell to allow it. If the shifted position is also blocked, the rotation is denied. Rotation blocked by a stacked die in the grid is always denied (no kick) to prevent dice from overlapping.
 
-**Soft drop:** Boosts the drop speed while held (default: 10x, adjustable). The player can still move and rotate during a soft drop.
+**Soft drop:** Boosts the drop speed while held. The player can still move and rotate during a soft drop.
 
 **Hard drop:** Instantly snaps the pair to the first available stacking position. The player cannot control the pair during a hard drop.
 
@@ -58,20 +58,13 @@ Dying dice do not fall — they float in place if their support is removed. They
 ### Score
 
 Player scores points by:
-- Stacking a die: 10 points per die when it is written to the grid
-- Eliminating dice: 100 points per die, multiplied by die value (except 1's: flat 100 points)
-- Suite elimination: bonus points for forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value (minimum N=6)
-
-| Suite length | Bonus |
-|---|---|
-| 6 | 6,000 |
-| 7 | 7,000 |
-| 8 | 8,000 |
-| 9 | 10,000 |
+- Stacking a die: a small fixed amount per die when it is written to the grid
+- Eliminating dice: points scale with die value; 1's are a flat exception since they have no value-based multiplier
+- Suite elimination: bonus points for forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value. Longer suites score more.
 
 Suite dice enter dying state normally and can trigger cascade propagation.
 
-Combo multiplier: each wave of eliminations after gravity increases the multiplier exponentially (×1 first wave, ×1.5 second, ×2.25 third, etc.). The combo counter resets when a new pair spawns.
+Combo multiplier: each wave of eliminations after gravity increases the multiplier exponentially. The combo counter resets when a new pair spawns.
 
 The game saves the high score persistently (may not be displayed in the prototype, TBD).
 
@@ -79,17 +72,24 @@ An online leaderboard feature is to be evaluated.
 
 ### Special Dice
 
-Three special die types can appear in pairs starting at specific levels. At most one special die can appear per pair; the other die is always a normal die.
+Four special die types can appear in pairs, each unlocking at its own level as the game progresses. At most one special die can appear per pair; the other die is always a normal die.
 
-| Die | Name | Unlock level | Spawn odds | Behavior |
-|---|---|---|---|---|
-| Mimic | Dé Mimic | 4 | 1/15 | On landing, copies the value of the die directly below it. If no normal die is below (or it lands on the floor), it stays in an idle state until a die falls on top of it or beneath it (gravity). |
-| Bomb | Dé Bomb | 3 | 1/15 | On landing, reads the value of the die directly below it and immediately eliminates all dice of that value on the grid. If no normal die is below, it stays idle until activated by a die landing on top of it or beneath it. |
-| Random | Dé Random | 2 | 1/15 | While active in the pair, cycles through all currently unlocked die values (1–N) at a 1.0s interval, visible in the pair and the next box. Locks to the current displayed value on landing. |
+| Die | Name | Behavior |
+|---|---|---|
+| Mimic | Dé Mimic | On landing, copies the value of the die directly below it. If no normal die is below (or it lands on the floor), it stays in an idle state until a die falls on top of it or beneath it (gravity). |
+| Bomb | Dé Bomb | On landing, reads the value of the die directly below it and eliminates all dice of that value on the grid (including every Brick on the grid, if the value read was a Brick). If no normal die is below, it stays idle until activated by a die landing on top of it or beneath it. The Bomb itself doesn't disappear instantly — it enters the dying state alongside its targets and fades out like they do. While it's fading, a new die placed adjacent to it re-triggers another grid-wide elimination using that new die's value, letting a single Bomb chain multiple clears if the player keeps feeding it. |
+| Random | Dé Random | While active in the pair, cycles through all currently unlocked die values (1–N), visible in the pair and the next box. Locks to the current displayed value on landing. |
+| Brick | Dé Brick | A solid obstacle. It can never be matched or eliminated through normal chains — the only way to remove it is a Bomb reading its value (see above). It falls with gravity like any other die when its support disappears, but otherwise just occupies its cell indefinitely. |
 
-Special die weights are computed dynamically from the normal pool so that each special die's probability is exactly 1/CHANCE regardless of how many normal die values are currently unlocked.
+Special die spawn odds are calculated dynamically so each one keeps a consistent probability regardless of how many normal die values are currently unlocked.
 
 Special dice never form matches on their own. A Mimic that stays idle (no normal die resolved) or a Bomb that stays idle are treated as inert until activated.
+
+### Junk Drop
+
+Periodically, a batch of dice drops onto the grid outside the player's control. The dice first appear as a translucent preview sitting in the dead zone once the player takes control of their current pair — an early warning before anything actually happens. The drop only becomes real once the board is completely idle (no dying dice, no active pair): each previewed die then falls into its own column (never sharing a column with another die from the same drop, and never targeting a column that would cause an unfair game over), fading in from the preview to full opacity as it lands. The next pair does not spawn until every dropped die has landed — normal "spawn during dying" rules resume immediately after that.
+
+Junk Drop dice are drawn from the same pool as normal spawns (currently unlocked values, plus Brick once unlocked) — never Mimic, Bomb or Random. Because the dice are ordinary values, a drop can just as easily complete a pending match for the player as it can clutter the board — both outcomes are intended.
 
 ### Spawn Rules
 
@@ -97,34 +97,22 @@ Pairs of 1:1 and 2:2 can never spawn. Spawn probabilities per die value are adju
 
 ### Level
 
-Predefined cumulative score thresholds increase the in-game level. Each level increases drop speed. Level 11 is the cap at 50,000 points.
-
-| Level | Score threshold | Drop speed | Die unlock |
-|---|---|---|---|
-| 1 | 0 | 0.75s | 1–6 |
-| 2 | 5,000 | 0.60s | + Random |
-| 3 | 10,000 | 0.50s | + Bomb |
-| 4 | 15,000 | 0.40s | + Mimic |
-| 5 | 20,000 | 0.30s | — |
-| 6 | 25,000 | 0.25s | — |
-| 7 | 30,000 | 0.20s | + 7 |
-| 8 | 35,000 | 0.15s | + 8 |
-| 9 | 40,000 | 0.10s | + 9 |
-| 10 | 45,000 | 0.05s | — |
-| 11 | 50,000 | 0.01s | — |
+Predefined cumulative score thresholds increase the in-game level. Each level increases drop speed, up to a plateau. Past a certain score, the level keeps climbing indefinitely on a recurring threshold, so a skilled player is never permanently capped. The special dice and Junk Drop unlock progressively as the level increases.
 
 ### Difficulty Levers
 
 All values are adjustable per level. Default values are starting points for playtesting. Currently only drop speed changes per level.
 
-| Lever | Effect | Default |
-|---|---|---|
-| Drop speed | Time between automatic drops (lower = faster) | Per level table above |
-| Lock delay duration | Time before a touching pair detaches | 0.5s |
-| Lock delay resets | Max actions that reset the lock timer | 10 |
-| Spawn odds | Weight per die value (1-6), controls spawn probability | Equal (1 each) |
-| Soft drop multiplier | Speed boost factor during soft drop | 10x |
-| Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) | 1.0s |
+| Lever | Effect |
+|---|---|
+| Drop speed | Time between automatic drops (lower = faster), increases per level |
+| Lock delay duration | Time before a touching pair detaches |
+| Lock delay resets | Max actions that reset the lock timer |
+| Spawn odds | Weight per die value, controls spawn probability |
+| Special die odds | Probability of each special die (Random, Mimic, Bomb, Brick) appearing, independent of the normal pool |
+| Soft drop multiplier | Speed boost factor during soft drop |
+| Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) |
+| Junk Drop rate & quantity | How often a Junk Drop triggers, and how many dice it drops each time |
 
 ## Screens
 
@@ -186,9 +174,9 @@ The in-game UI only displays mobile controls.
 - Drag horizontal = Move (finger controls pair position directly)
 - Swipe up = Hard drop
 - Swipe down = Soft drop
-- Tap right (top three-quarters) = Rotate CW (except pause and help buttons)
-- Tap left (top three-quarters) = Rotate CCW
-- Tap bottom quarter = Hold / Swap
+- Tap right (upper portion of the screen) = Rotate CW (except pause and help buttons)
+- Tap left (upper portion of the screen) = Rotate CCW
+- Tap (lower portion of the screen) = Hold / Swap
 
 ### Gamepad (Xbox scheme)
 - Left stick or D-Pad = Move / Soft drop / Hard drop (up)
@@ -234,6 +222,23 @@ The mockup (DICEROYAL.jpg) communicates layout intent, not exact dimensions.
 ## Audio
 
 Two versions of the game theme exist: a vocal version for the splash screen and an instrumental version for gameplay. Both loop indefinitely. The player can mute/unmute music (M key, or from pause menu). SFX (stacking, eliminating, combos, beating the high score) are independent from music mute. Sounds cannot overlap to avoid audio clutter.
+
+## Systems Reference
+
+A quick map of the game's key state variables and how they interact — meant to be checked before making a change that touches timing or sequencing, since several of these interact in ways that aren't obvious from any single script.
+
+| State | Meaning | Resets / clears when | Depended on by |
+|---|---|---|---|
+| Pair active | A pair is currently spawned and player-controlled | Pair detaches | Junk Drop trigger tracking, next-pair spawn gating |
+| Grid dying | Any cell is mid fade-out (matched, or eliminated by a Bomb) | Its own dying timer expires | Gravity (dying cells don't fall), Junk Drop's "board idle" check, game over check |
+| Combo count | Number of consecutive elimination waves within one resolution | A new pair spawns, or Junk Drop confirms the board is idle | Score multiplier on wave elimination |
+| Junk Drop state (idle / telegraph / falling) | Where a pending Junk Drop batch is in its lifecycle | Telegraph → falling once the board goes idle; falling → idle once every die has landed | Next-pair spawn (blocked until back to idle) |
+| Lock delay | Time before a touching pair detaches | Player action (move/rotate), up to a max number of resets | Detach trigger |
+
+Sequencing notes worth remembering:
+- The next pair never spawns while a Junk Drop is telegraphing or falling — normal "spawn during dying" rules only resume once every dropped die has landed.
+- Combo count is tied to *pair spawns*, not to *the board going idle* — the one exception is Junk Drop, which explicitly resets it the moment it detects the board is idle, so a Junk Drop match doesn't inherit a stale multiplier left over from the previous pair's resolution.
+- A Bomb doesn't disappear on activation — it fades out like its targets, and can be re-triggered by a new die landing on it before its timer expires.
 
 ## Presentation
 

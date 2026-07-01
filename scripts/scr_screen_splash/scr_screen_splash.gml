@@ -21,7 +21,7 @@ function scr_screen_splash_update() {
 			frame: irandom_range(1, 6),
 			alpha: random_range(RAIN_ALPHA_MIN, RAIN_ALPHA_MAX),
 			speed: random_range(RAIN_SPEED_MIN, RAIN_SPEED_MAX),
-			shaking: (irandom(100) < RAIN_SHAKE_CHANCE)
+			shaking: (irandom(RAIN_SHAKE_ODDS) < RAIN_SHAKE_CHANCE)
 		};
 		array_push(global.rain_dice, _die);
 	}
@@ -83,6 +83,12 @@ function scr_screen_splash_draw() {
 	draw_set_valign(fa_top);
 	scr_ui_draw_text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + _title_h, STR_TAP_TO_STACK, c_white);
 	draw_set_alpha(1.0);
+
+	// Credits
+	draw_set_font(fnt_bebasneue_credits);
+	draw_set_halign(fa_center);
+	draw_set_valign(fa_bottom);
+	scr_ui_draw_text(GAME_WIDTH / 2, GAME_HEIGHT - CREDITS_MARGIN_BOTTOM, STR_CREDITS, c_white);
 
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);

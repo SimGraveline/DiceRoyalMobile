@@ -22,9 +22,14 @@
 #macro SPAWN_ROW        12
 
 // --- Level system ---
-#macro LEVEL_COUNT  11
+#macro LEVEL_COUNT  20
 #macro LEVEL_THRESHOLDS  global.__level_thresholds
 #macro LEVEL_SPEEDS     global.__level_speeds
+// Beyond LEVEL_COUNT, level/threshold become an open-ended progression (see scr_level_update)
+#macro LEVEL_ENDLESS_BASE_SCORE  1000000
+#macro LEVEL_ENDLESS_SCORE_STEP  250000
+#macro LEVEL_ENDLESS_SPEED       0.01
+#macro LEVEL_ENDLESS_TIER_LEVEL  21
 
 // --- Gameplay ---
 #macro SOFT_DROP_MULTIPLIER  10.00
@@ -43,20 +48,45 @@
 #macro DIE_BOMB    10
 #macro DIE_MIMIC   11
 #macro DIE_RANDOM  12
+#macro DIE_BRICK   13
 
 // --- Dice unlock levels ---
+// Dice 7-8-9 are fully wired but kept dormant — see DICE_HIGH_VALUES_ENABLED below.
 #macro DICE_7_UNLOCK_LEVEL        7
 #macro DICE_8_UNLOCK_LEVEL        8
 #macro DICE_9_UNLOCK_LEVEL        9
-#macro DICE_MIMIC_UNLOCK_LEVEL    4
-#macro DICE_BOMB_UNLOCK_LEVEL     3
+#macro DICE_MIMIC_UNLOCK_LEVEL    3
+#macro DICE_BOMB_UNLOCK_LEVEL     4
 #macro DICE_RANDOM_UNLOCK_LEVEL   2
+#macro DICE_BRICK_UNLOCK_LEVEL    5
+#macro DICE_JUNK_UNLOCK_LEVEL     3
+
+// Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
+// colors, scoring, suites) but deliberately never activated. Flip to re-enable;
+// do not remove the surrounding logic as "dead code" without checking this flag.
+#macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) ---
 #macro DICE_MIMIC_CHANCE   15
 #macro DICE_BOMB_CHANCE    15
 #macro DICE_RANDOM_CHANCE  15
-#macro RANDOM_CYCLE_SPEED  1.00
+#macro DICE_BRICK_CHANCE   15
+// From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick odds tighten to 1/N (Random unaffected)
+#macro DICE_ENDLESS_CHANCE  10
+
+// --- Junk Drop ---
+#macro JUNK_DROP_SPAWN_INTERVAL       5
+#macro JUNK_DROP_SPAWN_INTERVAL_LATE  10 // used from LEVEL_ENDLESS_TIER_LEVEL on
+#macro JUNK_DROP_MAX_QTY              8
+#macro JUNK_PREVIEW_ALPHA             0.5
+#macro JUNK_DROP_SPEED                0.1
+#macro JUNK_DROP_STEP                 1
+#macro JUNK_TRACK_TIMEOUT             2.0
+
+// --- Random cycle speed ---
+#macro RANDOM_CYCLE_SPEED_BASE        1.00
+#macro RANDOM_CYCLE_SPEED_FAST        0.50
+#macro RANDOM_CYCLE_SPEED_FAST_LEVEL  11
 
 // --- Dice colors ---
 #macro COLOR_DIE_7      $00A5FF
@@ -64,6 +94,7 @@
 #macro COLOR_DIE_9      $6B25E3
 #macro COLOR_DIE_BOMB   $606060
 #macro COLOR_DIE_MIMIC  $D3D3D3
+#macro COLOR_DIE_BRICK  $2222B2
 
 // --- Level up VFX ---
 #macro LEVEL_PULSE_DURATION     1.0
@@ -79,7 +110,7 @@
 // --- Score ---
 #macro SCORE_STACK       10
 #macro SCORE_BASE        100
-#macro COMBO_MULTIPLIER  1.5
+#macro COMBO_MULTIPLIER  0.10
 #macro SCORE_SUITE_6     6000
 #macro SCORE_SUITE_7     7000
 #macro SCORE_SUITE_8     8000
@@ -96,6 +127,7 @@
 // --- Ghost ---
 #macro GHOST_TRAIL_ALPHA  0.2
 #macro GHOST_PREVIEW_ALPHA  0.4
+#macro BRICK_GHOST_SUBIMAGE  1
 
 // --- Colors ---
 #macro COLOR_BG           $662300
@@ -125,11 +157,15 @@
 #macro RAIN_FADE_RATE      0.005
 #macro RAIN_SPEED_MIN      1
 #macro RAIN_SPEED_MAX      5
-#macro RAIN_SCALE           0.5
+#macro RAIN_SCALE           1.0
+#macro RAIN_SHAKE_ODDS     100
 #macro RAIN_SHAKE_CHANCE   20
 #macro RAIN_SHAKE_MIN      0.90
 #macro RAIN_SHAKE_MAX      1.10
 #macro RAIN_DESTROY_BUFFER 100
+
+// --- Splash credits ---
+#macro CREDITS_MARGIN_BOTTOM  20
 
 // --- Fade transition ---
 #macro FADE_SCALE_RATE   0.06
@@ -164,7 +200,7 @@
 #macro DELTA_TO_SECONDS  1000000
 #macro UI_SHADOW_OFFSET    5
 #macro GRID_OUTLINE_WIDTH  6
-#macro GRID_LINE_WIDTH     2
+#macro DEAD_ZONE_LINE_WIDTH  2
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
@@ -183,5 +219,6 @@
 #macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
 #macro BOX_LABEL_OFFSET  8
 #macro UI_MENU_LINE_H_FACTOR      1.8
+#macro MENU_OVERLAY_ALPHA         0.9
 #macro UI_SCORE_LINE_H_FACTOR     1.5
 #macro UI_GAME_OVER_GAP_FACTOR    0.3

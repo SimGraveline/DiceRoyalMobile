@@ -31,14 +31,16 @@ function scr_grid_gravity() {
 						global.grid[_gc][_gr] = _below;
 					}
 				} else if (_special == DIE_BOMB && global.grid[_gc][_gr] == DIE_BOMB) {
-					if (_below >= 1 && _below <= PAIR_MAX_VALUE) {
+					if ((_below >= 1 && _below <= PAIR_MAX_VALUE) || _below == DIE_BRICK) {
 						scr_die_bomb_activate(_gc, _gr, _below);
 					}
 				}
-				// Die fell on top of idle ! (die at _gr, ! at _gr-1)
+				// Die fell on top of idle ? or ! (die at _gr, special at _gr-1)
 				var _val = global.grid[_gc][_gr];
 				if (_val >= 1 && _val <= PAIR_MAX_VALUE && global.grid_dying[_gc][_gr] == 0) {
-					if (global.grid[_gc][_gr - 1] == DIE_BOMB && global.grid_special[_gc][_gr - 1] == DIE_BOMB) {
+					if (global.grid[_gc][_gr - 1] == DIE_MIMIC && global.grid_special[_gc][_gr - 1] == DIE_MIMIC) {
+						global.grid[_gc][_gr - 1] = _val;
+					} else if (global.grid[_gc][_gr - 1] == DIE_BOMB && global.grid_special[_gc][_gr - 1] == DIE_BOMB) {
 						scr_die_bomb_activate(_gc, _gr - 1, _val);
 					}
 				}

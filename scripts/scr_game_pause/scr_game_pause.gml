@@ -82,23 +82,47 @@ function scr_pause_menu_select(_index) {
 	}
 }
 
-function scr_pause_menu_hit(_mouse_y) {
+function scr_pause_menu_layout() {
 	var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_QUIT,
 	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF,
 	              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF];
+	var _blank_after = 2; // extra blank line after this item index (QUIT)
+
 	draw_set_font(fnt_bungee);
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
-	var _total_h = array_length(_items) * _line_h;
+	var _menu_h = array_length(_items) * _line_h + _line_h;
 	draw_set_font(fnt_bungee_title);
 	var _title_h = string_height(STR_PAUSED);
 	var _gap = _title_h * 0.5;
-	var _block_h = _title_h + _gap + _total_h;
-	var _top = GAME_HEIGHT / 2 - _block_h / 2;
+	var _block_h = _title_h + _gap + _menu_h;
+	var _box_top = GRID_Y - GRID_OUTLINE_WIDTH;
+	var _box_h = GRID_HEIGHT + GRID_OUTLINE_WIDTH * 2;
+	var _top = _box_top + (_box_h - _block_h) / 2;
 	var _menu_top = _top + _title_h + _gap;
 
+	var _item_y = array_create(array_length(_items));
 	for (var _i = 0; _i < array_length(_items); _i++) {
-		var _item_y = _menu_top + _i * _line_h;
-		if (_mouse_y >= _item_y && _mouse_y < _item_y + _line_h) {
+		_item_y[_i] = _menu_top + _i * _line_h + (_i > _blank_after ? _line_h : 0);
+	}
+
+	return {
+		items: _items,
+		item_y: _item_y,
+		line_h: _line_h,
+		title_h: _title_h,
+		gap: _gap,
+		block_h: _block_h,
+		top: _top,
+		menu_top: _menu_top
+	};
+}
+
+function scr_pause_menu_hit(_mouse_y) {
+	var _layout = scr_pause_menu_layout();
+
+	for (var _i = 0; _i < array_length(_layout.items); _i++) {
+		var _item_y = _layout.item_y[_i];
+		if (_mouse_y >= _item_y && _mouse_y < _item_y + _layout.line_h) {
 			return _i;
 		}
 	}
@@ -163,28 +187,47 @@ function scr_game_over_menu_select(_index) {
 	}
 }
 
-function scr_game_over_menu_hit(_mouse_y) {
+function scr_game_over_menu_layout() {
 	var _items = [STR_MENU_RESTART, STR_MENU_QUIT];
-	draw_set_font(fnt_bungee);
-	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
-	var _menu_h = array_length(_items) * _line_h;
 
 	draw_set_font(fnt_bungee_title);
 	var _title_h = string_height(STR_GAME_OVER);
 	draw_set_font(fnt_bungee);
 	var _score_line_h = string_height("M") * UI_SCORE_LINE_H_FACTOR;
-	var _scores_h = _score_line_h * 4;
-	if (global.high_score_beaten) {
-		_scores_h += string_height(STR_NEW_BEST);
-	}
-	var _gap = _title_h * UI_GAME_OVER_GAP_FACTOR;
-	var _block_h = _title_h + _scores_h + _gap + _menu_h;
-	var _top = GAME_HEIGHT / 2 - _block_h / 2;
-	var _menu_top = _top + _title_h + _scores_h + _gap;
+	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 
-	for (var _i = 0; _i < array_length(_items); _i++) {
-		var _item_y = _menu_top + _i * _line_h;
-		if (_mouse_y >= _item_y && _mouse_y < _item_y + _line_h) {
+	var _new_best_h = 0;
+	if (global.high_score_beaten) {
+		_new_best_h = _score_line_h;
+	}
+	var _scores_h = _new_best_h + _score_line_h * 4;
+	var _menu_h = array_length(_items) * _line_h;
+	var _gap = _title_h * UI_GAME_OVER_GAP_FACTOR;
+	var _block_h = _title_h + _scores_h + _gap + _line_h + _menu_h;
+	var _box_top = GRID_Y - GRID_OUTLINE_WIDTH;
+	var _box_h = GRID_HEIGHT + GRID_OUTLINE_WIDTH * 2;
+	var _top = _box_top + (_box_h - _block_h) / 2;
+	var _menu_top = _top + _title_h + _scores_h + _gap + _line_h;
+
+	return {
+		items: _items,
+		line_h: _line_h,
+		score_line_h: _score_line_h,
+		title_h: _title_h,
+		scores_h: _scores_h,
+		gap: _gap,
+		block_h: _block_h,
+		top: _top,
+		menu_top: _menu_top
+	};
+}
+
+function scr_game_over_menu_hit(_mouse_y) {
+	var _layout = scr_game_over_menu_layout();
+
+	for (var _i = 0; _i < array_length(_layout.items); _i++) {
+		var _item_y = _layout.menu_top + _i * _layout.line_h;
+		if (_mouse_y >= _item_y && _mouse_y < _item_y + _layout.line_h) {
 			return _i;
 		}
 	}

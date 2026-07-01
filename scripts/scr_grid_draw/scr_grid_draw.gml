@@ -28,11 +28,11 @@ function scr_grid_draw() {
 	// Dead zone line
 	draw_set_color(c_red);
 	var _dead_y = _y + CELL_SIZE;
-	draw_line_width(_x, _dead_y, _x + GRID_WIDTH, _dead_y, GRID_LINE_WIDTH);
+	draw_line_width(_x, _dead_y, _x + GRID_WIDTH, _dead_y, DEAD_ZONE_LINE_WIDTH);
 
 	// Draw stacked dice
 	for (var _col = 0; _col < GRID_COLS; _col++) {
-		for (var _row = 0; _row < GRID_ROWS + 1; _row++) {
+		for (var _row = 0; _row <= GRID_ROWS; _row++) {
 			var _val = global.grid[_col][_row];
 			if (_val > 0) {
 				scr_die_draw(_col, _row, _val);

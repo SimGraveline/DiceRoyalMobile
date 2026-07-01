@@ -68,14 +68,19 @@ function scr_pair_draw_ghost() {
 	var _mval = (global.pair_val1 == DIE_RANDOM) ? global.pair_random_val : global.pair_val1;
 	var _sval = (global.pair_val2 == DIE_RANDOM) ? global.pair_random_val : global.pair_val2;
 
+	var _m_color = (_mval == DIE_BRICK) ? c_white : _colors[_mval];
+	var _m_sub   = (_mval == DIE_BRICK) ? BRICK_GHOST_SUBIMAGE : _mval;
+	var _s_color = (_sval == DIE_BRICK) ? c_white : _colors[_sval];
+	var _s_sub   = (_sval == DIE_BRICK) ? BRICK_GHOST_SUBIMAGE : _sval;
+
 	if (_draw_master) {
 		var _m_x = GRID_X + (_mc * CELL_SIZE);
 		var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE;
 		var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
-		draw_set_color(_colors[_mval]);
+		draw_set_color(_m_color);
 		draw_roundrect(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
-		draw_sprite_ext(spr_dice_ghost, _mval, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+		draw_sprite_ext(spr_dice_ghost, _m_sub, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
 	}
 
 	if (_draw_slave) {
@@ -83,9 +88,9 @@ function scr_pair_draw_ghost() {
 		var _s_top_y = GRID_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE;
 		var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
-		draw_set_color(_colors[_sval]);
+		draw_set_color(_s_color);
 		draw_roundrect(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
-		draw_sprite_ext(spr_dice_ghost, _sval, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
+		draw_sprite_ext(spr_dice_ghost, _s_sub, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
 	}
 
 	draw_set_alpha(1.0);
