@@ -35,6 +35,7 @@ function scr_pair_rotate(_clockwise) {
 	var _kicked_slave_row = global.pair_row + _or;
 
 	if (_kicked_col >= 0 && _kicked_col < GRID_COLS && _kicked_slave_col >= 0 && _kicked_slave_col < GRID_COLS
+		&& !scr_grid_cell_blocked(_kicked_col, global.pair_row)
 		&& !scr_grid_cell_blocked(_kicked_slave_col, _kicked_slave_row)) {
 		global.pair_col = _kicked_col;
 		global.pair_offset_col = _oc;

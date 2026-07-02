@@ -1,13 +1,6 @@
 function scr_pair_update() {
 	if (!global.pair_active) return;
 
-	// --- Check if pair is resting on something ---
-	var _master_on_ground = scr_grid_cell_blocked(global.pair_col, global.pair_row - 1);
-	var _slave_col = global.pair_col + global.pair_offset_col;
-	var _slave_row = global.pair_row + global.pair_offset_row;
-	var _slave_on_ground = scr_grid_cell_blocked(_slave_col, _slave_row - 1);
-	var _touching = _master_on_ground || _slave_on_ground;
-
 	// --- Movement ---
 	var _acted = false;
 	var _dir = 0;
@@ -46,6 +39,14 @@ function scr_pair_update() {
 	// --- Rotation ---
 	if (global.input_rotate_cw && scr_pair_rotate(true)) _acted = true;
 	if (global.input_rotate_ccw && scr_pair_rotate(false)) _acted = true;
+
+	// --- Check if pair is resting on something (after move/rotate, so it reflects the
+	// current shape/position — not a stale value from before this frame's changes) ---
+	var _master_on_ground = scr_grid_cell_blocked(global.pair_col, global.pair_row - 1);
+	var _slave_col = global.pair_col + global.pair_offset_col;
+	var _slave_row = global.pair_row + global.pair_offset_row;
+	var _slave_on_ground = scr_grid_cell_blocked(_slave_col, _slave_row - 1);
+	var _touching = _master_on_ground || _slave_on_ground;
 
 	// --- Lock delay ---
 	if (_touching) {

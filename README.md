@@ -6,7 +6,7 @@ A falling block puzzle game inspired by Tetris, Puyo Puyo and Devil Dice, develo
 
 Dice Royal is a mobile puzzle game where players align dice of the same value to eliminate them and score points. The number of dice needed to clear a chain scales with the die's value (e.g. two 2's, three 3's, and so on). Chain reactions and combos create deeper strategic gameplay. Special dice — Mimic, Bomb, Random and Brick — unlock as the level increases and add new ways to clear (or complicate) the grid. Periodic Junk Drops also add dice outside the player's control once unlocked.
 
-This repository contains the mobile version, built in GameMaker with GX.games as the target export platform.
+This repository contains the mobile version, built in GameMaker with GX.games as the target export platform. It also includes a PC/kiosk display mode (toggle with F11) for convention booth demos — fullscreen, rescaled layout, keyboard/gamepad-oriented UI, and a QR code linking to the mobile version.
 
 ## Status
 

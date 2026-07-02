@@ -60,7 +60,7 @@ Dying dice do not fall — they float in place if their support is removed. They
 Player scores points by:
 - Stacking a die: a small fixed amount per die when it is written to the grid
 - Eliminating dice: points scale with die value; 1's are a flat exception since they have no value-based multiplier
-- Suite elimination: bonus points for forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value. Longer suites score more.
+- Suite elimination: forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value, eliminates the whole sequence. A suite at exactly the current maximum unlocked value scores through the normal per-die elimination above — no separate bonus. Suites longer than that maximum (7, 8, 9 — currently disabled) additionally score a flat bonus on top, increasing with length.
 
 Suite dice enter dying state normally and can trigger cascade propagation.
 
@@ -87,7 +87,7 @@ Special dice never form matches on their own. A Mimic that stays idle (no normal
 
 ### Junk Drop
 
-Periodically, a batch of dice drops onto the grid outside the player's control. The dice first appear as a translucent preview sitting in the dead zone once the player takes control of their current pair — an early warning before anything actually happens. The drop only becomes real once the board is completely idle (no dying dice, no active pair): each previewed die then falls into its own column (never sharing a column with another die from the same drop, and never targeting a column that would cause an unfair game over), fading in from the preview to full opacity as it lands. The next pair does not spawn until every dropped die has landed — normal "spawn during dying" rules resume immediately after that.
+Periodically, a batch of dice drops onto the grid outside the player's control. The number of pairs between two drops is randomized within a range and re-rolled independently each time, rather than a fixed count — so the player can't just count pairs to predict the next drop. The dice first appear as a translucent preview sitting in the dead zone once the player takes control of their current pair — an early warning before anything actually happens. The drop only becomes real once the board is completely idle (no dying dice, no active pair): each previewed die then falls into its own column (never sharing a column with another die from the same drop, and never targeting a column that would cause an unfair game over), fading in from the preview to full opacity as it lands. The next pair does not spawn until every dropped die has landed — normal "spawn during dying" rules resume immediately after that.
 
 Junk Drop dice are drawn from the same pool as normal spawns (currently unlocked values, plus Brick once unlocked) — never Mimic, Bomb or Random. Because the dice are ordinary values, a drop can just as easily complete a pending match for the player as it can clutter the board — both outcomes are intended.
 
@@ -124,7 +124,7 @@ Two logo screens displayed on launch (timings adjustable):
 
 ### Splash Screen
 
-Title screen displayed after logos. Shows "DICE ROYAL" (fnt_bungee_splash) centered with "Tap to Stack!" (fnt_inkfree_logo) blinking below. Background features a dice rain effect (spr_dice_rain sprites falling with random speed, alpha fade, and per-die shake). Tap/Enter/Start to begin, triggering a fade transition (die zoom in/out) to the game screen.
+Title screen displayed after logos. Shows "DICE ROYAL" (fnt_bungee_splash) centered with "Tap to Stack!" (fnt_inkfree_logo) blinking below, and a "Beta Version" tag (fnt_bebasneue_credits) at the top of the screen. Background features a dice rain effect (spr_dice_rain sprites falling with random speed, alpha fade, and per-die shake). Tap/Enter/Start to begin, triggering a fade transition (die zoom in/out) to the game screen.
 
 ### Game Screen
 
@@ -138,10 +138,9 @@ Accessed via pause button (touch), ESC (keyboard), or Start (gamepad). Not avail
 - Quit (return to splash)
 - [X] Mute Music / [ ] Mute Music (toggle, reflects current state)
 - [X] Mute SFX / [ ] Mute SFX (toggle, reflects current state)
+- [X] Ghost / [ ] Ghost (toggle, reflects current state)
 
 Navigation: touch tap on option, or keyboard arrows/gamepad stick + Enter/A. Options are white until keyboard/gamepad navigation is detected, then focused option highlights in cream (COLOR_BOX_FILL).
-
-Future additions: Ghost on/off, Hold on/off.
 
 ### Help Screen
 
@@ -166,9 +165,24 @@ A "3-2-1-STACK!" countdown plays before gameplay begins. Each step lasts 0.5s wi
 
 A die sprite (spr_screen_fade, 1664×1664) zooms in while fading to opaque, then zooms out while fading to transparent. Used between splash and game screens. The countdown starts only after the fade completes.
 
+## PC / Kiosk Mode
+
+A second display mode, intended for convention booth demos on a PC. Toggled with F11, available from the logo screen onward — no separate build, room or fork, just a runtime switch.
+
+- **Mobile mode** (default): unchanged from before this feature — windowed, fixed portrait size.
+- **PC mode**: fullscreen at the desktop's resolution. The grid is rescaled to occupy 90% of the screen height (same column/row count, bigger cells); width follows from that since the grid's proportions don't change.
+
+Layout differences in PC mode (game screen only — logos and splash are unaffected other than filling the wider screen):
+- Title ("DICE ROYAL" + "DEMO" label) moves to the top-left, Score/Level to the top-right.
+- Hold and Next boxes move to the left side of the screen, stacked, centered between the bottom of the "DEMO" label and the bottom of the screen, and between the screen's left edge and the grid's left edge.
+- A "Scan to download mobile demo" prompt + QR code (spr_code_qr) appears bottom-right, mirroring the Hold/Next module's position on the opposite side.
+- Pause/help buttons stay in their corners but scale up so they remain readable at PC resolution.
+- The Help screen's control instructions switch from mobile touch gestures to keyboard/gamepad bindings.
+- Dedicated PC fonts (title, body, buttons) and a dedicated fade transition sprite are used in this mode so text stays legible at the larger scale.
+
 ## Controls
 
-The in-game UI only displays mobile controls.
+The in-game UI displays mobile controls by default, or keyboard/gamepad controls when in PC mode (see PC / Kiosk Mode above).
 
 ### Mobile
 - Drag horizontal = Move (finger controls pair position directly)

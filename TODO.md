@@ -31,7 +31,8 @@
 - [x] **Version PC** — Prévoir une version PC du jeu pour convention, re-dispositionner interface, ajout QR Code pour mobile. Branche GitHud? Same build + hotkeys? 
 
 ## À investiguer (Bug)
-- [ ] **Fast Rotation** A vitesse de drop rapide, il semble que la rotation permettre de "clip" un dé de la pair dans un dé de la grille.
+- [x] **Fast Rotation** — À vitesse de drop rapide, la rotation permettait de "clip" un dé de la pair dans un dé de la grille. Deux causes trouvées et fixées : (1) `_touching` était calculé avant la rotation dans `scr_pair_update`, donc le drop qui suivait se basait sur une valeur périmée qui ne reflétait pas la nouvelle orientation — recalculé après le mouvement/la rotation. (2) le wall-kick dans `scr_pair_rotate` ne validait que la cellule de l'esclave après le kick, jamais celle du maître — pouvait clipper le maître dans une pile de l'autre côté (mur d'un côté, pile de l'autre).
 - [x] **Odds de Specials** — J'ai l'impression qu'ils ne spawn pas aussi souvent qu'il devrait.
 - [x] **Combo Score Reset** — J'ai l'impression qu'après un combo, le "multiplier" ne se reset pas, ce qui cause certain niveau de monter quasiment après juste 1 chain.
 - [x] Investiguer spawn de pair [1][1] et odds de Brick dans Junk. — Pair [1][1] : règle confirmée saine (le Random dice non-exclu est accepté, laissé tel quel). Odds de Brick dans Junk : bug confirmé et fixé (pool uniforme → pondération alignée sur DICE_BRICK_CHANCE).
+- [x] **Junk Drop qui arrêtait de tomber** — Découvert en testant la randomisation de l'intervalle. Le comptage de paires dépendait d'un mécanisme annexe (`junk_track_pending`/`timer`) qui exigeait que la paire descende sous `SPAWN_ROW` ou attende 2s — une paire qui se verrouille immédiatement (pile haute) ne comptait jamais. Retiré ce mécanisme, le comptage se fait maintenant directement dans `scr_pair_spawn()`.
