@@ -6,9 +6,9 @@ function scr_grid_check_suite() {
 	}
 	if (_n < 6) return false;
 
+	// A 6-suite scores through the normal per-die resolve, same as any other chain — no flat bonus.
 	var _suite_score = 0;
-	if      (_n == 6) _suite_score = SCORE_SUITE_6;
-	else if (_n == 7) _suite_score = SCORE_SUITE_7;
+	if      (_n == 7) _suite_score = SCORE_SUITE_7;
 	else if (_n == 8) _suite_score = SCORE_SUITE_8;
 	else if (_n == 9) _suite_score = SCORE_SUITE_9;
 

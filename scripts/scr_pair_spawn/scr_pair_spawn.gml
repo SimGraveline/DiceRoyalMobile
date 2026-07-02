@@ -91,4 +91,5 @@ function scr_pair_spawn() {
 	global.pair_val2 = global.next_val2;
 
 	scr_pair_generate_next();
+	scr_junk_drop_track_spawn();
 }

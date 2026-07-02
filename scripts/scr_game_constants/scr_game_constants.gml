@@ -1,9 +1,21 @@
 // --- Display ---
-#macro GAME_WIDTH  384
-#macro GAME_HEIGHT 832
+// GAME_WIDTH/HEIGHT/CELL_SIZE are aliases to globals (see scr_display_mode) so the
+// PC fullscreen mode can resize them at runtime — mobile mode keeps the values below.
+#macro GAME_WIDTH  global.__game_width
+#macro GAME_HEIGHT global.__game_height
+#macro MOBILE_GAME_WIDTH   384
+#macro MOBILE_GAME_HEIGHT  832
+#macro MOBILE_CELL_SIZE    40
+#macro PC_GRID_HEIGHT_RATIO  0.9
+#macro PC_MARGIN  global.__cell_size
+
+// Title/body/button fonts swap to their _pc variant in PC mode (see scr_display_mode)
+#macro FONT_TITLE    global.__font_title
+#macro FONT_BODY     global.__font_body
+#macro FONT_BUTTONS  global.__font_buttons
 
 // --- Grid ---
-#macro CELL_SIZE   40
+#macro CELL_SIZE   global.__cell_size
 #macro GRID_COLS   8
 #macro GRID_ROWS   12
 #macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
@@ -27,7 +39,7 @@
 #macro LEVEL_SPEEDS     global.__level_speeds
 // Beyond LEVEL_COUNT, level/threshold become an open-ended progression (see scr_level_update)
 #macro LEVEL_ENDLESS_BASE_SCORE  1000000
-#macro LEVEL_ENDLESS_SCORE_STEP  250000
+#macro LEVEL_ENDLESS_SCORE_STEP  100000
 #macro LEVEL_ENDLESS_SPEED       0.01
 #macro LEVEL_ENDLESS_TIER_LEVEL  21
 
@@ -56,10 +68,10 @@
 #macro DICE_7_UNLOCK_LEVEL        7
 #macro DICE_8_UNLOCK_LEVEL        8
 #macro DICE_9_UNLOCK_LEVEL        9
-#macro DICE_MIMIC_UNLOCK_LEVEL    3
-#macro DICE_BOMB_UNLOCK_LEVEL     4
-#macro DICE_RANDOM_UNLOCK_LEVEL   2
-#macro DICE_BRICK_UNLOCK_LEVEL    5
+#macro DICE_MIMIC_UNLOCK_LEVEL    4
+#macro DICE_BOMB_UNLOCK_LEVEL     2
+#macro DICE_RANDOM_UNLOCK_LEVEL   5
+#macro DICE_BRICK_UNLOCK_LEVEL    3
 #macro DICE_JUNK_UNLOCK_LEVEL     3
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
@@ -68,21 +80,24 @@
 #macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) ---
-#macro DICE_MIMIC_CHANCE   15
-#macro DICE_BOMB_CHANCE    15
-#macro DICE_RANDOM_CHANCE  15
+#macro DICE_MIMIC_CHANCE   10
+#macro DICE_BOMB_CHANCE    10
+#macro DICE_RANDOM_CHANCE  10
 #macro DICE_BRICK_CHANCE   15
 // From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick odds tighten to 1/N (Random unaffected)
 #macro DICE_ENDLESS_CHANCE  10
 
 // --- Junk Drop ---
-#macro JUNK_DROP_SPAWN_INTERVAL       5
-#macro JUNK_DROP_SPAWN_INTERVAL_LATE  10 // used from LEVEL_ENDLESS_TIER_LEVEL on
+// Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
+// so the player can't just count pairs to predict the next drop.
+#macro JUNK_DROP_SPAWN_INTERVAL_MIN       4
+#macro JUNK_DROP_SPAWN_INTERVAL_MAX       6
+#macro JUNK_DROP_SPAWN_INTERVAL_LATE_MIN  9  // used from LEVEL_ENDLESS_TIER_LEVEL on
+#macro JUNK_DROP_SPAWN_INTERVAL_LATE_MAX  11
 #macro JUNK_DROP_MAX_QTY              8
 #macro JUNK_PREVIEW_ALPHA             0.5
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1
-#macro JUNK_TRACK_TIMEOUT             2.0
 
 // --- Random cycle speed ---
 #macro RANDOM_CYCLE_SPEED_BASE        1.00
@@ -112,7 +127,6 @@
 #macro SCORE_STACK       10
 #macro SCORE_BASE        100
 #macro COMBO_MULTIPLIER  0.10
-#macro SCORE_SUITE_6     6000
 #macro SCORE_SUITE_7     7000
 #macro SCORE_SUITE_8     8000
 #macro SCORE_SUITE_9     10000
@@ -208,12 +222,20 @@
 // --- UI ---
 #macro UI_TITLE_Y      36
 #macro UI_SCORE_Y      80
-#macro UI_BTN_SIZE     32
-#macro UI_BTN_MARGIN   8
-#macro UI_BTN_PAUSE_X  UI_BTN_MARGIN
-#macro UI_BTN_PAUSE_Y  UI_BTN_MARGIN
-#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN)
-#macro UI_BTN_HELP_Y   UI_BTN_MARGIN
+// UI_BTN_SIZE/MARGIN are dynamic (see scr_display_mode) so pause/help stay readable at PC scale
+#macro UI_BTN_SIZE     global.__ui_btn_size
+#macro UI_BTN_MARGIN   global.__ui_btn_margin
+#macro MOBILE_UI_BTN_SIZE    32
+#macro MOBILE_UI_BTN_MARGIN  8
+// PC mode nudges pause/help a few pixels off their mobile corner anchor — mobile is unaffected.
+#macro UI_BTN_PAUSE_OFFSET_X  (global.pc_mode ? -5 : 0)
+#macro UI_BTN_PAUSE_OFFSET_Y  (global.pc_mode ? -10 : 0)
+#macro UI_BTN_HELP_OFFSET_X   (global.pc_mode ? 5 : 0)
+#macro UI_BTN_HELP_OFFSET_Y   (global.pc_mode ? -10 : 0)
+#macro UI_BTN_PAUSE_X  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_X)
+#macro UI_BTN_PAUSE_Y  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_Y)
+#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_X)
+#macro UI_BTN_HELP_Y   (UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_Y)
 #macro BOX_WIDTH       (CELL_SIZE * 3)
 #macro BOX_HEIGHT      (CELL_SIZE * 1.5)
 #macro BOX_Y           (GRID_Y + GRID_HEIGHT + CELL_SIZE)

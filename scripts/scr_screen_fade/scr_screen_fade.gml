@@ -43,6 +43,7 @@ function scr_screen_fade_draw() {
 
 	var _cx = GAME_WIDTH / 2;
 	var _cy = GAME_HEIGHT / 2;
+	var _sprite = global.pc_mode ? spr_screen_fade_pc : spr_screen_fade;
 
-	draw_sprite_ext(spr_screen_fade, 0, _cx, _cy, global.fade_scale, global.fade_scale, 0, c_white, global.fade_alpha);
+	draw_sprite_ext(_sprite, 0, _cx, _cy, global.fade_scale, global.fade_scale, 0, c_white, global.fade_alpha);
 }

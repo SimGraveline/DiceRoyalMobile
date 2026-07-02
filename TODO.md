@@ -4,18 +4,19 @@
 - [x] Ajouter Brick Dice.
 - [x] Ajouter Junk Drop.
 - [x] Ajouter "hide preview" dans pause menu.
-- [ ] Ajouter texte "Beta Version" dans le haut du splash screen.
+- [X] Ajouter texte "Beta Version" dans le haut du splash screen.
 - [ ] Ajouter une section "Dice" dans le help... un glossaire.
 
 # À améliorer
 - [x] Refaire les SVG des dés (le resize déforme le vector).
 - [x] Réduire opacité du preview.
-- [ ] Changer visuel de la bombe.
+- [x] Changer visuel de la bombe (changer celui de brick à place).
+- [x] Rendre le junk drop moins prévisible.
 
 # En continue
-- [ ] Nouvelle passe de balancing.
-- [ ] Ajout d'effets visuel pour améliorer le juice.
-- [ ] Ajout d'effets audio pour améliorer le juice.
+- Nouvelle passe de balancing.
+- Ajout d'effets visuel pour améliorer le juice.
+- Ajout d'effets audio pour améliorer le juice.
 
 # Metadata / Publishing / Platform Support
 - [ ] Évaluer intégrations leaderboard en ligne (Firebase/Firestore).
@@ -26,8 +27,8 @@
 ## Questions en suspens
 - [ ] **Gravité vs snap** — En ce moment, les dés stackés qui perdent leur support snappent instantanément (scr_grid_gravity), mais la paire active qui perd son support tombe lentement au drop speed (scr_pair_update). Incohérent. Sim préfère la gravité visible (pas le snap) parce que ça donne un meilleur game feel et du temps de réaction au joueur, mais appliquer la gravité partout ouvre des problèmes de complexité (dés en chute pendant que le joueur joue, collisions mid-air, etc.). Pas de solution retenue pour l'instant.
 - [x] **Repenser la Bombe** — Faire exploser les 8 cases autour de la bombe, plutôt que tous les dés de la même valeur.
-- [ ] **Levels** — Réflexion sur affichage du level et / ou passage de niveau basé sur le temps et / ou combinaison temps + points.
-- [ ] **Version PC** — Prévoir une version PC du jeu pour convention, re-dispositionner interface, ajout QR Code pour mobile. Branche GitHud? Same build + hotkeys? 
+- [X] **Levels** — Réflexion sur affichage du level et / ou passage de niveau basé sur le temps et / ou combinaison temps + points.
+- [x] **Version PC** — Prévoir une version PC du jeu pour convention, re-dispositionner interface, ajout QR Code pour mobile. Branche GitHud? Same build + hotkeys? 
 
 ## À investiguer (Bug)
 - [ ] **Fast Rotation** A vitesse de drop rapide, il semble que la rotation permettre de "clip" un dé de la pair dans un dé de la grille.

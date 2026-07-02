@@ -57,7 +57,7 @@ function scr_countdown_draw() {
 	draw_set_color(c_white);
 	draw_text_transformed(_x, _y, _text, _scale, _scale, 0);
 
-	draw_set_font(fnt_bungee);
+	draw_set_font(FONT_BODY);
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);
 }

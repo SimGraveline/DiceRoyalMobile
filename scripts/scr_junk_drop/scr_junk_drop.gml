@@ -2,16 +2,24 @@ function scr_junk_drop(){
 
 }
 
+// Rolls a fresh random trigger target for the next cycle (called at init/restart and right
+// after each drop resolves) — each cycle's target is independent, no carryover between cycles.
+function scr_junk_drop_roll_target() {
+	if (global.level >= LEVEL_ENDLESS_TIER_LEVEL) {
+		return irandom_range(JUNK_DROP_SPAWN_INTERVAL_LATE_MIN, JUNK_DROP_SPAWN_INTERVAL_LATE_MAX);
+	}
+	return irandom_range(JUNK_DROP_SPAWN_INTERVAL_MIN, JUNK_DROP_SPAWN_INTERVAL_MAX);
+}
+
 // Called on every pair spawn — counts toward the next Junk Drop trigger
 function scr_junk_drop_track_spawn() {
 	if (global.level < DICE_JUNK_UNLOCK_LEVEL) return;
 	if (global.junk_state != "none") return;
 
-	var _interval = (global.level >= LEVEL_ENDLESS_TIER_LEVEL) ? JUNK_DROP_SPAWN_INTERVAL_LATE : JUNK_DROP_SPAWN_INTERVAL;
-
 	global.junk_spawn_counter += 1;
-	if (global.junk_spawn_counter >= _interval) {
+	if (global.junk_spawn_counter >= global.junk_spawn_target) {
 		global.junk_spawn_counter = 0;
+		global.junk_spawn_target = scr_junk_drop_roll_target();
 		scr_junk_drop_queue();
 	}
 }

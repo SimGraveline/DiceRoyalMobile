@@ -1,4 +1,6 @@
 function scr_game_update() {
+	scr_display_mode_update();
+
 	if (global.game_state == STATE_LOGOS) {
 		scr_screen_logos_update();
 		return;

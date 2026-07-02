@@ -91,10 +91,10 @@ function scr_pause_menu_layout() {
 	              global.ghost_enabled ? STR_MENU_GHOST_ON : STR_MENU_GHOST_OFF];
 	var _blank_after = 2; // extra blank line after this item index (QUIT)
 
-	draw_set_font(fnt_bungee);
+	draw_set_font(FONT_BODY);
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _menu_h = array_length(_items) * _line_h + _line_h;
-	draw_set_font(fnt_bungee_title);
+	draw_set_font(FONT_TITLE);
 	var _title_h = string_height(STR_PAUSED);
 	var _gap = _title_h * 0.5;
 	var _block_h = _title_h + _gap + _menu_h;
@@ -193,9 +193,9 @@ function scr_game_over_menu_select(_index) {
 function scr_game_over_menu_layout() {
 	var _items = [STR_MENU_RESTART, STR_MENU_QUIT];
 
-	draw_set_font(fnt_bungee_title);
+	draw_set_font(FONT_TITLE);
 	var _title_h = string_height(STR_GAME_OVER);
-	draw_set_font(fnt_bungee);
+	draw_set_font(FONT_BODY);
 	var _score_line_h = string_height("M") * UI_SCORE_LINE_H_FACTOR;
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 

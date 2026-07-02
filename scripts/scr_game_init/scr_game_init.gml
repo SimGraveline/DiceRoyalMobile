@@ -1,5 +1,6 @@
 function scr_game_init() {
 	randomize();
+	scr_display_mode_init();
 	scr_grid_init();
 
 	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1, 0, 0, 0];
@@ -28,10 +29,8 @@ function scr_game_init() {
 	scr_save_load();
 	global.high_score_beaten = false;
 
-	LEVEL_THRESHOLDS = [0, 1000, 3000, 5000, 7000, 10000, 20000, 30000, 40000, 50000,
-	                    100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000];
-	LEVEL_SPEEDS     = [1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10,
-	                    0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.05];
+	LEVEL_THRESHOLDS = [0, 5000, 15000, 30000, 50000, 75000, 105000, 140000, 180000, 225000, 275000, 330000, 390000, 455000, 525000, 600000, 680000, 765000, 855000, 950000];	
+	LEVEL_SPEEDS     = [0.75, 0.75, 0.75, 0.50, 0.50, 0.50, 0.40, 0.40, 0.40, 0.30, 0.30, 0.30, 0.30, 0.30, 0.20, 0.20, 0.20, 0.20, 0.20, 0.10];
 	global.drop_speed = LEVEL_SPEEDS[0];
 	global.combo_count = 0;
 	global.hold_val1 = -1;
@@ -52,12 +51,11 @@ function scr_game_init() {
 	global.touch_drag_col = 0;
 
 	global.junk_spawn_counter = 0;
+	global.junk_spawn_target = scr_junk_drop_roll_target();
 	global.junk_state = "none";
 	global.junk_queue = [];
 	global.junk_falling = [];
 	global.junk_drop_timer = 0;
-	global.junk_track_pending = false;
-	global.junk_track_timer = 0;
 
 	global.game_state = STATE_LOGOS;
 	scr_screen_logos_init();
@@ -65,7 +63,6 @@ function scr_game_init() {
 	scr_audio_init();
 	scr_pair_generate_next();
 	scr_pair_spawn();
-	global.junk_track_pending = true;
 }
 
 function scr_game_restart() {
@@ -110,18 +107,16 @@ function scr_game_restart() {
 	global.touch_drag_col = 0;
 
 	global.junk_spawn_counter = 0;
+	global.junk_spawn_target = scr_junk_drop_roll_target();
 	global.junk_state = "none";
 	global.junk_queue = [];
 	global.junk_falling = [];
 	global.junk_drop_timer = 0;
-	global.junk_track_pending = false;
-	global.junk_track_timer = 0;
 
 	global.game_state = STATE_GAME;
 	scr_audio_init();
 	scr_pair_generate_next();
 	scr_pair_spawn();
-	global.junk_track_pending = true;
 	if (!global.fade_active) {
 		scr_countdown_start();
 	}
