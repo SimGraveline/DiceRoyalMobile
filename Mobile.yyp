@@ -18,11 +18,7 @@
     {"$GMFolder":"","%Name":"Sprites","folderPath":"folders/Sprites.yy","name":"Sprites","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
   "ForcedPrefabProjectReferences":[],
-  "IncludedFiles":[
-    {"$GMIncludedFile":"","%Name":"~$DR_DifficultyProgression.xlsx","CopyToMask":-1,"filePath":"datafiles","name":"~$DR_DifficultyProgression.xlsx","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"DICEROYAL(obsolete).md","CopyToMask":-1,"filePath":"datafiles","name":"DICEROYAL(obsolete).md","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"DR_DifficultyProgression.xlsx","CopyToMask":-1,"filePath":"datafiles","name":"DR_DifficultyProgression.xlsx","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-  ],
+  "IncludedFiles":[],
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{

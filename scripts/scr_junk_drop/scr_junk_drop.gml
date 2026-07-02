@@ -16,6 +16,35 @@ function scr_junk_drop_track_spawn() {
 	}
 }
 
+// Same weighting formula as scr_pair_weighted_random, restricted to normal values + Brick
+// (Junk Drop never carries Mimic/Bomb/Random) — keeps Brick's odds consistent with pair spawn
+function scr_junk_weighted_random() {
+	var _normal_total = 0;
+	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
+		_normal_total += global.spawn_weights[_i];
+	}
+
+	var _is_endless_tier = (global.level >= LEVEL_ENDLESS_TIER_LEVEL);
+	var _brick_chance = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_BRICK_CHANCE;
+	var _w_b = (global.level >= DICE_BRICK_UNLOCK_LEVEL) ? (_normal_total / (_brick_chance - 1)) : 0;
+
+	var _total = _normal_total + _w_b;
+	var _roll  = random(_total);
+
+	if (_roll < _w_b) return DIE_BRICK;
+	_roll -= _w_b;
+
+	var _sum = 0;
+	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
+		_sum += global.spawn_weights[_i];
+		if (_roll < _sum) return _i;
+	}
+	for (var _i = PAIR_MAX_VALUE; _i >= PAIR_MIN_VALUE; _i--) {
+		if (global.spawn_weights[_i] > 0) return _i;
+	}
+	return PAIR_MIN_VALUE;
+}
+
 // Picks columns/values and enters the telegraph state (0.5 alpha, dead zone)
 function scr_junk_drop_queue() {
 	// Ramps 1 (at unlock) to JUNK_DROP_MAX_QTY over subsequent levels, then holds
@@ -30,19 +59,13 @@ function scr_junk_drop_queue() {
 	if (array_length(_safe_cols) == 0) return;
 	if (_qty > array_length(_safe_cols)) _qty = array_length(_safe_cols);
 
-	var _pool = [];
-	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
-		if (global.spawn_weights[_i] > 0) array_push(_pool, _i);
-	}
-	if (global.level >= DICE_BRICK_UNLOCK_LEVEL) array_push(_pool, DIE_BRICK);
-
 	global.junk_queue = [];
 	for (var _i = 0; _i < _qty; _i++) {
 		var _idx = irandom(array_length(_safe_cols) - 1);
 		var _col = _safe_cols[_idx];
 		array_delete(_safe_cols, _idx, 1);
 
-		var _val = _pool[irandom(array_length(_pool) - 1)];
+		var _val = scr_junk_weighted_random();
 
 		array_push(global.junk_queue, { col: _col, val: _val });
 	}

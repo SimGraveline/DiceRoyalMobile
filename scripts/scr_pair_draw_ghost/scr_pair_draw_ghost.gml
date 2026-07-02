@@ -1,3 +1,7 @@
+function scr_ghost_toggle() {
+	global.ghost_enabled = !global.ghost_enabled;
+}
+
 function scr_pair_draw_ghost() {
 	if (!global.pair_active || !global.ghost_enabled) return;
 

@@ -9,7 +9,7 @@ function scr_game_pause() {
 function scr_game_pause_update() {
 	if (!global.paused || global.help_active) return;
 
-	var _menu_count = 5;
+	var _menu_count = 6;
 	var _moved = false;
 
 	// Navigation — keyboard
@@ -79,13 +79,16 @@ function scr_pause_menu_select(_index) {
 		scr_audio_toggle_music();
 	} else if (_index == 4) {
 		scr_audio_toggle_sfx();
+	} else if (_index == 5) {
+		scr_ghost_toggle();
 	}
 }
 
 function scr_pause_menu_layout() {
 	var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_QUIT,
 	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF,
-	              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF];
+	              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF,
+	              global.ghost_enabled ? STR_MENU_GHOST_ON : STR_MENU_GHOST_OFF];
 	var _blank_after = 2; // extra blank line after this item index (QUIT)
 
 	draw_set_font(fnt_bungee);

@@ -37,7 +37,8 @@
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
 #macro LOCK_RESETS_MAX  10
-#macro DYING_DURATION  1.0
+#macro DYING_DURATION   1.0
+#macro DYING_ALPHA_MIN  0.05
 
 // --- Spawn restrictions ---
 #macro PAIR_MIN_VALUE   1
@@ -125,8 +126,8 @@
 #macro RESTART_ZONE  0.1
 
 // --- Ghost ---
-#macro GHOST_TRAIL_ALPHA  0.2
-#macro GHOST_PREVIEW_ALPHA  0.4
+#macro GHOST_TRAIL_ALPHA  0.05
+#macro GHOST_PREVIEW_ALPHA  0.1
 #macro BRICK_GHOST_SUBIMAGE  1
 
 // --- Colors ---
@@ -166,6 +167,7 @@
 
 // --- Splash credits ---
 #macro CREDITS_MARGIN_BOTTOM  20
+#macro BETA_VERSION_MARGIN_TOP  20
 
 // --- Fade transition ---
 #macro FADE_SCALE_RATE   0.06
