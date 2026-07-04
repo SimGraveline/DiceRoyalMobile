@@ -20,6 +20,33 @@ function scr_die_brick_destroy(_col, _row) {
 	scr_audio_play_sfx(snd_chain_dying);
 }
 
+// One-shot: sets dying on the whole row (horizontal) or column (vertical) through (_col, _row),
+// including the Clear die itself and any Brick in its path. Never re-triggers afterward —
+// everything past this point (cascading, 1's, joining an active chain) is the normal dying rules.
+function scr_die_clear_activate(_col, _row, _horizontal) {
+	var _clear_val = _horizontal ? DIE_CLEAR_H : DIE_CLEAR_V;
+	global.grid[_col][_row] = _clear_val;
+	global.grid_special[_col][_row] = _clear_val;
+	global.grid_dying[_col][_row] = DYING_DURATION;
+
+	if (_horizontal) {
+		for (var _c = 0; _c < GRID_COLS; _c++) {
+			if (global.grid[_c][_row] != 0 && global.grid_dying[_c][_row] == 0) {
+				global.grid_dying[_c][_row] = DYING_DURATION;
+			}
+		}
+	} else {
+		for (var _r = 0; _r <= GRID_ROWS; _r++) {
+			if (global.grid[_col][_r] != 0 && global.grid_dying[_col][_r] == 0) {
+				global.grid_dying[_col][_r] = DYING_DURATION;
+			}
+		}
+	}
+
+	scr_audio_play_sfx(snd_chain_dying);
+	scr_grid_propagate_dying();
+}
+
 function scr_die_place(_col, _row, _val) {
 	if (_val == DIE_MIMIC) {
 		var _below = (_row > 0) ? global.grid[_col][_row - 1] : 0;
@@ -40,6 +67,14 @@ function scr_die_place(_col, _row, _val) {
 	} else if (_val == DIE_BRICK) {
 		global.grid[_col][_row] = DIE_BRICK;
 		global.grid_special[_col][_row] = DIE_BRICK;
+		if (_row > 0) {
+			var _below_sp = global.grid_special[_col][_row - 1];
+			if (global.grid[_col][_row - 1] == DIE_BOMB && _below_sp == DIE_BOMB) {
+				scr_die_bomb_activate(_col, _row - 1, DIE_BRICK);
+			}
+		}
+	} else if (_val == DIE_CLEAR_H || _val == DIE_CLEAR_V) {
+		scr_die_clear_activate(_col, _row, _val == DIE_CLEAR_H);
 	} else if (_val == DIE_RANDOM) {
 		var _locked = global.pair_random_val;
 		global.grid[_col][_row] = _locked;

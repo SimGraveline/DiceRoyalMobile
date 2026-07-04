@@ -18,31 +18,50 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1) {
 
 	draw_set_alpha(_alpha);
 
-	// Special die: Mimic
+	// Special die: Mimic — unresolved ("?") uses the shared specials sheet, resolved uses its own sheet
 	var _is_question = (_value == DIE_MIMIC) || (_in_grid && global.grid_special[_col][_row] == DIE_MIMIC);
 	if (_is_question) {
-		var _subimage = (_value == DIE_MIMIC) ? 0 : _value;
-		var _scale = CELL_SIZE / sprite_get_width(spr_dice_mimic);
-		draw_sprite_ext(spr_dice_mimic, _subimage, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		if (_value == DIE_MIMIC) {
+			var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
+			draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_MIMIC, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		} else {
+			var _scale = CELL_SIZE / sprite_get_width(spr_dice_mimics);
+			draw_sprite_ext(spr_dice_mimics, _value, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		}
 		draw_set_alpha(1.0);
 		return;
 	}
 
-	// Special die: Bomb
+	// Special die: Bomb — static frame for now, animation to come later
 	var _is_killer = (_value == DIE_BOMB) || (_in_grid && global.grid_special[_col][_row] == DIE_BOMB);
 	if (_is_killer) {
-		var _frame = floor(current_time / DIE_BOMB_ANIM_MS) mod 2;
-		var _scale = CELL_SIZE / sprite_get_width(spr_dice_bomb);
-		draw_sprite_ext(spr_dice_bomb, _frame, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_BOMB, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
 		draw_set_alpha(1.0);
 		return;
 	}
 
-	// Special die: Brick
+	// Special die: Brick — static frame for now, animation to come later
 	var _is_brick = (_value == DIE_BRICK) || (_in_grid && global.grid_special[_col][_row] == DIE_BRICK);
 	if (_is_brick) {
-		var _scale = CELL_SIZE / sprite_get_width(spr_dice_brick);
-		draw_sprite_ext(spr_dice_brick, 0, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_BRICK, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		draw_set_alpha(1.0);
+		return;
+	}
+
+	// Special die: Clear Horizontal — static frame, one-shot (no idle grid state)
+	if (_value == DIE_CLEAR_H) {
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_H, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		draw_set_alpha(1.0);
+		return;
+	}
+
+	// Special die: Clear Vertical — static frame, one-shot (no idle grid state)
+	if (_value == DIE_CLEAR_V) {
+		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_V, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
 		draw_set_alpha(1.0);
 		return;
 	}

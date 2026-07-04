@@ -8,9 +8,11 @@ function scr_grid_resolve() {
 				global.grid_dying[_col][_row] -= delta_time / DELTA_TO_SECONDS;
 				if (global.grid_dying[_col][_row] <= 0) {
 					var _val = global.grid[_col][_row];
-					if (_val != DIE_BRICK && _val != DIE_BOMB) {
+					// DIE_MIMIC here means it died still unresolved (never became a real value) — no score, like Bomb
+					var _no_score = (_val == DIE_BOMB) || (_val == DIE_CLEAR_H) || (_val == DIE_CLEAR_V) || (_val == DIE_MIMIC);
+					if (!_no_score) {
 						var _combo = power(COMBO_MULTIPLIER, global.combo_count);
-						if (_val == 1) {
+						if (_val == 1 || _val == DIE_BRICK) {
 							global.score += floor(SCORE_BASE * _combo);
 						} else {
 							global.score += floor(SCORE_BASE * _val * _combo);

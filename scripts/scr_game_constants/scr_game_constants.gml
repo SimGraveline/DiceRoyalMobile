@@ -5,7 +5,7 @@
 #macro GAME_HEIGHT global.__game_height
 #macro MOBILE_GAME_WIDTH   384
 #macro MOBILE_GAME_HEIGHT  832
-#macro MOBILE_CELL_SIZE    40
+#macro MOBILE_CELL_SIZE    50
 #macro PC_GRID_HEIGHT_RATIO  0.9
 #macro PC_MARGIN  global.__cell_size
 
@@ -16,8 +16,8 @@
 
 // --- Grid ---
 #macro CELL_SIZE   global.__cell_size
-#macro GRID_COLS   8
-#macro GRID_ROWS   12
+#macro GRID_COLS   7
+#macro GRID_ROWS   7
 #macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
 #macro GRID_HEIGHT ((GRID_ROWS + 1) * CELL_SIZE)
 
@@ -26,12 +26,12 @@
 #macro GRID_Y      ((GAME_HEIGHT - GRID_HEIGHT) / 2)
 
 // --- Dead zone ---
-#macro DEAD_ZONE_ROW  12
+#macro DEAD_ZONE_ROW  GRID_ROWS
 
 // --- Pair spawn ---
-#macro SPAWN_COL_LEFT   3
-#macro SPAWN_COL_RIGHT  4
-#macro SPAWN_ROW        12
+#macro SPAWN_COL_LEFT   2
+#macro SPAWN_COL_RIGHT  3
+#macro SPAWN_ROW        GRID_ROWS
 
 // --- Level system ---
 #macro LEVEL_COUNT  20
@@ -58,10 +58,12 @@
 #macro SPAWN_RETRY_MAX  20
 
 // --- Special die values ---
-#macro DIE_BOMB    10
-#macro DIE_MIMIC   11
-#macro DIE_RANDOM  12
-#macro DIE_BRICK   13
+#macro DIE_BOMB      10
+#macro DIE_MIMIC     11
+#macro DIE_RANDOM    12
+#macro DIE_BRICK     13
+#macro DIE_CLEAR_H   14
+#macro DIE_CLEAR_V   15
 
 // --- Dice unlock levels ---
 // Dice 7-8-9 are fully wired but kept dormant — see DICE_HIGH_VALUES_ENABLED below.
@@ -73,6 +75,8 @@
 #macro DICE_RANDOM_UNLOCK_LEVEL   5
 #macro DICE_BRICK_UNLOCK_LEVEL    3
 #macro DICE_JUNK_UNLOCK_LEVEL     3
+#macro DICE_CLEAR_H_UNLOCK_LEVEL  1
+#macro DICE_CLEAR_V_UNLOCK_LEVEL  1
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
 // colors, scoring, suites) but deliberately never activated. Flip to re-enable;
@@ -80,11 +84,13 @@
 #macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) ---
-#macro DICE_MIMIC_CHANCE   10
-#macro DICE_BOMB_CHANCE    10
-#macro DICE_RANDOM_CHANCE  10
-#macro DICE_BRICK_CHANCE   15
-// From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick odds tighten to 1/N (Random unaffected)
+#macro DICE_MIMIC_CHANCE     15
+#macro DICE_BOMB_CHANCE      15
+#macro DICE_RANDOM_CHANCE    15
+#macro DICE_BRICK_CHANCE     15
+#macro DICE_CLEAR_H_CHANCE   15
+#macro DICE_CLEAR_V_CHANCE   15
+// From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick/Clear H/Clear V odds tighten to 1/N (Random unaffected)
 #macro DICE_ENDLESS_CHANCE  10
 
 // --- Junk Drop ---
@@ -123,6 +129,14 @@
 // --- Animation ---
 #macro DIE_BOMB_ANIM_MS          500
 
+// --- Special dice sheet (spr_dice_specials) ---
+// Subimage 0 = generic ghost, unused now that each special uses its own subimage as ghost.
+#macro DICE_SPECIALS_SUB_CLEAR_H  1
+#macro DICE_SPECIALS_SUB_CLEAR_V  2
+#macro DICE_SPECIALS_SUB_BOMB     3
+#macro DICE_SPECIALS_SUB_BRICK    4
+#macro DICE_SPECIALS_SUB_MIMIC    5
+
 // --- Score ---
 #macro SCORE_STACK       10
 #macro SCORE_BASE        100
@@ -140,9 +154,8 @@
 #macro RESTART_ZONE  0.1
 
 // --- Ghost ---
-#macro GHOST_TRAIL_ALPHA  0.05
-#macro GHOST_PREVIEW_ALPHA  0.1
-#macro BRICK_GHOST_SUBIMAGE  1
+#macro GHOST_TRAIL_ALPHA  0.075
+#macro GHOST_PREVIEW_ALPHA  0.25
 
 // --- Colors ---
 #macro COLOR_BG           $662300
@@ -234,6 +247,9 @@
 #macro UI_BTN_HELP_OFFSET_Y   (global.pc_mode ? -10 : 0)
 #macro UI_BTN_PAUSE_X  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_X)
 #macro UI_BTN_PAUSE_Y  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_Y)
+// PC mode: manual nudge to bring the Next box closer to Hold, and push the QR block down to compensate
+#macro PC_NEXT_NUDGE_Y  -(CELL_SIZE * 0.25)
+#macro PC_QR_NUDGE_Y     (CELL_SIZE * 0.25)
 #macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_X)
 #macro UI_BTN_HELP_Y   (UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_Y)
 #macro BOX_WIDTH       (CELL_SIZE * 3)
