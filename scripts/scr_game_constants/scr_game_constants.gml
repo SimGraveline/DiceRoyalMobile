@@ -70,13 +70,13 @@
 #macro DICE_7_UNLOCK_LEVEL        7
 #macro DICE_8_UNLOCK_LEVEL        8
 #macro DICE_9_UNLOCK_LEVEL        9
-#macro DICE_MIMIC_UNLOCK_LEVEL    4
-#macro DICE_BOMB_UNLOCK_LEVEL     2
-#macro DICE_RANDOM_UNLOCK_LEVEL   5
-#macro DICE_BRICK_UNLOCK_LEVEL    3
-#macro DICE_JUNK_UNLOCK_LEVEL     3
-#macro DICE_CLEAR_R_UNLOCK_LEVEL  1
-#macro DICE_CLEAR_C_UNLOCK_LEVEL  1
+#macro DICE_MIMIC_UNLOCK_LEVEL    5
+#macro DICE_BOMB_UNLOCK_LEVEL     3
+#macro DICE_RANDOM_UNLOCK_LEVEL   1
+#macro DICE_BRICK_UNLOCK_LEVEL    4
+#macro DICE_JUNK_UNLOCK_LEVEL     4
+#macro DICE_CLEAR_R_UNLOCK_LEVEL  2
+#macro DICE_CLEAR_C_UNLOCK_LEVEL  2
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
 // colors, scoring, suites) but deliberately never activated. Flip to re-enable;
@@ -84,12 +84,12 @@
 #macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) --- constant for life once unlocked, no endless-tier change
-#macro DICE_MIMIC_CHANCE     15
-#macro DICE_BOMB_CHANCE      15
-#macro DICE_RANDOM_CHANCE    15
-#macro DICE_BRICK_CHANCE     15
-#macro DICE_CLEAR_R_CHANCE   15
-#macro DICE_CLEAR_C_CHANCE   15
+#macro DICE_MIMIC_CHANCE     20
+#macro DICE_BOMB_CHANCE      20
+#macro DICE_RANDOM_CHANCE    20
+#macro DICE_BRICK_CHANCE     20
+#macro DICE_CLEAR_R_CHANCE   20
+#macro DICE_CLEAR_C_CHANCE   20
 
 // --- Junk Drop ---
 // Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
@@ -98,7 +98,7 @@
 #macro JUNK_DROP_SPAWN_INTERVAL_MAX       6
 #macro JUNK_DROP_SPAWN_INTERVAL_LATE_MIN  9  // used from LEVEL_ENDLESS_TIER_LEVEL on
 #macro JUNK_DROP_SPAWN_INTERVAL_LATE_MAX  11
-#macro JUNK_DROP_MAX_QTY              8
+#macro JUNK_DROP_MAX_QTY              GRID_COLS
 #macro JUNK_PREVIEW_ALPHA             0.5
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1

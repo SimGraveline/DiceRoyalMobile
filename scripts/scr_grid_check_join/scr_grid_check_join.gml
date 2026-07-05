@@ -16,7 +16,9 @@ function scr_grid_check_join(_col, _row) {
 		var _nc = _neighbors[_i][0];
 		var _nr = _neighbors[_i][1];
 		if (_nc < 0 || _nc >= GRID_COLS || _nr < 0 || _nr > GRID_ROWS) continue;
-		if (global.grid_dying[_nc][_nr] > 0) {
+		// A Clear-triggered dying neighbor never counts as joinable — keeps Clear isolated to
+		// exactly what it swept, whether the new die is landing now or was already on the board.
+		if (global.grid_dying[_nc][_nr] > 0 && !global.grid_dying_clear[_nc][_nr]) {
 			_has_dying_neighbor = true;
 			if (global.grid[_nc][_nr] == _val) {
 				_has_same_dying_neighbor = true;

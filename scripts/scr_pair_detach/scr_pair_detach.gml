@@ -19,16 +19,15 @@ function scr_pair_detach() {
 		global.score += SCORE_STACK;
 	}
 
-	if (_master_landed && (global.grid_special[_master_col][_master_row] == DIE_CLEAR_R || global.grid_special[_master_col][_master_row] == DIE_CLEAR_C)) {
-		scr_die_clear_trigger(_master_col, _master_row);
-	}
-	if (_slave_landed && (global.grid_special[_slave_col][_slave_row] == DIE_CLEAR_R || global.grid_special[_slave_col][_slave_row] == DIE_CLEAR_C)) {
-		scr_die_clear_trigger(_slave_col, _slave_row);
-	}
-
+	// Let matches/joins resolve first — a die that forms a valid chain right as it lands must get
+	// caught by that chain, not stolen into an isolated Clear-only dying group first. Clear's sweep
+	// (below) skips anything already dying, so it won't touch cells the match/join already caught.
 	if (_master_landed) scr_grid_check_join(_master_col, _master_row);
 	if (_slave_landed) scr_grid_check_join(_slave_col, _slave_row);
 	scr_grid_match();
+
+	if (_master_landed) scr_die_clear_try_trigger(_master_col, _master_row);
+	if (_slave_landed) scr_die_clear_try_trigger(_slave_col, _slave_row);
 
 	// Determine solo faller
 	global.pair_active = false;
@@ -61,7 +60,7 @@ function scr_pair_detach() {
 			var _nc = _neighbors[_i][0];
 			var _nr = _neighbors[_i][1];
 			if (_nc < 0 || _nc >= GRID_COLS || _nr < 0 || _nr > GRID_ROWS) continue;
-			if (global.grid_dying[_nc][_nr] > 0) {
+			if (global.grid_dying[_nc][_nr] > 0 && !global.grid_dying_clear[_nc][_nr]) {
 				if (global.grid[_nc][_nr] == _solo_val || _solo_val == 1) {
 					_should_join = true;
 					break;
@@ -79,12 +78,10 @@ function scr_pair_detach() {
 		}
 		global.score += SCORE_STACK;
 
-		if (global.grid_special[_solo_col][_solo_row] == DIE_CLEAR_R || global.grid_special[_solo_col][_solo_row] == DIE_CLEAR_C) {
-			scr_die_clear_trigger(_solo_col, _solo_row);
-		}
-
 		scr_grid_check_join(_solo_col, _solo_row);
 		scr_grid_match();
+
+		scr_die_clear_try_trigger(_solo_col, _solo_row);
 	}
 
 	scr_audio_play_sfx(snd_dice_stack);

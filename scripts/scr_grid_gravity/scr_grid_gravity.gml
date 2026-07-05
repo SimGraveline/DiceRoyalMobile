@@ -31,7 +31,7 @@ function scr_grid_gravity() {
 						global.grid[_gc][_gr] = _below;
 					}
 				} else if (_special == DIE_BOMB && global.grid[_gc][_gr] == DIE_BOMB) {
-					if ((_below >= 1 && _below <= PAIR_MAX_VALUE) || _below == DIE_BRICK) {
+					if ((_below >= 1 && _below <= PAIR_MAX_VALUE) || _below == DIE_BRICK || _below == DIE_BOMB || _below == DIE_MIMIC) {
 						scr_die_bomb_activate(_gc, _gr, _below);
 					}
 				}

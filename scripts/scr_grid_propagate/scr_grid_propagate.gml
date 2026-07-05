@@ -6,6 +6,9 @@ function scr_grid_propagate_dying() {
 		for (var _col = 0; _col < GRID_COLS; _col++) {
 			for (var _row = 0; _row <= GRID_ROWS; _row++) {
 				if (global.grid_dying[_col][_row] <= 0) continue;
+				// A Clear-triggered cell never acts as a cascade source — keeps Clear isolated to
+				// exactly what it swept, no matter when/why propagation runs afterward.
+				if (global.grid_dying_clear[_col][_row]) continue;
 
 				var _val = global.grid[_col][_row];
 				var _neighbors = [
