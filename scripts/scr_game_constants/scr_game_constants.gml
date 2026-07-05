@@ -41,7 +41,6 @@
 #macro LEVEL_ENDLESS_BASE_SCORE  1000000
 #macro LEVEL_ENDLESS_SCORE_STEP  100000
 #macro LEVEL_ENDLESS_SPEED       0.01
-#macro LEVEL_ENDLESS_TIER_LEVEL  21
 
 // --- Gameplay ---
 #macro SOFT_DROP_MULTIPLIER  10.00
@@ -96,8 +95,6 @@
 // so the player can't just count pairs to predict the next drop.
 #macro JUNK_DROP_SPAWN_INTERVAL_MIN       4
 #macro JUNK_DROP_SPAWN_INTERVAL_MAX       6
-#macro JUNK_DROP_SPAWN_INTERVAL_LATE_MIN  9  // used from LEVEL_ENDLESS_TIER_LEVEL on
-#macro JUNK_DROP_SPAWN_INTERVAL_LATE_MAX  11
 #macro JUNK_DROP_MAX_QTY              GRID_COLS
 #macro JUNK_PREVIEW_ALPHA             0.5
 #macro JUNK_DROP_SPEED                0.1
@@ -149,6 +146,10 @@
 // --- Ghost ---
 #macro GHOST_TRAIL_ALPHA  0.075
 #macro GHOST_PREVIEW_ALPHA  0.25
+// Fixed corner radius for the trail — draw_roundrect_ext keeps this constant regardless of the
+// trail's aspect ratio, unlike plain draw_roundrect whose auto radius makes short/near-square
+// trails (small drop distance) look almost circular.
+#macro GHOST_TRAIL_CORNER_RADIUS  20
 
 // --- Colors ---
 #macro COLOR_BG           $662300

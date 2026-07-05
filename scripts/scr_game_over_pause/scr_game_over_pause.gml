@@ -1,4 +1,4 @@
-function scr_game_pause() {
+function scr_game_over_pause() {
 	global.paused = !global.paused;
 	if (global.paused) {
 		global.pause_cursor = 0;
@@ -67,7 +67,7 @@ function scr_game_pause_update() {
 
 function scr_pause_menu_select(_index) {
 	if (_index == 0) {
-		scr_game_pause();
+		scr_game_over_pause();
 	} else if (_index == 1) {
 		scr_game_restart();
 	} else if (_index == 2) {

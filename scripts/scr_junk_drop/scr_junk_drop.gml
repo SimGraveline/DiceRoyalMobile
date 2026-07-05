@@ -4,10 +4,9 @@ function scr_junk_drop(){
 
 // Rolls a fresh random trigger target for the next cycle (called at init/restart and right
 // after each drop resolves) — each cycle's target is independent, no carryover between cycles.
+// Interval never tightens by level — quantity is what ramps (see scr_junk_drop_queue), and once
+// it caps out, Junk Drop's behavior stays constant for good.
 function scr_junk_drop_roll_target() {
-	if (global.level >= LEVEL_ENDLESS_TIER_LEVEL) {
-		return irandom_range(JUNK_DROP_SPAWN_INTERVAL_LATE_MIN, JUNK_DROP_SPAWN_INTERVAL_LATE_MAX);
-	}
 	return irandom_range(JUNK_DROP_SPAWN_INTERVAL_MIN, JUNK_DROP_SPAWN_INTERVAL_MAX);
 }
 

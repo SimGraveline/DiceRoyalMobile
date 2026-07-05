@@ -33,7 +33,7 @@ function scr_game_update() {
 		global.help_active = true;
 		global.paused = true;
 	} else if (global.input_pause && !global.game_over && !global.countdown_active && !global.fade_active) {
-		scr_game_pause();
+		scr_game_over_pause();
 	}
 
 	if (global.input_grid_lines) {

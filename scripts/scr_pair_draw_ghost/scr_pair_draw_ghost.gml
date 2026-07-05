@@ -85,7 +85,7 @@ function scr_pair_draw_ghost() {
 		var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_m_color);
-		draw_roundrect(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, false);
+		draw_roundrect_ext(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 		if (_m_is_special) {
 			draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_GHOST, _m_x, _m_land_y, _specials_scale, _specials_scale, 0, c_white, GHOST_PREVIEW_ALPHA);
 		} else {
@@ -99,7 +99,7 @@ function scr_pair_draw_ghost() {
 		var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_s_color);
-		draw_roundrect(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, false);
+		draw_roundrect_ext(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 		if (_s_is_special) {
 			draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_GHOST, _s_x, _s_land_y, _specials_scale, _specials_scale, 0, c_white, GHOST_PREVIEW_ALPHA);
 		} else {

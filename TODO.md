@@ -1,8 +1,8 @@
 # TODO — Dice Royal
 
 ## NEXT SESSION
-- [ ] Revoir toutes les règles liées aux Specials; points, timing, dying, stack, effect on stack, unlock, rate, etc.
-- [ ] Review Unlock levels for Specials (after new ones)
+- [x] Revoir toutes les règles liées aux Specials; points, timing, dying, stack, effect on stack, unlock, rate, etc.
+- [x] Review Unlock levels for Specials (after new ones)
 - [x] Review Random Dice Cycle Speed
 - [x] Review Junk Rate before and After Level 20
 
@@ -12,7 +12,7 @@
 
 ## SYSTEMS
 - [ ] Ajouter achievements.
-- [ ] Ajouter unlocks (thèmes visuels; Dice, Cards, Dominio, Chips (unlock avec achievements)).
+- [ ] Ajouter rewards (thèmes visuels; Dice, Cards, Dominio, Chips (unlock avec achievements)).
 - [ ] Ajouter online leaderboard.
 
 ## MENUS
@@ -44,3 +44,6 @@
 - [ ] Publier version Android + Metadata.
 - [ ] Porter en version PC pour Steam + Metadata (sans pub / mtx).
 - [ ] Mettre stripped versions sur Itch, GameJolt et OperaGX.
+
+## BUGS
+- [ ] 
