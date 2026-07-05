@@ -59,7 +59,7 @@ Dying dice do not fall — they float in place if their support is removed. They
 
 Player scores points by:
 - Stacking a die: a small fixed amount per die when it is written to the grid. This applies to every die type, special or not — the stack action itself is what scores, independent of any special effect.
-- Eliminating dice: points scale with die value; 1's and Brick are a flat exception since they have no value-based multiplier. Bomb, Clear Horizontal and Clear Vertical never score points themselves when they finish dying — they're triggers, not targets. A Mimic that dies still unresolved (never copied a value) also scores nothing, since it never became a real die value.
+- Eliminating dice: points scale with die value; 1's and Brick are a flat exception since they have no value-based multiplier. Bomb, Clear Row and Clear Column never score points themselves when they finish dying — they're triggers, not targets. A Mimic that dies still unresolved (never copied a value) also scores nothing, since it never became a real die value.
 - Suite elimination: forming a consecutive ascending or descending sequence (1–N or N–1) in a row or column, where N is the highest currently unlocked die value, eliminates the whole sequence. A suite at exactly the current maximum unlocked value scores through the normal per-die elimination above — no separate bonus. Suites longer than that maximum (7, 8, 9 — currently disabled) additionally score a flat bonus on top, increasing with length.
 
 Suite dice enter dying state normally and can trigger cascade propagation.
@@ -79,13 +79,13 @@ Six special die types can appear in pairs, each unlocking at its own level as th
 | Mimic | Dé Mimic | On landing, copies the value of the die directly below it. If no normal die is below (or it lands on the floor), it stays in an idle state until a die falls on top of it or beneath it (gravity). |
 | Bomb | Dé Bomb | On landing, reads the value of the die directly below it and eliminates all dice of that value on the grid (including every Brick on the grid, if the value read was a Brick). If no normal die is below, it stays idle until activated by a die landing on top of it or beneath it. The Bomb itself doesn't disappear instantly — it enters the dying state alongside its targets and fades out like they do. While it's fading, a new die placed adjacent to it re-triggers another grid-wide elimination using that new die's value, letting a single Bomb chain multiple clears if the player keeps feeding it. |
 | Random | Dé Random | While active in the pair, cycles through all currently unlocked die values (1–N), visible in the pair and the next box. Locks to the current displayed value on landing. |
-| Brick | Dé Brick | A solid obstacle. It can never be matched or eliminated through normal chains — the only ways to remove it are a Bomb reading its value, or a Clear Horizontal/Clear Vertical line passing through it (see below). It falls with gravity like any other die when its support disappears, but otherwise just occupies its cell indefinitely. |
-| Clear Horizontal | Dé Clear H | On landing, immediately triggers dying for every die on its entire row (including Bricks), then joins the dying itself. This is a one-time effect — it never stays idle and is never re-triggered afterward. Everything past that point (cascade propagation, 1's rule, joining an in-progress chain) follows the same rules as any other dying die. |
-| Clear Vertical | Dé Clear V | Same as Clear Horizontal, but affects the entire column instead of the row. |
+| Brick | Dé Brick | A solid obstacle. It can never be matched or eliminated through normal chains — the only ways to remove it are a Bomb reading its value, or a Clear Row/Clear Column line passing through it (see below). It falls with gravity like any other die when its support disappears, but otherwise just occupies its cell indefinitely. |
+| Clear Row | Dé Clear R | On landing, immediately triggers dying for every die on its entire row (including Bricks), then joins the dying itself. This is a one-time effect — it never stays idle and is never re-triggered afterward. Everything past that point (cascade propagation, 1's rule, joining an in-progress chain) follows the same rules as any other dying die. |
+| Clear Column | Dé Clear C | Same as Clear Row, but affects the entire column instead of the row. |
 
 Special die spawn odds are calculated dynamically so each one keeps a consistent probability regardless of how many normal die values are currently unlocked.
 
-Special dice never form matches on their own. A Mimic that stays idle (no normal die resolved) or a Bomb that stays idle are treated as inert until activated. Clear Horizontal and Clear Vertical are never idle — their effect always fires the instant they land.
+Special dice never form matches on their own. A Mimic that stays idle (no normal die resolved) or a Bomb that stays idle are treated as inert until activated. Clear Row and Clear Column are never idle — their effect always fires the instant they land.
 
 ### Junk Drop
 
@@ -111,7 +111,7 @@ All values are adjustable per level. Default values are starting points for play
 | Lock delay duration | Time before a touching pair detaches |
 | Lock delay resets | Max actions that reset the lock timer |
 | Spawn odds | Weight per die value, controls spawn probability |
-| Special die odds | Probability of each special die (Random, Mimic, Bomb, Brick, Clear Horizontal, Clear Vertical) appearing, independent of the normal pool |
+| Special die odds | Probability of each special die (Random, Mimic, Bomb, Brick, Clear Row, Clear Column) appearing, independent of the normal pool |
 | Soft drop multiplier | Speed boost factor during soft drop |
 | Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) |
 | Junk Drop rate & quantity | How often a Junk Drop triggers, and how many dice it drops each time |
@@ -246,7 +246,7 @@ A quick map of the game's key state variables and how they interact — meant to
 | State | Meaning | Resets / clears when | Depended on by |
 |---|---|---|---|
 | Pair active | A pair is currently spawned and player-controlled | Pair detaches | Junk Drop trigger tracking, next-pair spawn gating |
-| Grid dying | Any cell is mid fade-out (matched, or eliminated by a Bomb / Clear Horizontal / Clear Vertical) | Its own dying timer expires | Gravity (dying cells don't fall), Junk Drop's "board idle" check, game over check |
+| Grid dying | Any cell is mid fade-out (matched, or eliminated by a Bomb / Clear Row / Clear Column) | Its own dying timer expires | Gravity (dying cells don't fall), Junk Drop's "board idle" check, game over check |
 | Combo count | Number of consecutive elimination waves within one resolution | A new pair spawns, or Junk Drop confirms the board is idle | Score multiplier on wave elimination |
 | Junk Drop state (idle / telegraph / falling) | Where a pending Junk Drop batch is in its lifecycle | Telegraph → falling once the board goes idle; falling → idle once every die has landed | Next-pair spawn (blocked until back to idle) |
 | Lock delay | Time before a touching pair detaches | Player action (move/rotate), up to a max number of resets | Detach trigger |

@@ -14,14 +14,14 @@ function scr_ui_draw_die(_x, _y, _value) {
 		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_BRICK, _x, _y, _scale, _scale, 0, c_white, 1.0);
 		return;
 	}
-	if (_value == DIE_CLEAR_H) {
+	if (_value == DIE_CLEAR_R) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_H, _x, _y, _scale, _scale, 0, c_white, 1.0);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_R, _x, _y, _scale, _scale, 0, c_white, 1.0);
 		return;
 	}
-	if (_value == DIE_CLEAR_V) {
+	if (_value == DIE_CLEAR_C) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_V, _x, _y, _scale, _scale, 0, c_white, 1.0);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_C, _x, _y, _scale, _scale, 0, c_white, 1.0);
 		return;
 	}
 	if (_value == DIE_RANDOM) {

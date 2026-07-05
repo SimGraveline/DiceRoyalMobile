@@ -5,23 +5,16 @@ function scr_pair_weighted_random() {
 		_normal_total += global.spawn_weights[_i];
 	}
 
-	// From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick/Clear H/Clear V odds tighten (Random is unaffected)
-	var _is_endless_tier = (global.level >= LEVEL_ENDLESS_TIER_LEVEL);
-	var _mimic_chance   = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_MIMIC_CHANCE;
-	var _bomb_chance    = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_BOMB_CHANCE;
-	var _brick_chance   = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_BRICK_CHANCE;
-	var _clear_h_chance = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_CLEAR_H_CHANCE;
-	var _clear_v_chance = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_CLEAR_V_CHANCE;
-
 	// Special die weights: w = normal_total / (CHANCE - 1) → P(special) ≈ 1/CHANCE
-	var _w_q  = (global.level >= DICE_MIMIC_UNLOCK_LEVEL)   ? (_normal_total / (_mimic_chance   - 1)) : 0;
-	var _w_r  = (global.level >= DICE_RANDOM_UNLOCK_LEVEL)  ? (_normal_total / (DICE_RANDOM_CHANCE - 1)) : 0;
-	var _w_k  = (global.level >= DICE_BOMB_UNLOCK_LEVEL)    ? (_normal_total / (_bomb_chance    - 1)) : 0;
-	var _w_b  = (global.level >= DICE_BRICK_UNLOCK_LEVEL)   ? (_normal_total / (_brick_chance   - 1)) : 0;
-	var _w_ch = (global.level >= DICE_CLEAR_H_UNLOCK_LEVEL) ? (_normal_total / (_clear_h_chance - 1)) : 0;
-	var _w_cv = (global.level >= DICE_CLEAR_V_UNLOCK_LEVEL) ? (_normal_total / (_clear_v_chance - 1)) : 0;
+	// Odds stay constant for life once unlocked — no endless-tier tightening.
+	var _w_q  = (global.level >= DICE_MIMIC_UNLOCK_LEVEL)   ? (_normal_total / (DICE_MIMIC_CHANCE   - 1)) : 0;
+	var _w_r  = (global.level >= DICE_RANDOM_UNLOCK_LEVEL)  ? (_normal_total / (DICE_RANDOM_CHANCE   - 1)) : 0;
+	var _w_k  = (global.level >= DICE_BOMB_UNLOCK_LEVEL)    ? (_normal_total / (DICE_BOMB_CHANCE     - 1)) : 0;
+	var _w_b  = (global.level >= DICE_BRICK_UNLOCK_LEVEL)   ? (_normal_total / (DICE_BRICK_CHANCE    - 1)) : 0;
+	var _w_cr = (global.level >= DICE_CLEAR_R_UNLOCK_LEVEL) ? (_normal_total / (DICE_CLEAR_R_CHANCE  - 1)) : 0;
+	var _w_cc = (global.level >= DICE_CLEAR_C_UNLOCK_LEVEL) ? (_normal_total / (DICE_CLEAR_C_CHANCE  - 1)) : 0;
 
-	var _total = _normal_total + _w_q + _w_r + _w_k + _w_b + _w_ch + _w_cv;
+	var _total = _normal_total + _w_q + _w_r + _w_k + _w_b + _w_cr + _w_cc;
 	var _roll  = random(_total);
 
 	if (_roll < _w_q) return DIE_MIMIC;
@@ -32,10 +25,10 @@ function scr_pair_weighted_random() {
 	_roll -= _w_k;
 	if (_roll < _w_b) return DIE_BRICK;
 	_roll -= _w_b;
-	if (_roll < _w_ch) return DIE_CLEAR_H;
-	_roll -= _w_ch;
-	if (_roll < _w_cv) return DIE_CLEAR_V;
-	_roll -= _w_cv;
+	if (_roll < _w_cr) return DIE_CLEAR_R;
+	_roll -= _w_cr;
+	if (_roll < _w_cc) return DIE_CLEAR_C;
+	_roll -= _w_cc;
 
 	var _sum = 0;
 	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {

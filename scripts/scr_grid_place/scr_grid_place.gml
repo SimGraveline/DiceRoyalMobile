@@ -20,13 +20,24 @@ function scr_die_brick_destroy(_col, _row) {
 	scr_audio_play_sfx(snd_chain_dying);
 }
 
+// Writes the Clear die itself into the grid. Activation is deferred (see scr_die_clear_trigger) —
+// if the pair partner landing in the same detach shares this row/column, it must be written to the
+// grid first, otherwise the scan below would skip it as an empty cell.
+function scr_die_clear_write(_col, _row, _horizontal) {
+	var _clear_val = _horizontal ? DIE_CLEAR_R : DIE_CLEAR_C;
+	global.grid[_col][_row] = _clear_val;
+	global.grid_special[_col][_row] = _clear_val;
+}
+
 // One-shot: sets dying on the whole row (horizontal) or column (vertical) through (_col, _row),
 // including the Clear die itself and any Brick in its path. Never re-triggers afterward —
 // everything past this point (cascading, 1's, joining an active chain) is the normal dying rules.
-function scr_die_clear_activate(_col, _row, _horizontal) {
-	var _clear_val = _horizontal ? DIE_CLEAR_H : DIE_CLEAR_V;
-	global.grid[_col][_row] = _clear_val;
-	global.grid_special[_col][_row] = _clear_val;
+// Must only be called once every die from the same detach (including a pair partner sharing this
+// row/column) has already been written to the grid via scr_die_clear_write.
+function scr_die_clear_trigger(_col, _row) {
+	if (global.grid_dying[_col][_row] > 0) return;
+
+	var _horizontal = (global.grid[_col][_row] == DIE_CLEAR_R);
 	global.grid_dying[_col][_row] = DYING_DURATION;
 
 	if (_horizontal) {
@@ -73,8 +84,8 @@ function scr_die_place(_col, _row, _val) {
 				scr_die_bomb_activate(_col, _row - 1, DIE_BRICK);
 			}
 		}
-	} else if (_val == DIE_CLEAR_H || _val == DIE_CLEAR_V) {
-		scr_die_clear_activate(_col, _row, _val == DIE_CLEAR_H);
+	} else if (_val == DIE_CLEAR_R || _val == DIE_CLEAR_C) {
+		scr_die_clear_write(_col, _row, _val == DIE_CLEAR_R);
 	} else if (_val == DIE_RANDOM) {
 		var _locked = global.pair_random_val;
 		global.grid[_col][_row] = _locked;

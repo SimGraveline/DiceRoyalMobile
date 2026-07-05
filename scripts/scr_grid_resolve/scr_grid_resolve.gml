@@ -9,7 +9,7 @@ function scr_grid_resolve() {
 				if (global.grid_dying[_col][_row] <= 0) {
 					var _val = global.grid[_col][_row];
 					// DIE_MIMIC here means it died still unresolved (never became a real value) — no score, like Bomb
-					var _no_score = (_val == DIE_BOMB) || (_val == DIE_CLEAR_H) || (_val == DIE_CLEAR_V) || (_val == DIE_MIMIC);
+					var _no_score = (_val == DIE_BOMB) || (_val == DIE_CLEAR_R) || (_val == DIE_CLEAR_C) || (_val == DIE_MIMIC);
 					if (!_no_score) {
 						var _combo = power(COMBO_MULTIPLIER, global.combo_count);
 						if (_val == 1 || _val == DIE_BRICK) {

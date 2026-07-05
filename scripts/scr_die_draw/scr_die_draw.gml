@@ -50,18 +50,18 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1) {
 		return;
 	}
 
-	// Special die: Clear Horizontal — static frame, one-shot (no idle grid state)
-	if (_value == DIE_CLEAR_H) {
+	// Special die: Clear Row — static frame, one-shot (no idle grid state)
+	if (_value == DIE_CLEAR_R) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_H, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_R, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
 		draw_set_alpha(1.0);
 		return;
 	}
 
-	// Special die: Clear Vertical — static frame, one-shot (no idle grid state)
-	if (_value == DIE_CLEAR_V) {
+	// Special die: Clear Column — static frame, one-shot (no idle grid state)
+	if (_value == DIE_CLEAR_C) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_V, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
+		draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_C, _x, _y, _scale * _xs, _scale * _ys, 0, c_white, _alpha);
 		draw_set_alpha(1.0);
 		return;
 	}

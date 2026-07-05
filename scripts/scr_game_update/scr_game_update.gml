@@ -119,10 +119,10 @@ function scr_game_update() {
 	}
 
 	// --- Random die cycling (always active for next box display) ---
+	// Cycle speed always tracks the current drop speed, so it speeds up/slows down in lockstep with it.
 	global.pair_random_timer += delta_time / DELTA_TO_SECONDS;
-	var _random_cycle_speed = (global.level >= RANDOM_CYCLE_SPEED_FAST_LEVEL) ? RANDOM_CYCLE_SPEED_FAST : RANDOM_CYCLE_SPEED_BASE;
-	if (global.pair_random_timer >= _random_cycle_speed) {
-		global.pair_random_timer -= _random_cycle_speed;
+	if (global.pair_random_timer >= global.drop_speed) {
+		global.pair_random_timer -= global.drop_speed;
 		var _max_rnd = PAIR_MIN_VALUE;
 		for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
 			if (global.spawn_weights[_i] > 0) _max_rnd = _i;

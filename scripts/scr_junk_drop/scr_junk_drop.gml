@@ -32,9 +32,7 @@ function scr_junk_weighted_random() {
 		_normal_total += global.spawn_weights[_i];
 	}
 
-	var _is_endless_tier = (global.level >= LEVEL_ENDLESS_TIER_LEVEL);
-	var _brick_chance = _is_endless_tier ? DICE_ENDLESS_CHANCE : DICE_BRICK_CHANCE;
-	var _w_b = (global.level >= DICE_BRICK_UNLOCK_LEVEL) ? (_normal_total / (_brick_chance - 1)) : 0;
+	var _w_b = (global.level >= DICE_BRICK_UNLOCK_LEVEL) ? (_normal_total / (DICE_BRICK_CHANCE - 1)) : 0;
 
 	var _total = _normal_total + _w_b;
 	var _roll  = random(_total);

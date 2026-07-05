@@ -62,8 +62,8 @@
 #macro DIE_MIMIC     11
 #macro DIE_RANDOM    12
 #macro DIE_BRICK     13
-#macro DIE_CLEAR_H   14
-#macro DIE_CLEAR_V   15
+#macro DIE_CLEAR_R   14
+#macro DIE_CLEAR_C   15
 
 // --- Dice unlock levels ---
 // Dice 7-8-9 are fully wired but kept dormant — see DICE_HIGH_VALUES_ENABLED below.
@@ -75,23 +75,21 @@
 #macro DICE_RANDOM_UNLOCK_LEVEL   5
 #macro DICE_BRICK_UNLOCK_LEVEL    3
 #macro DICE_JUNK_UNLOCK_LEVEL     3
-#macro DICE_CLEAR_H_UNLOCK_LEVEL  1
-#macro DICE_CLEAR_V_UNLOCK_LEVEL  1
+#macro DICE_CLEAR_R_UNLOCK_LEVEL  1
+#macro DICE_CLEAR_C_UNLOCK_LEVEL  1
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
 // colors, scoring, suites) but deliberately never activated. Flip to re-enable;
 // do not remove the surrounding logic as "dead code" without checking this flag.
 #macro DICE_HIGH_VALUES_ENABLED  false
 
-// --- Special dice spawn chances (1 in N) ---
+// --- Special dice spawn chances (1 in N) --- constant for life once unlocked, no endless-tier change
 #macro DICE_MIMIC_CHANCE     15
 #macro DICE_BOMB_CHANCE      15
 #macro DICE_RANDOM_CHANCE    15
 #macro DICE_BRICK_CHANCE     15
-#macro DICE_CLEAR_H_CHANCE   15
-#macro DICE_CLEAR_V_CHANCE   15
-// From LEVEL_ENDLESS_TIER_LEVEL on, Mimic/Bomb/Brick/Clear H/Clear V odds tighten to 1/N (Random unaffected)
-#macro DICE_ENDLESS_CHANCE  10
+#macro DICE_CLEAR_R_CHANCE   15
+#macro DICE_CLEAR_C_CHANCE   15
 
 // --- Junk Drop ---
 // Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
@@ -104,11 +102,6 @@
 #macro JUNK_PREVIEW_ALPHA             0.5
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1
-
-// --- Random cycle speed ---
-#macro RANDOM_CYCLE_SPEED_BASE        1.00
-#macro RANDOM_CYCLE_SPEED_FAST        0.50
-#macro RANDOM_CYCLE_SPEED_FAST_LEVEL  11
 
 // --- Dice colors ---
 #macro COLOR_DIE_7      $00A5FF
@@ -130,9 +123,9 @@
 #macro DIE_BOMB_ANIM_MS          500
 
 // --- Special dice sheet (spr_dice_specials) ---
-// Subimage 0 = generic ghost, unused now that each special uses its own subimage as ghost.
-#macro DICE_SPECIALS_SUB_CLEAR_H  1
-#macro DICE_SPECIALS_SUB_CLEAR_V  2
+#macro DICE_SPECIALS_SUB_GHOST    0
+#macro DICE_SPECIALS_SUB_CLEAR_R  1
+#macro DICE_SPECIALS_SUB_CLEAR_C  2
 #macro DICE_SPECIALS_SUB_BOMB     3
 #macro DICE_SPECIALS_SUB_BRICK    4
 #macro DICE_SPECIALS_SUB_MIMIC    5

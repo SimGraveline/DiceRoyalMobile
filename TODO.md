@@ -1,9 +1,10 @@
 # TODO — Dice Royal
 
 ## NEXT SESSION
-- [ ] Review Random Dice Cycle Speed
-- [ ] Review Junk Rate before and After Level 20
+- [ ] Revoir toutes les règles liées aux Specials; points, timing, dying, stack, effect on stack, unlock, rate, etc.
 - [ ] Review Unlock levels for Specials (after new ones)
+- [x] Review Random Dice Cycle Speed
+- [x] Review Junk Rate before and After Level 20
 
 ## GAMEPLAY
 - [x] Ajouter dés "clear lines".
@@ -22,17 +23,20 @@
 - [ ] Ajouter menu help; rules, controls, dice index.
 
 ## POLISH
-- [ ] Refaire visuel pour les dés spéciaux.
+- [x] Refaire visuel pour les dés spéciaux.
 - [ ] Changer le thème musical.
 - [ ] Refaire les SFX / Ajouter SFX.
 - [ ] Ajouter VFX.
 
 ## TEST & DEBUG
 - [ ] Faire passe de balancing finale.
-- [ ] Repenser balancing niveaux 21+.
+- [x] Repenser balancing niveaux 21+.
 - [ ] Retirer booth version (F11 desktop toggle).
 
 ## PUBLISHING
+- [ ] Générer et intégrer QR Code pour Convention (desktop mode).
+- [ ] Intégrer une fonction "Mailing List" Mobile et Desktop mode.
+- [ ] Réduire de moitié la taille (et dés à l'intérieur) des boxes Hold et Next en mode desktop.
 - [ ] Intégrer publicité.
 - [ ] Intégrer microtransactions.
 - [ ] Ajouter features social; facebook, twitter, etc.

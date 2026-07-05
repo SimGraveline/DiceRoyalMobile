@@ -7,17 +7,27 @@ function scr_pair_detach() {
 	var _master_landed = scr_grid_cell_blocked(_master_col, _master_row - 1);
 	var _slave_landed = scr_grid_cell_blocked(_slave_col, _slave_row - 1);
 
-	// Write landed die(s) to grid and check matches/joins
+	// Write landed die(s) to grid first — Clear R/C's trigger (below) scans the whole row/column,
+	// so both dice from this detach must already be written before it runs, otherwise a pair partner
+	// sharing that row/column would still read as an empty cell.
 	if (_master_landed) {
 		scr_die_place(_master_col, _master_row, global.pair_val1);
 		global.score += SCORE_STACK;
-		scr_grid_check_join(_master_col, _master_row);
 	}
 	if (_slave_landed) {
 		scr_die_place(_slave_col, _slave_row, global.pair_val2);
 		global.score += SCORE_STACK;
-		scr_grid_check_join(_slave_col, _slave_row);
 	}
+
+	if (_master_landed && (global.grid_special[_master_col][_master_row] == DIE_CLEAR_R || global.grid_special[_master_col][_master_row] == DIE_CLEAR_C)) {
+		scr_die_clear_trigger(_master_col, _master_row);
+	}
+	if (_slave_landed && (global.grid_special[_slave_col][_slave_row] == DIE_CLEAR_R || global.grid_special[_slave_col][_slave_row] == DIE_CLEAR_C)) {
+		scr_die_clear_trigger(_slave_col, _slave_row);
+	}
+
+	if (_master_landed) scr_grid_check_join(_master_col, _master_row);
+	if (_slave_landed) scr_grid_check_join(_slave_col, _slave_row);
 	scr_grid_match();
 
 	// Determine solo faller
@@ -68,6 +78,10 @@ function scr_pair_detach() {
 			scr_die_place(_solo_col, _solo_row, _solo_val);
 		}
 		global.score += SCORE_STACK;
+
+		if (global.grid_special[_solo_col][_solo_row] == DIE_CLEAR_R || global.grid_special[_solo_col][_solo_row] == DIE_CLEAR_C) {
+			scr_die_clear_trigger(_solo_col, _solo_row);
+		}
 
 		scr_grid_check_join(_solo_col, _solo_row);
 		scr_grid_match();
