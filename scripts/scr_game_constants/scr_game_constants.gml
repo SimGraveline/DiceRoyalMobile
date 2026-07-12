@@ -159,6 +159,10 @@
 #macro SQUASH_SCALE_Y   0.5   // shorter at the instant of landing
 #macro SQUASH_DURATION  0.12  // seconds to ease back to normal after landing
 
+// --- Background combo feel (bg dice tint to the active dying chain's color) ---
+#macro BG_COMBO_ENABLED  true
+#macro BG_COMBO_ALPHA    1.0  // full opacity while a chain is dying (vs. the default BG_ALPHA)
+
 // --- Colors ---
 #macro COLOR_BG           $662300
 #macro COLOR_GRID_BG      $CF8964

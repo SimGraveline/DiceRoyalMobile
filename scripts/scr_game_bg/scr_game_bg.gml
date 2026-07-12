@@ -22,6 +22,10 @@ function scr_game_bg_init() {
 	global.bg_shake_reset_rate = BG_SHAKE_RESET_RATE;
 	global.bg_shake_reset_timer = global.bg_shake_reset_rate;
 
+	// Combo feel — tint/alpha driven by scr_grid_resolve while a chain is dying
+	global.bg_combo_color = c_white;
+	global.bg_combo_alpha = BG_ALPHA;
+
 	var _cols = ceil(GAME_WIDTH / global.bg_spacing_x) + 2;
 	var _rows = ceil(GAME_HEIGHT / global.bg_spacing_y) + 2;
 	global.bg_grid_cols = _cols;
@@ -62,6 +66,8 @@ function scr_game_bg_draw() {
 	var _ox = global.bg_offset_x - _sx;
 	var _oy = global.bg_offset_y - _sy;
 	var _base = global.bg_scale;
+	var _color = BG_COMBO_ENABLED ? global.bg_combo_color : c_white;
+	var _alpha = BG_COMBO_ENABLED ? global.bg_combo_alpha : global.bg_alpha;
 	var _i = 0;
 	var _count = global.bg_grid_cols * global.bg_grid_rows;
 
@@ -74,7 +80,7 @@ function scr_game_bg_draw() {
 				_xs = _base * random_range(global.bg_shake_min, global.bg_shake_max);
 				_ys = _base * random_range(global.bg_shake_min, global.bg_shake_max);
 			}
-			draw_sprite_ext(spr_dxr, 0, _x, _y, _xs, _ys, 0, c_white, global.bg_alpha);
+			draw_sprite_ext(spr_dxr, 0, _x, _y, _xs, _ys, 0, _color, _alpha);
 			_i++;
 		}
 	}

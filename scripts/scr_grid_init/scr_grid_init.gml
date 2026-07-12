@@ -7,11 +7,16 @@ function scr_grid_init() {
 	global.grid_dying_clear = array_create(GRID_COLS);
 	// Landing squash timer — counts down from SQUASH_DURATION to 0, purely visual (see scr_die_draw).
 	global.grid_squash = array_create(GRID_COLS);
+	// Marks cells whose dying came from a genuine value-cluster match (scr_grid_match's flood
+	// fill) — never set by Bomb, Clear, suites, or the "1 joins anything" rule. Lets the bg combo
+	// color (scr_grid_resolve) react only to real [N]xN chains, not incidental same-value deaths.
+	global.grid_dying_match = array_create(GRID_COLS);
 	for (var _col = 0; _col < GRID_COLS; _col++) {
 		global.grid[_col] = array_create(GRID_ROWS + 1, 0);
 		global.grid_dying[_col] = array_create(GRID_ROWS + 1, 0);
 		global.grid_special[_col] = array_create(GRID_ROWS + 1, 0);
 		global.grid_dying_clear[_col] = array_create(GRID_ROWS + 1, false);
 		global.grid_squash[_col] = array_create(GRID_ROWS + 1, 0);
+		global.grid_dying_match[_col] = array_create(GRID_ROWS + 1, false);
 	}
 }

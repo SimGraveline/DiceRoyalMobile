@@ -55,9 +55,14 @@ function scr_junk_drop_queue() {
 	// Ramps 1 (at unlock) to JUNK_DROP_MAX_QTY over subsequent levels, then holds
 	var _qty = clamp(global.level - (DICE_JUNK_UNLOCK_LEVEL - 1), 1, JUNK_DROP_MAX_QTY);
 
+	// A column only counts as safe if the row below the dead zone is free — the game should
+	// never choose a column with no room left to land in, since that would force the die
+	// straight into the dead zone (an unavoidable, game-caused game over). Whether the column
+	// stays safe between now and the actual drop is on the player, not this check — see
+	// scr_grid_cell_blocked for the same landing logic a normal pair uses.
 	var _safe_cols = [];
 	for (var _c = 0; _c < GRID_COLS; _c++) {
-		if (global.grid[_c][DEAD_ZONE_ROW] == 0) {
+		if (!scr_grid_cell_blocked(_c, DEAD_ZONE_ROW - 1)) {
 			array_push(_safe_cols, _c);
 		}
 	}
