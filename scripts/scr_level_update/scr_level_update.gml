@@ -6,13 +6,13 @@ function scr_level_update() {
 		if (global.level_pulse_timer < 0) global.level_pulse_timer = 0;
 	}
 
-	if (global.score >= LEVEL_ENDLESS_BASE_SCORE) {
+	if (global.game_score >= LEVEL_ENDLESS_BASE_SCORE) {
 		// Open-ended progression past the fixed table: fixed speed, recurring threshold step
-		global.level = LEVEL_COUNT + floor((global.score - LEVEL_ENDLESS_BASE_SCORE) / LEVEL_ENDLESS_SCORE_STEP);
+		global.level = LEVEL_COUNT + floor((global.game_score - LEVEL_ENDLESS_BASE_SCORE) / LEVEL_ENDLESS_SCORE_STEP);
 		global.drop_speed = LEVEL_ENDLESS_SPEED;
 	} else {
 		for (var _i = LEVEL_COUNT - 1; _i >= 0; _i--) {
-			if (global.score >= LEVEL_THRESHOLDS[_i]) {
+			if (global.game_score >= LEVEL_THRESHOLDS[_i]) {
 				global.level = _i + 1;
 				global.drop_speed = LEVEL_SPEEDS[_i];
 				break;

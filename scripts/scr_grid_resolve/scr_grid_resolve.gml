@@ -4,6 +4,11 @@ function scr_grid_resolve() {
 	// Tick dying timers and remove expired dice — score on removal
 	for (var _col = 0; _col < GRID_COLS; _col++) {
 		for (var _row = 0; _row <= GRID_ROWS; _row++) {
+			if (global.grid_squash[_col][_row] > 0) {
+				global.grid_squash[_col][_row] -= delta_time / DELTA_TO_SECONDS;
+				if (global.grid_squash[_col][_row] < 0) global.grid_squash[_col][_row] = 0;
+			}
+
 			if (global.grid_dying[_col][_row] > 0) {
 				global.grid_dying[_col][_row] -= delta_time / DELTA_TO_SECONDS;
 				if (global.grid_dying[_col][_row] <= 0) {
@@ -12,9 +17,9 @@ function scr_grid_resolve() {
 					var _val = global.grid[_col][_row];
 					var _combo = power(COMBO_MULTIPLIER, global.combo_count);
 					if (_val == 1) {
-						global.score += floor(SCORE_BASE * _combo);
+						global.game_score += floor(SCORE_BASE * _combo);
 					} else {
-						global.score += floor(SCORE_BASE * _val * _combo);
+						global.game_score += floor(SCORE_BASE * _val * _combo);
 					}
 					global.grid_dying[_col][_row] = 0;
 					global.grid_dying_clear[_col][_row] = false;

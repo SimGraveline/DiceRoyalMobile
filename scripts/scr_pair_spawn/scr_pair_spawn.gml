@@ -69,10 +69,24 @@ function scr_pair_generate_next() {
 		_v2 = scr_pair_weighted_random();
 	}
 
-	// No 1:1 or 2:2
+	// Two independent constraints on v2, re-rolled together in one loop so fixing one never
+	// silently reintroduces the other:
+	// (1) No 1:1 or 2:2 within the same pair.
+	// (2) No two consecutive pairs identical, order-independent (regular or special dice alike) —
+	//     compares against the pair that just became current (global.pair_val1/2). Skipped on the
+	//     very first call (game init), since no current pair exists yet.
+	// If SPAWN_RETRY_MAX is exhausted, whatever's left over is accepted as-is.
+	var _has_current = variable_global_exists("pair_val1");
+	var _cv1 = _has_current ? global.pair_val1 : -1;
+	var _cv2 = _has_current ? global.pair_val2 : -1;
+
 	var _iters = 0;
-	while ((_v1 == _v2) && (_v1 == 1 || _v1 == 2) && _iters < SPAWN_RETRY_MAX) {
-		_v2 = scr_pair_normal_random();
+	while (_iters < SPAWN_RETRY_MAX) {
+		var _same_pair_double = (_v1 == _v2) && (_v1 == 1 || _v1 == 2);
+		var _matches_current = _has_current && ((_v1 == _cv1 && _v2 == _cv2) || (_v1 == _cv2 && _v2 == _cv1));
+		if (!_same_pair_double && !_matches_current) break;
+
+		_v2 = (_v1 > PAIR_MAX_VALUE) ? scr_pair_normal_random() : scr_pair_weighted_random();
 		_iters++;
 	}
 

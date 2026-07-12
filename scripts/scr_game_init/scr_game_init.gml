@@ -23,7 +23,7 @@ function scr_game_init() {
 	global.countdown_active = false;
 	global.ghost_enabled = true;
 	global.grid_lines = false;
-	global.score = 0;
+	global.game_score = 0;
 	global.level = 1;
 	global.level_pulse_timer = 0;
 	scr_save_load();
@@ -87,7 +87,7 @@ function scr_game_restart() {
 	global.pause_mouse_y = 0;
 	global.ghost_enabled = true;
 	global.grid_lines = false;
-	global.score = 0;
+	global.game_score = 0;
 	global.level = 1;
 	global.drop_speed = LEVEL_SPEEDS[0];
 	global.level_pulse_timer = 0;

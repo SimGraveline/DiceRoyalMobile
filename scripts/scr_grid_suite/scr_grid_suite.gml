@@ -30,7 +30,7 @@ function scr_grid_check_suite() {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col + _i][_row] = DYING_DURATION;
 				}
-				global.score += _suite_score;
+				global.game_score += _suite_score;
 				_found = true;
 			}
 		}
@@ -52,7 +52,7 @@ function scr_grid_check_suite() {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col][_row + _i] = DYING_DURATION;
 				}
-				global.score += _suite_score;
+				global.game_score += _suite_score;
 				_found = true;
 			}
 		}

@@ -137,7 +137,7 @@ function scr_junk_drop_draw() {
 	} else if (global.junk_state == "falling") {
 		for (var _i = 0; _i < array_length(global.junk_falling); _i++) {
 			var _d = global.junk_falling[_i];
-			scr_die_draw(_d.col, _d.row, _d.val, 1.0);
+			scr_die_draw(_d.col, _d.row, _d.val, 1.0, true);
 		}
 	}
 }

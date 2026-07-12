@@ -107,9 +107,9 @@ function scr_ui_draw() {
 		draw_set_valign(fa_top);
 		scr_ui_draw_text(_score_right_x, _top, STR_SCORE, COLOR_BOX_FILL);
 		var _score_y = _top + string_height(STR_SCORE);
-		scr_ui_draw_text(_score_right_x, _score_y, string(global.score), _score_col);
+		scr_ui_draw_text(_score_right_x, _score_y, string(global.game_score), _score_col);
 
-		var _level_y = _score_y + string_height(string(global.score)) + CELL_SIZE * 0.5;
+		var _level_y = _score_y + string_height(string(global.game_score)) + CELL_SIZE * 0.5;
 		scr_ui_draw_text(_score_right_x, _level_y, STR_LEVEL, COLOR_BOX_FILL);
 		scr_ui_draw_text(_score_right_x, _level_y + string_height(STR_LEVEL), string(global.level), c_white);
 
@@ -138,9 +138,9 @@ function scr_ui_draw() {
 		draw_set_font(FONT_BODY);
 
 		scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y, STR_SCORE, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y + string_height(STR_SCORE), string(global.score), _score_col);
+		scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y + string_height(STR_SCORE), string(global.game_score), _score_col);
 
-		var _level_y = UI_SCORE_Y + string_height(STR_SCORE) + string_height(string(global.score)) * UI_SCORE_LINE_H_FACTOR;
+		var _level_y = UI_SCORE_Y + string_height(STR_SCORE) + string_height(string(global.game_score)) * UI_SCORE_LINE_H_FACTOR;
 		scr_ui_draw_text(GAME_WIDTH / 2, _level_y, STR_LEVEL, COLOR_BOX_FILL);
 		scr_ui_draw_text(GAME_WIDTH / 2, _level_y + string_height(STR_LEVEL), string(global.level), c_white);
 	}
@@ -257,7 +257,7 @@ function scr_ui_draw() {
 
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_CURRENT_SCORE, COLOR_BOX_FILL);
 		_sy += _layout.score_line_h;
-		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.score), c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.game_score), c_white);
 		_sy += _layout.score_line_h;
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_HIGH_SCORE, COLOR_BOX_FILL);
 		_sy += _layout.score_line_h;

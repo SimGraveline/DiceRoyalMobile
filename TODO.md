@@ -29,7 +29,7 @@
 - [ ] Ajouter VFX.
 
 ## TEST & DEBUG
-- [ ] Faire passe de balancing finale.
+- [ ] Faire passe de balancing finale... Gestion du data avec CSV?
 - [x] Repenser balancing niveaux 21+.
 - [ ] Retirer booth version (F11 desktop toggle).
 
@@ -39,6 +39,7 @@
 - [ ] Réduire de moitié la taille (et dés à l'intérieur) des boxes Hold et Next en mode desktop.
 - [ ] Intégrer publicité.
 - [ ] Intégrer microtransactions.
+- [ ] Implémenter support paysage.
 - [ ] Ajouter features social; facebook, twitter, etc.
 - [ ] Publier version iPhone + Metadata.
 - [ ] Publier version Android + Metadata.

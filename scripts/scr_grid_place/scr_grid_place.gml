@@ -1,4 +1,6 @@
 function scr_die_place(_col, _row, _val) {
+	global.grid_squash[_col][_row] = SQUASH_DURATION;
+
 	if (_val == DIE_MIMIC) {
 		var _below = (_row > 0) ? global.grid[_col][_row - 1] : 0;
 		if (_below >= 1 && _below <= PAIR_MAX_VALUE) {

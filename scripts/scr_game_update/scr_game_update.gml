@@ -104,8 +104,8 @@ function scr_game_update() {
 					global.game_over_cursor = 0;
 					global.game_over_highlight = false;
 					global.game_over_stick_prev = false;
-					if (global.score > global.high_score) {
-						global.high_score = global.score;
+					if (global.game_score > global.high_score) {
+						global.high_score = global.game_score;
 						scr_save_write();
 					}
 				}
@@ -136,7 +136,7 @@ function scr_game_update() {
 	scr_level_update();
 	scr_game_bg_update();
 
-	if (!global.high_score_beaten && global.score > global.high_score) {
+	if (!global.high_score_beaten && global.game_score > global.high_score) {
 		global.high_score_beaten = true;
 		scr_audio_play_sfx(snd_highscore);
 	}

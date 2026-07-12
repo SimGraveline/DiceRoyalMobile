@@ -144,12 +144,20 @@
 #macro RESTART_ZONE  0.1
 
 // --- Ghost ---
-#macro GHOST_TRAIL_ALPHA  0.075
-#macro GHOST_PREVIEW_ALPHA  0.25
+#macro GHOST_TRAIL_ALPHA  0.08
+#macro GHOST_PREVIEW_ALPHA  0.2
 // Fixed corner radius for the trail — draw_roundrect_ext keeps this constant regardless of the
 // trail's aspect ratio, unlike plain draw_roundrect whose auto radius makes short/near-square
 // trails (small drop distance) look almost circular.
 #macro GHOST_TRAIL_CORNER_RADIUS  20
+
+// --- Squash & Stretch (purely visual, no effect on grid/collision) ---
+#macro SQUASH_STRETCH_ENABLED  true
+#macro STRETCH_SCALE_X  0.5   // narrower while airborne (soft/hard drop, Junk Drop fall)
+#macro STRETCH_SCALE_Y  1.25  // taller while airborne
+#macro SQUASH_SCALE_X   1.25  // wider at the instant of landing
+#macro SQUASH_SCALE_Y   0.5   // shorter at the instant of landing
+#macro SQUASH_DURATION  0.12  // seconds to ease back to normal after landing
 
 // --- Colors ---
 #macro COLOR_BG           $662300
