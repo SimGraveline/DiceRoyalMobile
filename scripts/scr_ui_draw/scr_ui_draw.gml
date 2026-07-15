@@ -68,114 +68,32 @@ function scr_ui_draw() {
 
 	var _score_col = global.high_score_beaten ? c_yellow : c_white;
 
-	if (global.pc_mode) {
-		// --- PC layout: title/Hold/Next along the left, Score/Level top-right, QR bottom-right ---
-		var _top = UI_BTN_SIZE + UI_BTN_MARGIN * 3;
+	// --- Score (top-left) / Level (top-right) ---
+	var _margin = UI_SCREEN_MARGIN;
 
-		// Title + Demo label (top-left) — left edge aligned with the pause button's left edge
-		var _title_x = UI_BTN_PAUSE_X;
+	draw_set_halign(fa_left);
+	draw_set_valign(fa_top);
+	scr_ui_draw_text(_margin, _margin, STR_SCORE, COLOR_BOX_FILL);
+	var _score_y = _margin + string_height(STR_SCORE);
+	scr_ui_draw_text(_margin, _score_y, string(global.game_score), _score_col);
 
-		draw_set_font(FONT_TITLE);
-		draw_set_halign(fa_left);
-		draw_set_valign(fa_top);
-		scr_ui_draw_text(_title_x, _top, STR_TITLE, c_white);
-		var _title_h = string_height(STR_TITLE);
+	draw_set_halign(fa_right);
+	scr_ui_draw_text(GAME_WIDTH - _margin, _margin, STR_LEVEL, COLOR_BOX_FILL);
+	var _level_y = _margin + string_height(STR_LEVEL);
+	scr_ui_draw_text(GAME_WIDTH - _margin, _level_y, string(global.level), c_white);
 
-		draw_set_font(FONT_BODY);
-		scr_ui_draw_text(_title_x, _top + _title_h, STR_DEMO_LABEL, COLOR_BOX_FILL);
-		var _demo_h = string_height(STR_DEMO_LABEL);
+	// Hold (left of grid) / Next (right of grid) — each centered vertically on the screen,
+	// and horizontally centered in the gap between the grid and its side of the screen.
+	var _box_y = (GAME_HEIGHT - BOX_HEIGHT) / 2;
+	var _hold_x = GRID_X / 2 - BOX_WIDTH / 2;
+	var _next_x = (GRID_X + GRID_WIDTH + GAME_WIDTH) / 2 - BOX_WIDTH / 2;
 
-		// Hold / Next boxes — centered vertically between the bottom of "DEMO" and the bottom of
-		// the screen, and centered horizontally between the screen's left edge and the grid's left edge.
-		var _demo_bottom = _top + _title_h + _demo_h;
-		var _box_gap = CELL_SIZE;
-		var _module_h = BOX_HEIGHT + BOX_LABEL_OFFSET + string_height(STR_HOLD)
-		              + _box_gap
-		              + BOX_HEIGHT + BOX_LABEL_OFFSET + string_height(STR_NEXT);
-		var _module_top = _demo_bottom + (GAME_HEIGHT - _demo_bottom - _module_h) / 2;
-		var _module_x = (GRID_X - BOX_WIDTH) / 2;
-
-		var _hold_y = _module_top;
-		scr_ui_draw_pair_box(_module_x, _hold_y, global.hold_val1, global.hold_val2, STR_HOLD);
-
-		var _next_y = _hold_y + BOX_HEIGHT + BOX_LABEL_OFFSET + string_height(STR_HOLD) + _box_gap + PC_NEXT_NUDGE_Y;
-		scr_ui_draw_pair_box(_module_x, _next_y, global.next_val1, global.next_val2, STR_NEXT);
-
-		// Score / Level (top-right) — right edge aligned with the help button's right edge
-		var _score_right_x = UI_BTN_HELP_X + UI_BTN_SIZE;
-		draw_set_halign(fa_right);
-		draw_set_valign(fa_top);
-		scr_ui_draw_text(_score_right_x, _top, STR_SCORE, COLOR_BOX_FILL);
-		var _score_y = _top + string_height(STR_SCORE);
-		scr_ui_draw_text(_score_right_x, _score_y, string(global.game_score), _score_col);
-
-		var _level_y = _score_y + string_height(string(global.game_score)) + CELL_SIZE * 0.5;
-		scr_ui_draw_text(_score_right_x, _level_y, STR_LEVEL, COLOR_BOX_FILL);
-		scr_ui_draw_text(_score_right_x, _level_y + string_height(STR_LEVEL), string(global.level), c_white);
-
-		// "Scan to download" + QR code — centered horizontally between the grid's right edge and
-		// the screen's right edge; the text's top aligns with the Hold box's top edge.
-		var _qr_w = sprite_get_width(spr_code_qr);
-		var _module2_cx = (GRID_X + GRID_WIDTH + GAME_WIDTH) / 2;
-
-		draw_set_font(fnt_bungee_buttons_pc);
-		draw_set_halign(fa_center);
-		draw_set_valign(fa_top);
-		scr_ui_draw_text(_module2_cx, _hold_y, STR_SCAN_QR, c_white);
-		var _scan_h = string_height(STR_SCAN_QR);
-
-		var _qr_x = _module2_cx - _qr_w / 2;
-		var _qr_y = _hold_y + _scan_h + BOX_LABEL_OFFSET + PC_QR_NUDGE_Y;
-		draw_sprite(spr_code_qr, 0, _qr_x, _qr_y);
-
-		draw_set_font(FONT_BODY);
-	} else {
-		// --- Mobile layout (unchanged) ---
-		draw_set_font(FONT_TITLE);
-		draw_set_halign(fa_center);
-		draw_set_valign(fa_top);
-		scr_ui_draw_text(GAME_WIDTH / 2, UI_TITLE_Y, STR_TITLE, c_white);
-		draw_set_font(FONT_BODY);
-
-		scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y, STR_SCORE, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y + string_height(STR_SCORE), string(global.game_score), _score_col);
-
-		var _level_y = UI_SCORE_Y + string_height(STR_SCORE) + string_height(string(global.game_score)) * UI_SCORE_LINE_H_FACTOR;
-		scr_ui_draw_text(GAME_WIDTH / 2, _level_y, STR_LEVEL, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, _level_y + string_height(STR_LEVEL), string(global.level), c_white);
-	}
-
-	// Pause button
-	draw_set_font(FONT_BUTTONS);
-	draw_set_color(c_gray);
-	draw_rectangle(UI_BTN_PAUSE_X, UI_BTN_PAUSE_Y, UI_BTN_PAUSE_X + UI_BTN_SIZE - 1, UI_BTN_PAUSE_Y + UI_BTN_SIZE - 1, false);
-	draw_set_color(c_white);
-	draw_set_halign(fa_center);
-	draw_set_valign(fa_middle);
-	draw_text(UI_BTN_PAUSE_X + UI_BTN_SIZE / 2, UI_BTN_PAUSE_Y + UI_BTN_SIZE / 2, STR_PAUSE);
-
-	// Help button
-	draw_set_color(c_gray);
-	draw_rectangle(UI_BTN_HELP_X, UI_BTN_HELP_Y, UI_BTN_HELP_X + UI_BTN_SIZE - 1, UI_BTN_HELP_Y + UI_BTN_SIZE - 1, false);
-	draw_set_color(c_white);
-	if (global.help_active) {
-		draw_text(UI_BTN_HELP_X + UI_BTN_SIZE / 2, UI_BTN_HELP_Y + UI_BTN_SIZE / 2, STR_HELP_CLOSE);
-	} else {
-		draw_text(UI_BTN_HELP_X + UI_BTN_SIZE / 2, UI_BTN_HELP_Y + UI_BTN_SIZE / 2, STR_HELP);
-	}
-	draw_set_font(FONT_BODY);
-
-	if (!global.pc_mode) {
-		// Hold box
-		scr_ui_draw_pair_box(BOX_HOLD_X, BOX_Y, global.hold_val1, global.hold_val2, STR_HOLD);
-
-		// Next box
-		scr_ui_draw_pair_box(BOX_NEXT_X, BOX_Y, global.next_val1, global.next_val2, STR_NEXT);
-	}
+	scr_ui_draw_pair_box(_hold_x, _box_y, global.hold_val1, global.hold_val2, STR_HOLD);
+	scr_ui_draw_pair_box(_next_x, _box_y, global.next_val1, global.next_val2, STR_NEXT);
 
 	// Paused
 	if (global.help_active) {
-		var _controls_str = global.pc_mode ? STR_HELP_CONTROLS_PC : STR_HELP_CONTROLS;
+		var _controls_str = STR_HELP_CONTROLS;
 
 		draw_set_font(FONT_TITLE);
 		var _title_h = string_height(STR_HELP_TITLE);
@@ -191,7 +109,7 @@ function scr_ui_draw() {
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
-		draw_rectangle(0, _box_top, GAME_WIDTH, _box_top + _box_h, false);
+		draw_rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, false);
 		draw_set_alpha(1.0);
 		draw_set_halign(fa_center);
 
@@ -209,7 +127,7 @@ function scr_ui_draw() {
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
-		draw_rectangle(0, GRID_Y - GRID_OUTLINE_WIDTH, GAME_WIDTH, GRID_Y + GRID_HEIGHT + GRID_OUTLINE_WIDTH, false);
+		draw_rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, false);
 		draw_set_alpha(1.0);
 		draw_set_halign(fa_center);
 
@@ -234,7 +152,7 @@ function scr_ui_draw() {
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
-		draw_rectangle(0, GRID_Y - GRID_OUTLINE_WIDTH, GAME_WIDTH, GRID_Y + GRID_HEIGHT + GRID_OUTLINE_WIDTH, false);
+		draw_rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, false);
 		draw_set_alpha(1.0);
 		draw_set_halign(fa_center);
 

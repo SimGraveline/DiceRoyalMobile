@@ -1,5 +1,12 @@
 function scr_game_update() {
-	scr_display_mode_update();
+	// application_surface stays fixed at whatever size it was created at (the initial
+	// windowed size) unless explicitly resized — without this, switching to fullscreen
+	// just stretches that lower-res surface instead of rendering at full detail.
+	if (window_get_fullscreen()) {
+		surface_resize(application_surface, GAME_WIDTH, GAME_HEIGHT);
+	} else {
+		surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
+	}
 
 	if (global.game_state == STATE_LOGOS) {
 		scr_screen_logos_update();
@@ -8,7 +15,6 @@ function scr_game_update() {
 
 	scr_game_input_keyboard();
 	scr_game_input_gamepad();
-	scr_game_input_touch();
 
 	if (global.game_state == STATE_SPLASH) {
 		scr_screen_splash_update();

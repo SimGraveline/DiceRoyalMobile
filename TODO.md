@@ -1,5 +1,21 @@
 # TODO — Dice Royal
 
+## DESKTOP CONVERSION
+- [x] Ajustement du texte de logo screen et splash screen.
+- [x] Changer les hold et next box de place.
+- [x] Ajuster la section title in-game.
+- [x] Ajuster la section score in-game.
+- [x] Ajuster le overlay bleu de pause / help pour que ça couvre l'écran au complet.
+- [x] Enlever boutons pause et help.
+- [x] Doubler la taille des DXR.
+- [x] Augmenter taille dés splash de 1.5.
+- [x] Permettre windowed.
+- [x] Permettre switch du full screen.
+- [x] Fixer souris qui fait starter le jeu dans le splash screen.
+- [ ] Fixer le fond bleu du game over.
+- [ ] Changer le preview pour un draw plutôt qu'un sprite.
+
+
 ## NEXT SESSION
 - [x] Revoir toutes les règles liées aux Specials; points, timing, dying, stack, effect on stack, unlock, rate, etc.
 - [x] Review Unlock levels for Specials (after new ones)
@@ -25,14 +41,19 @@
 
 ## POLISH
 - [x] Refaire visuel pour les dés spéciaux.
+- [ ] Chaque special dice aura son propre sprite.
+- [ ] Mute / Un Mute ne devrait pas restart la toune, juste la resume.
+- [ ] Pause devrait arrêter l'animation des dés.
 - [ ] Changer le thème musical.
 - [ ] Refaire les SFX / Ajouter SFX.
 - [ ] Ajouter VFX.
+- [ ] Réorganisation des Fonts.
 
 ## TEST & DEBUG
 - [ ] Faire passe de balancing finale... Gestion du data avec CSV?
 - [x] Repenser balancing niveaux 21+.
 - [ ] Retirer booth version (F11 desktop toggle).
+- [ ] Investiguer Clear Colonne Behaviour.
 
 ## PUBLISHING
 - [ ] Générer et intégrer QR Code pour Convention (desktop mode).

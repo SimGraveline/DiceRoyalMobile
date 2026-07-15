@@ -1,21 +1,21 @@
 // --- Display ---
-// GAME_WIDTH/HEIGHT/CELL_SIZE are aliases to globals (see scr_display_mode) so the
-// PC fullscreen mode can resize them at runtime — mobile mode keeps the values below.
-#macro GAME_WIDTH  global.__game_width
-#macro GAME_HEIGHT global.__game_height
-#macro MOBILE_GAME_WIDTH   384
-#macro MOBILE_GAME_HEIGHT  832
-#macro MOBILE_CELL_SIZE    50
-#macro PC_GRID_HEIGHT_RATIO  0.9
-#macro PC_MARGIN  global.__cell_size
+// GAME_WIDTH/HEIGHT follow the room's own size directly (the fullscreen render target —
+// see scr_game_update, which resizes application_surface to this or WINDOW_WIDTH/HEIGHT
+// depending on window_get_fullscreen()). Window mode itself (windowed vs fullscreen,
+// default at launch) is managed by Sim via GameMaker's project options, not GML.
+#macro GAME_WIDTH  room_width
+#macro GAME_HEIGHT room_height
+// Fixed windowed size — matches the room's 16:9 aspect at a smaller scale.
+#macro WINDOW_WIDTH   1600
+#macro WINDOW_HEIGHT  900
+#macro LOGO_SCALE_REFERENCE_WIDTH  400
+#macro GRID_HEIGHT_RATIO  0.75
 
-// Title/body/button fonts swap to their _pc variant in PC mode (see scr_display_mode)
-#macro FONT_TITLE    global.__font_title
-#macro FONT_BODY     global.__font_body
-#macro FONT_BUTTONS  global.__font_buttons
+#macro FONT_TITLE    fnt_bungee_title
+#macro FONT_BODY     fnt_bungee
 
 // --- Grid ---
-#macro CELL_SIZE   global.__cell_size
+#macro CELL_SIZE   floor((GAME_HEIGHT * GRID_HEIGHT_RATIO) / (GRID_ROWS + 1))
 #macro GRID_COLS   7
 #macro GRID_ROWS   7
 #macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
@@ -30,17 +30,19 @@
 
 // --- Pair spawn ---
 #macro SPAWN_COL_LEFT   2
-#macro SPAWN_COL_RIGHT  3
 #macro SPAWN_ROW        GRID_ROWS
 
 // --- Level system ---
 #macro LEVEL_COUNT  20
 #macro LEVEL_THRESHOLDS  global.__level_thresholds
 #macro LEVEL_SPEEDS     global.__level_speeds
+// Single knob to scale drop speed across every level (and the endless tier) without
+// reshaping the per-level curve — 1.0 = values below as-is, <1 faster, >1 slower.
+#macro DROP_SPEED_MULTIPLIER  0.9
 // Beyond LEVEL_COUNT, level/threshold become an open-ended progression (see scr_level_update)
 #macro LEVEL_ENDLESS_BASE_SCORE  1000000
 #macro LEVEL_ENDLESS_SCORE_STEP  100000
-#macro LEVEL_ENDLESS_SPEED       0.01
+#macro LEVEL_ENDLESS_SPEED       (0.01)
 
 // --- Gameplay ---
 #macro SOFT_DROP_MULTIPLIER  10.00
@@ -104,9 +106,6 @@
 #macro COLOR_DIE_7      $00A5FF
 #macro COLOR_DIE_8      $90536F
 #macro COLOR_DIE_9      $6B25E3
-#macro COLOR_DIE_BOMB   $606060
-#macro COLOR_DIE_MIMIC  $D3D3D3
-#macro COLOR_DIE_BRICK  $2222B2
 
 // --- Level up VFX ---
 #macro LEVEL_PULSE_DURATION     1.0
@@ -116,11 +115,7 @@
 #macro MUSIC_VOLUME              0.4
 #macro SPLASH_MUSIC_FADE_MS      700
 
-// --- Animation ---
-#macro DIE_BOMB_ANIM_MS          500
-
 // --- Special dice sheet (spr_dice_specials) ---
-#macro DICE_SPECIALS_SUB_GHOST    0
 #macro DICE_SPECIALS_SUB_CLEAR_R  1
 #macro DICE_SPECIALS_SUB_CLEAR_C  2
 #macro DICE_SPECIALS_SUB_BOMB     3
@@ -134,14 +129,6 @@
 #macro SCORE_SUITE_7     7000
 #macro SCORE_SUITE_8     8000
 #macro SCORE_SUITE_9     10000
-
-// --- Touch ---
-#macro SWIPE_MIN_DISTANCE  15
-#macro DRAG_THRESHOLD  5
-#macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
-#macro TAP_ZONE_SPLIT  0.80
-#macro ROTATE_SPLIT  0.5
-#macro RESTART_ZONE  0.1
 
 // --- Ghost ---
 #macro GHOST_TRAIL_ALPHA  0.08
@@ -172,9 +159,9 @@
 
 // --- Background ---
 #macro BG_SPEED           0.5
-#macro BG_SCALE           0.5
-#macro BG_SPACING_X       80
-#macro BG_SPACING_Y       90
+#macro BG_SCALE           0.6
+#macro BG_SPACING_X       90
+#macro BG_SPACING_Y       100
 #macro BG_ALPHA           0.25
 #macro BG_CHANGE_RATE     3
 #macro BG_SHAKE_ODDS      100
@@ -191,7 +178,7 @@
 #macro RAIN_FADE_RATE      0.005
 #macro RAIN_SPEED_MIN      1
 #macro RAIN_SPEED_MAX      5
-#macro RAIN_SCALE           1.0
+#macro RAIN_SCALE           1.5
 #macro RAIN_SHAKE_ODDS     100
 #macro RAIN_SHAKE_CHANCE   20
 #macro RAIN_SHAKE_MIN      0.90
@@ -231,7 +218,6 @@
 #macro GAMEPAD_DEADZONE  0.5
 
 // --- Drawing ---
-#macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
 #macro UI_SHADOW_OFFSET    5
 #macro GRID_OUTLINE_WIDTH  6
@@ -239,30 +225,10 @@
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-#macro UI_TITLE_Y      36
-#macro UI_SCORE_Y      80
-// UI_BTN_SIZE/MARGIN are dynamic (see scr_display_mode) so pause/help stay readable at PC scale
-#macro UI_BTN_SIZE     global.__ui_btn_size
-#macro UI_BTN_MARGIN   global.__ui_btn_margin
-#macro MOBILE_UI_BTN_SIZE    32
-#macro MOBILE_UI_BTN_MARGIN  8
-// PC mode nudges pause/help a few pixels off their mobile corner anchor — mobile is unaffected.
-#macro UI_BTN_PAUSE_OFFSET_X  (global.pc_mode ? -5 : 0)
-#macro UI_BTN_PAUSE_OFFSET_Y  (global.pc_mode ? -10 : 0)
-#macro UI_BTN_HELP_OFFSET_X   (global.pc_mode ? 5 : 0)
-#macro UI_BTN_HELP_OFFSET_Y   (global.pc_mode ? -10 : 0)
-#macro UI_BTN_PAUSE_X  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_X)
-#macro UI_BTN_PAUSE_Y  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_Y)
-// PC mode: manual nudge to bring the Next box closer to Hold, and push the QR block down to compensate
-#macro PC_NEXT_NUDGE_Y  -(CELL_SIZE * 0.25)
-#macro PC_QR_NUDGE_Y     (CELL_SIZE * 0.25)
-#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_X)
-#macro UI_BTN_HELP_Y   (UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_Y)
+// Margin between screen-edge UI (Score/Level) and the window edge
+#macro UI_SCREEN_MARGIN   (CELL_SIZE * 0.5)
 #macro BOX_WIDTH       (CELL_SIZE * 3)
 #macro BOX_HEIGHT      (CELL_SIZE * 1.5)
-#macro BOX_Y           (GRID_Y + GRID_HEIGHT + CELL_SIZE)
-#macro BOX_HOLD_X      (GRID_X)
-#macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
 #macro BOX_LABEL_OFFSET  8
 #macro UI_MENU_LINE_H_FACTOR      1.8
 #macro MENU_OVERLAY_ALPHA         0.9

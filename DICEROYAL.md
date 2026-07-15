@@ -1,6 +1,6 @@
 # DICE ROYAL
 
-Dice Royal is a falling block puzzle game for mobile platforms, inspired by Tetris, Puyo Puyo and Devil Dice. Built in GameMaker Studio, it targets mobile via GX.games while also supporting keyboard and gamepad for browser play. The game is locked to portrait orientation.
+Dice Royal is a falling block puzzle game, inspired by Tetris, Puyo Puyo and Devil Dice. Built in GameMaker Studio, this build targets PC (Steam), fullscreen, with keyboard and gamepad controls. A mobile version is planned as a follow-up port once the PC version ships.
 
 This is a proof of concept / prototype with only logo, splash, game, pause, help and game over screens — no ads, monetization or achievements yet.
 
@@ -116,7 +116,7 @@ Two logo screens displayed on launch (timings adjustable): a "proudly made with"
 
 ### Splash Screen
 
-Title screen shown after the logos: game title centered, with a blinking "Tap to Stack!" prompt below and a "Beta Version" tag. Background features a falling dice rain effect. Tapping/confirming begins the game via a fade transition.
+Title screen shown after the logos: game title centered, with a blinking "Press Enter to Stack!" prompt below and a "Beta Version" tag. Background features a falling dice rain effect. Confirming begins the game via a fade transition.
 
 ### Game Screen
 
@@ -124,7 +124,7 @@ Contains the grid, score, level display, hold box, next box, pause button and he
 
 ### Pause Screen
 
-Accessed via the pause button (touch), ESC (keyboard), or Start (gamepad). Not available during the countdown. Shows:
+Accessed via the pause button (mouse), ESC (keyboard), or Start (gamepad). Not available during the countdown. Shows:
 - Resume
 - Restart (soft restart, no logos)
 - Quit (return to splash)
@@ -132,11 +132,11 @@ Accessed via the pause button (touch), ESC (keyboard), or Start (gamepad). Not a
 - Mute SFX toggle
 - Ghost toggle
 
-Navigable by touch tap, or keyboard/gamepad.
+Navigable by mouse click, or keyboard/gamepad.
 
 ### Help Screen
 
-Accessed via the "?" button (touch), F1 (keyboard), or Select (gamepad). Shows "HOW TO PLAY" with the rules and controls. Closes the same way it opens, or via ESC. Game is paused while help is open.
+Accessed via the "?" button (mouse), F1 (keyboard), or Select (gamepad). Shows "HOW TO PLAY" with the rules and controls. Closes the same way it opens, or via ESC. Game is paused while help is open.
 
 Future: auto-show on first game after launch with a "Don't show again" option.
 
@@ -156,31 +156,11 @@ A "3-2-1-STACK!" countdown plays before gameplay begins, at game start and after
 
 A zoom-in/zoom-out die transition used between the splash and game screens. The countdown starts only after the fade completes.
 
-## PC / Kiosk Mode
+## Display
 
-A second display mode, intended for convention booth demos on a PC. Toggled with F11, available from the logo screen onward — no separate build, room or fork, just a runtime switch.
-
-- **Mobile mode** (default): windowed, fixed portrait size.
-- **PC mode**: fullscreen at the desktop's resolution. The grid is rescaled to occupy most of the screen height (same column/row count, bigger cells); width follows from that since the grid's proportions don't change.
-
-Layout differences in PC mode (game screen only — logos and splash are unaffected other than filling the wider screen):
-- Title moves to the top-left, Score/Level to the top-right.
-- Hold and Next boxes move to the left side of the screen, stacked.
-- A "Scan to download mobile demo" prompt with a QR code appears bottom-right.
-- Pause/help buttons scale up so they remain readable at PC resolution.
-- The Help screen's control instructions switch from mobile touch gestures to keyboard/gamepad bindings.
+Fullscreen at the desktop's resolution. The grid is rescaled to occupy most of the screen height (same column/row count, bigger cells); width follows from that since the grid's proportions don't change.
 
 ## Controls
-
-The in-game UI displays mobile controls by default, or keyboard/gamepad controls when in PC mode (see PC / Kiosk Mode above).
-
-### Mobile
-- Drag horizontal = Move (finger controls pair position directly)
-- Swipe up = Hard drop
-- Swipe down = Soft drop
-- Tap right (upper portion of the screen) = Rotate CW (except pause and help buttons)
-- Tap left (upper portion of the screen) = Rotate CCW
-- Tap (lower portion of the screen) = Hold / Swap
 
 ### Gamepad (Xbox scheme)
 - Left stick or D-Pad = Move / Soft drop / Hard drop (up)
@@ -205,20 +185,22 @@ The in-game UI displays mobile controls by default, or keyboard/gamepad controls
 - M = Mute/unmute music
 - Tab = Toggle grid lines
 
+### Mouse
+- Click Pause / Help buttons and menu items (splash, pause, help, game over)
+- Not used to control the falling pair — that's keyboard/gamepad only
+
 ## Layout
 
-The mockup (DICEROYAL.jpg) communicates layout intent, not exact dimensions.
+The mockup (DICEROYAL.jpg) communicates layout intent from an earlier mobile-oriented pass, not the current PC layout or exact dimensions.
 
 | Element | Position |
 |---|---|
 | Die / grid cell | Square, one cell per die, size is tunable |
 | Grid | Centered on screen, with one dead zone row above the visible rows |
-| Title | Centered above grid |
-| Score | Centered below title |
-| Level | Directly below Score |
-| Hold / Next boxes | Below grid, with labels underneath |
-| Pause button | Top-left corner |
-| Help button ("?") | Top-right corner |
+| Title | Top-left, with Score/Level mirrored top-right |
+| Hold / Next boxes | Left side of the screen, stacked, with labels underneath |
+| Pause button | Near the title, top-left |
+| Help button ("?") | Near Score/Level, top-right |
 
 ## Audio
 

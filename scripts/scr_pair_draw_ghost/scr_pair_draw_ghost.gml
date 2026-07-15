@@ -5,6 +5,8 @@ function scr_ghost_toggle() {
 function scr_pair_draw_ghost() {
 	if (!global.pair_active || !global.ghost_enabled) return;
 
+	// Indices 10 (Bomb) and 11 (Mimic) are never read — both are always classified as
+	// "special" below and short-circuit to c_white before this array is consulted.
 	var _colors = [
 		c_black,           // 0 = unused
 		c_white,           // 1
@@ -15,9 +17,7 @@ function scr_pair_draw_ghost() {
 		c_black,           // 6
 		COLOR_DIE_7,       // 7
 		COLOR_DIE_8,       // 8
-		COLOR_DIE_9,       // 9
-		COLOR_DIE_BOMB,   // 10 = Bomb
-		COLOR_DIE_MIMIC   // 11 = Mimic
+		COLOR_DIE_9        // 9
 	];
 
 	var _mc = global.pair_col;
@@ -61,8 +61,6 @@ function scr_pair_draw_ghost() {
 
 	if (_final_mr == _mr && _final_sr == _sr) return;
 
-	var _ghost_w = sprite_get_width(spr_dice_ghosts);
-	var _xscale = CELL_SIZE / _ghost_w;
 	var _vertical = (_oc == 0);
 
 	// In vertical orientation, only the bottom die projects a ghost
@@ -72,12 +70,11 @@ function scr_pair_draw_ghost() {
 	var _mval = (global.pair_val1 == DIE_RANDOM) ? global.pair_random_val : global.pair_val1;
 	var _sval = (global.pair_val2 == DIE_RANDOM) ? global.pair_random_val : global.pair_val2;
 
-	// Bomb/Mimic/Brick/Clear R/Clear C each use their own specials subimage as ghost; trail color is generic (white)
+	// Bomb/Mimic/Brick/Clear R/Clear C have no per-type color, so they draw as white
 	var _m_is_special = (_mval == DIE_BOMB) || (_mval == DIE_MIMIC) || (_mval == DIE_BRICK) || (_mval == DIE_CLEAR_R) || (_mval == DIE_CLEAR_C);
 	var _s_is_special = (_sval == DIE_BOMB) || (_sval == DIE_MIMIC) || (_sval == DIE_BRICK) || (_sval == DIE_CLEAR_R) || (_sval == DIE_CLEAR_C);
 	var _m_color = _m_is_special ? c_white : _colors[_mval];
 	var _s_color = _s_is_special ? c_white : _colors[_sval];
-	var _specials_scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
 
 	if (_draw_master) {
 		var _m_x = GRID_X + (_mc * CELL_SIZE);
@@ -86,11 +83,8 @@ function scr_pair_draw_ghost() {
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_m_color);
 		draw_roundrect_ext(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
-		if (_m_is_special) {
-			draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_GHOST, _m_x, _m_land_y, _specials_scale, _specials_scale, 0, c_white, GHOST_PREVIEW_ALPHA);
-		} else {
-			draw_sprite_ext(spr_dice_ghosts, _mval, _m_x, _m_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
-		}
+		draw_set_alpha(GHOST_PREVIEW_ALPHA);
+		draw_roundrect_ext(_m_x, _m_land_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 	}
 
 	if (_draw_slave) {
@@ -100,11 +94,8 @@ function scr_pair_draw_ghost() {
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_s_color);
 		draw_roundrect_ext(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
-		if (_s_is_special) {
-			draw_sprite_ext(spr_dice_specials, DICE_SPECIALS_SUB_GHOST, _s_x, _s_land_y, _specials_scale, _specials_scale, 0, c_white, GHOST_PREVIEW_ALPHA);
-		} else {
-			draw_sprite_ext(spr_dice_ghosts, _sval, _s_x, _s_land_y, _xscale, _xscale, 0, c_white, GHOST_PREVIEW_ALPHA);
-		}
+		draw_set_alpha(GHOST_PREVIEW_ALPHA);
+		draw_roundrect_ext(_s_x, _s_land_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 	}
 
 	draw_set_alpha(1.0);
