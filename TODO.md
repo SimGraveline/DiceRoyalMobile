@@ -21,6 +21,7 @@
 - [ ] Ajouter menu online leaderboard.
 - [ ] Ajouter menu options; Mute Music, Mute SFX, Toggle Ghost, Select Theme.
 - [ ] Ajouter menu help; rules, controls, dice index.
+- [ ] Ajouter attract mode.
 
 ## POLISH
 - [x] Refaire visuel pour les dés spéciaux.
@@ -47,4 +48,4 @@
 - [ ] Mettre stripped versions sur Itch, GameJolt et OperaGX.
 
 ## BUGS
-- [ ] 
+- [ ] Clear Colone ne clear pas celui du dessus.

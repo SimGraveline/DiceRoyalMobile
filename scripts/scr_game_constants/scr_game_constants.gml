@@ -136,8 +136,8 @@
 #macro SCORE_SUITE_9     10000
 
 // --- Touch ---
-#macro SWIPE_MIN_DISTANCE  30
-#macro DRAG_THRESHOLD  10
+#macro SWIPE_MIN_DISTANCE  15
+#macro DRAG_THRESHOLD  5
 #macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
 #macro TAP_ZONE_SPLIT  0.80
 #macro ROTATE_SPLIT  0.5
