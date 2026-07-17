@@ -38,7 +38,7 @@
 #macro LEVEL_SPEEDS     global.__level_speeds
 // Single knob to scale drop speed across every level (and the endless tier) without
 // reshaping the per-level curve — 1.0 = values below as-is, <1 faster, >1 slower.
-#macro DROP_SPEED_MULTIPLIER  0.9
+#macro DROP_SPEED_MULTIPLIER  1
 // Beyond LEVEL_COUNT, level/threshold become an open-ended progression (see scr_level_update)
 #macro LEVEL_ENDLESS_BASE_SCORE  1000000
 #macro LEVEL_ENDLESS_SCORE_STEP  100000
@@ -50,8 +50,8 @@
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
 #macro LOCK_RESETS_MAX  10
-#macro DYING_DURATION   1.0
-#macro DYING_ALPHA_MIN  0.05
+#macro DYING_DURATION   1.1
+#macro DYING_ALPHA_MIN  0.1
 
 // --- Spawn restrictions ---
 #macro PAIR_MIN_VALUE   1

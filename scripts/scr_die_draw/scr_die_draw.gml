@@ -12,9 +12,23 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 		_alpha = max(DYING_ALPHA_MIN, global.grid_dying[_col][_row] / DYING_DURATION);
 	}
 
-	// Dying shake (same jitter as the splash screen dice rain)
-	var _xs = _is_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
-	var _ys = _is_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
+	// A genuine chain (match/join/cascade/suite) shakes and tints to its value's color while
+	// dying — a standalone dying die (Bomb, or Clear via its own isolation) stays still and keeps
+	// its normal color, so a chain reads visually distinct from an artificial elimination.
+	var _is_chain_dying = _is_dying && global.grid_dying_chain[_col][_row];
+
+	// Dying shake (same jitter as the splash screen dice rain) — chain only
+	var _xs = _is_chain_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
+	var _ys = _is_chain_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
+
+	// Dying tint — chain only, and only for a real 2-9 value (never a 1, never a special)
+	var _dying_color = c_white;
+	if (_is_chain_dying) {
+		var _dying_val = global.grid[_col][_row];
+		if (_dying_val >= 2 && _dying_val <= PAIR_MAX_VALUE) {
+			_dying_color = scr_die_color(_dying_val);
+		}
+	}
 
 	// Squash & stretch — stretch while airborne (pivots on the center), squash right after
 	// landing (pivots on the bottom so the die reads as pressing into the stack, not sinking
@@ -42,10 +56,10 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	if (_is_question) {
 		if (_value == DIE_MIMIC) {
 			var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-			scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_MIMIC, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+			scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_MIMIC, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		} else {
 			var _scale = CELL_SIZE / sprite_get_width(spr_dice_mimics);
-			scr_die_draw_sprite(spr_dice_mimics, _value, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+			scr_die_draw_sprite(spr_dice_mimics, _value, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		}
 		draw_set_alpha(1.0);
 		return;
@@ -55,7 +69,7 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	var _is_killer = (_value == DIE_BOMB) || (_in_grid && global.grid_special[_col][_row] == DIE_BOMB);
 	if (_is_killer) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_BOMB, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_BOMB, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		draw_set_alpha(1.0);
 		return;
 	}
@@ -64,7 +78,7 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	var _is_brick = (_value == DIE_BRICK) || (_in_grid && global.grid_special[_col][_row] == DIE_BRICK);
 	if (_is_brick) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_BRICK, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_BRICK, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		draw_set_alpha(1.0);
 		return;
 	}
@@ -72,7 +86,7 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	// Special die: Clear Row — static frame, one-shot (no idle grid state)
 	if (_value == DIE_CLEAR_R) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_R, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_R, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		draw_set_alpha(1.0);
 		return;
 	}
@@ -80,7 +94,7 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	// Special die: Clear Column — static frame, one-shot (no idle grid state)
 	if (_value == DIE_CLEAR_C) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice_specials);
-		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_C, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+		scr_die_draw_sprite(spr_dice_specials, DICE_SPECIALS_SUB_CLEAR_C, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		draw_set_alpha(1.0);
 		return;
 	}
@@ -88,13 +102,13 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 	// Special die: Random (only appears in active pair, never stored in grid as DIE_RANDOM)
 	if (_value == DIE_RANDOM) {
 		var _scale = CELL_SIZE / sprite_get_width(spr_dice);
-		scr_die_draw_sprite(spr_dice, global.pair_random_val, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+		scr_die_draw_sprite(spr_dice, global.pair_random_val, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 		draw_set_alpha(1.0);
 		return;
 	}
 
 	var _scale = CELL_SIZE / sprite_get_width(spr_dice);
-	scr_die_draw_sprite(spr_dice, _value, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha);
+	scr_die_draw_sprite(spr_dice, _value, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _dying_color);
 
 	draw_set_alpha(1.0);
 }
@@ -102,10 +116,10 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 // Shared draw call for every die sprite — applies the squash/stretch scale on top of the base
 // scale/jitter, offsetting position so the effect pivots on the center (stretch) or the bottom
 // (squash) instead of the sprite's top-left draw origin.
-function scr_die_draw_sprite(_sprite, _subimg, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha) {
+function scr_die_draw_sprite(_sprite, _subimg, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _color = c_white) {
 	var _draw_x = _x + CELL_SIZE * (1 - _sqx) * 0.5;
 	var _draw_y = _pivot_bottom
 		? _y + CELL_SIZE * (1 - _sqy)
 		: _y + CELL_SIZE * (1 - _sqy) * 0.5;
-	draw_sprite_ext(_sprite, _subimg, _draw_x, _draw_y, _scale * _xs * _sqx, _scale * _ys * _sqy, 0, c_white, _alpha);
+	draw_sprite_ext(_sprite, _subimg, _draw_x, _draw_y, _scale * _xs * _sqx, _scale * _ys * _sqy, 0, _color, _alpha);
 }

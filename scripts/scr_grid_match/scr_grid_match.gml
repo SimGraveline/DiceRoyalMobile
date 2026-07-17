@@ -49,7 +49,7 @@ function scr_grid_match() {
 					for (var _gr = 0; _gr <= GRID_ROWS; _gr++) {
 						if (_group[_gc][_gr]) {
 							global.grid_dying[_gc][_gr] = DYING_DURATION;
-							global.grid_dying_match[_gc][_gr] = true;
+							global.grid_dying_chain[_gc][_gr] = true;
 						}
 					}
 				}

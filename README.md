@@ -1,4 +1,4 @@
-# Dice Royal
+# Dice Royal - DESKTOP
 
 A falling block puzzle game inspired by Tetris, Puyo Puyo and Devil Dice, developed by Grave Games.
 

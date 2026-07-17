@@ -1,10 +1,10 @@
 function scr_grid_resolve() {
 	var _any_expired = false;
 
-	// Tracks the "freshest" still-dying cell that came from a genuine value-cluster match
-	// (grid_dying_match — see scr_grid_match) so the background dice can tint to match it. Bomb,
-	// Clear, suites, and the "1 joins anything" rule never set that flag, so none of them can
-	// trigger this even though they also set grid_dying — see scr_die_color.
+	// Tracks the "freshest" still-dying cell that's part of a genuine 2-9 value-cluster chain
+	// (grid_dying_chain — see scr_grid_init — restricted to regular values here) so the background
+	// dice can tint to match it. 1's and specials never drive the tint, even when grid_dying_chain
+	// is set on them (e.g. a 1 caught by the chain-dying rule) — only the 2-9 chain itself does.
 	var _any_dying = false;
 	var _best_timer = 0;
 	var _best_val = 0;
@@ -31,15 +31,18 @@ function scr_grid_resolve() {
 					}
 					global.grid_dying[_col][_row] = 0;
 					global.grid_dying_clear[_col][_row] = false;
-					global.grid_dying_match[_col][_row] = false;
+					global.grid_dying_chain[_col][_row] = false;
 					global.grid[_col][_row] = 0;
 					global.grid_special[_col][_row] = 0;
 					_any_expired = true;
-				} else if (global.grid_dying_match[_col][_row]) {
-					_any_dying = true;
-					if (global.grid_dying[_col][_row] > _best_timer) {
-						_best_timer = global.grid_dying[_col][_row];
-						_best_val = global.grid[_col][_row];
+				} else if (global.grid_dying_chain[_col][_row]) {
+					var _chain_val = global.grid[_col][_row];
+					if (_chain_val >= 2 && _chain_val <= PAIR_MAX_VALUE) {
+						_any_dying = true;
+						if (global.grid_dying[_col][_row] > _best_timer) {
+							_best_timer = global.grid_dying[_col][_row];
+							_best_val = _chain_val;
+						}
 					}
 				}
 			}
@@ -66,7 +69,7 @@ function scr_grid_resolve() {
 }
 
 // Maps a die value to its representative color, same palette used by the ghost trail. Only ever
-// called with a value carrying grid_dying_match (2-9), so no other case is reachable.
+// called with a value in the 2-9 chain range (see scr_grid_resolve), so no other case is reachable.
 function scr_die_color(_val) {
 	switch (_val) {
 		case 2: return c_yellow;

@@ -2,9 +2,18 @@ function scr_grid_specials(){
 
 }
 
+// Whether _val is something a Bomb can read as a target — below it, or landing on/being landed
+// on by it. Every activation site (this die's own placement, scr_die_try_activate_below, and
+// both directions in scr_grid_gravity) must agree on this set, so it lives in one place instead
+// of being duplicated with a risk of drifting out of sync between them. Deliberately excludes
+// DIE_MIMIC — an idle (unresolved) Mimic is never a valid Bomb target or trigger.
+function scr_die_bomb_valid_target(_val) {
+	return (_val >= 1 && _val <= PAIR_MAX_VALUE) || _val == DIE_BRICK || _val == DIE_BOMB;
+}
+
 // Checks the cell directly below (_col, _row) for an idle Mimic or Bomb and activates it using
-// _target. An idle Mimic only resolves to a real 1-9 value; an idle Bomb accepts any target
-// (real value, Brick, another Bomb, or an unresolved Mimic) — see scr_die_bomb_activate.
+// _target. An idle Mimic only resolves to a real 1-9 value; an idle Bomb accepts anything
+// scr_die_bomb_valid_target allows (real value, Brick, another Bomb — never an idle Mimic).
 function scr_die_try_activate_below(_col, _row, _target) {
 	if (_row <= 0) return;
 
@@ -13,7 +22,7 @@ function scr_die_try_activate_below(_col, _row, _target) {
 
 	if (_below_val == DIE_MIMIC && _below_sp == DIE_MIMIC && _target >= 1 && _target <= PAIR_MAX_VALUE) {
 		global.grid[_col][_row - 1] = _target;
-	} else if (_below_val == DIE_BOMB && _below_sp == DIE_BOMB) {
+	} else if (_below_val == DIE_BOMB && _below_sp == DIE_BOMB && scr_die_bomb_valid_target(_target)) {
 		scr_die_bomb_activate(_col, _row - 1, _target);
 	}
 }
@@ -27,19 +36,6 @@ function scr_die_bomb_activate(_col, _row, _target_val) {
 		for (var _r = 0; _r <= GRID_ROWS; _r++) {
 			if (global.grid[_c][_r] == _target_val && global.grid_dying[_c][_r] == 0) {
 				global.grid_dying[_c][_r] = DYING_DURATION;
-			}
-		}
-	}
-
-	// Combo: a Bomb reading a Brick as its target also wipes every Bomb on the grid (idle or not).
-	// Reading DIE_BOMB or DIE_MIMIC directly (see scr_die_place) already covers those cases generically
-	// through the scan above — this is only for the Brick-specific combo side effect.
-	if (_target_val == DIE_BRICK) {
-		for (var _c = 0; _c < GRID_COLS; _c++) {
-			for (var _r = 0; _r <= GRID_ROWS; _r++) {
-				if (global.grid[_c][_r] == DIE_BOMB && global.grid_dying[_c][_r] == 0) {
-					global.grid_dying[_c][_r] = DYING_DURATION;
-				}
 			}
 		}
 	}

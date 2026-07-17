@@ -29,6 +29,7 @@ function scr_grid_check_suite() {
 			if (_asc || _desc) {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col + _i][_row] = DYING_DURATION;
+					global.grid_dying_chain[_col + _i][_row] = true;
 				}
 				global.game_score += _suite_score;
 				_found = true;
@@ -51,6 +52,7 @@ function scr_grid_check_suite() {
 			if (_asc || _desc) {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col][_row + _i] = DYING_DURATION;
+					global.grid_dying_chain[_col][_row + _i] = true;
 				}
 				global.game_score += _suite_score;
 				_found = true;
