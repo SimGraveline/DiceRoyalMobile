@@ -14,18 +14,17 @@ function scr_game_init() {
 	global.paused = false;
 	global.help_active = false;
 	global.pause_cursor = 0;
-	global.pause_highlight = false;
+	global.pause_highlight = true;
+	global.pause_selected_index = -1;
 	global.pause_stick_prev = false;
 	global.pause_mouse_x = 0;
 	global.pause_mouse_y = 0;
 	global.fade_active = false;
 	global.countdown_active = false;
-	global.ghost_enabled = true;
-	global.grid_lines = false;
 	global.game_score = 0;
 	global.level = 1;
 	global.level_pulse_timer = 0;
-	scr_save_load();
+	scr_save_load(); // sets high_score(_name), music_muted, sfx_muted, grid_lines, show_queue, hold_swap_enabled, ghost_enabled
 	global.high_score_beaten = false;
 
 	LEVEL_THRESHOLDS = [0, 5000, 15000, 30000, 50000, 75000, 105000, 140000, 180000, 225000, 275000, 330000, 390000, 455000, 525000, 600000, 680000, 765000, 855000, 950000];
@@ -76,17 +75,18 @@ function scr_game_restart() {
 	global.paused = false;
 	global.help_active = false;
 	global.pause_cursor = 0;
-	global.pause_highlight = false;
+	global.pause_highlight = true;
+	global.pause_selected_index = -1;
 	global.pause_stick_prev = false;
 	global.pause_mouse_x = 0;
 	global.pause_mouse_y = 0;
-	global.ghost_enabled = true;
-	global.grid_lines = false;
+	// Deliberately NOT resetting ghost_enabled/grid_lines/show_queue/hold_swap_enabled/mute flags
+	// here, and no scr_save_load() call either — these are session-long options, they must survive
+	// a restart. Only a true game launch (scr_game_init) re-reads them from the save file.
 	global.game_score = 0;
 	global.level = 1;
 	global.drop_speed = LEVEL_SPEEDS[0];
 	global.level_pulse_timer = 0;
-	scr_save_load();
 	global.high_score_beaten = false;
 	global.combo_count = 0;
 	global.hold_val1 = -1;
@@ -102,6 +102,11 @@ function scr_game_restart() {
 	global.junk_queue = [];
 	global.junk_falling = [];
 	global.junk_drop_timer = 0;
+
+	// Background combo tint doesn't reset on its own — if a chain was mid-color when the player
+	// paused and quit, it would otherwise still be showing that color on the next game.
+	global.bg_combo_color = c_white;
+	global.bg_combo_alpha = BG_ALPHA;
 
 	global.game_state = STATE_GAME;
 	scr_audio_init();

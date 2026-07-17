@@ -11,9 +11,6 @@
 #macro LOGO_SCALE_REFERENCE_WIDTH  400
 #macro GRID_HEIGHT_RATIO  0.75
 
-#macro FONT_TITLE    fnt_bungee_title
-#macro FONT_BODY     fnt_bungee
-
 // --- Grid ---
 #macro CELL_SIZE   floor((GAME_HEIGHT * GRID_HEIGHT_RATIO) / (GRID_ROWS + 1))
 #macro GRID_COLS   7
@@ -68,16 +65,16 @@
 
 // --- Dice unlock levels ---
 // Dice 7-8-9 are fully wired but kept dormant — see DICE_HIGH_VALUES_ENABLED below.
+#macro DICE_RANDOM_UNLOCK_LEVEL   1
+#macro DICE_CLEAR_R_UNLOCK_LEVEL  2
+#macro DICE_CLEAR_C_UNLOCK_LEVEL  2
+#macro DICE_BOMB_UNLOCK_LEVEL     3
+#macro DICE_JUNK_UNLOCK_LEVEL     4
+#macro DICE_BRICK_UNLOCK_LEVEL    5
+#macro DICE_MIMIC_UNLOCK_LEVEL    6
 #macro DICE_7_UNLOCK_LEVEL        7
 #macro DICE_8_UNLOCK_LEVEL        8
 #macro DICE_9_UNLOCK_LEVEL        9
-#macro DICE_MIMIC_UNLOCK_LEVEL    5
-#macro DICE_BOMB_UNLOCK_LEVEL     3
-#macro DICE_RANDOM_UNLOCK_LEVEL   1
-#macro DICE_BRICK_UNLOCK_LEVEL    4
-#macro DICE_JUNK_UNLOCK_LEVEL     4
-#macro DICE_CLEAR_R_UNLOCK_LEVEL  2
-#macro DICE_CLEAR_C_UNLOCK_LEVEL  2
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
 // colors, scoring, suites) but deliberately never activated. Flip to re-enable;
@@ -231,6 +228,10 @@
 #macro BOX_HEIGHT      (CELL_SIZE * 1.5)
 #macro BOX_LABEL_OFFSET  8
 #macro UI_MENU_LINE_H_FACTOR      1.8
+// "-space-" gap between menu groups — smaller than an actual line, shared by Pause/Help/Game Over.
+#macro UI_MENU_BLANK_LINE_FACTOR  0.8
 #macro MENU_OVERLAY_ALPHA         0.9
 #macro UI_SCORE_LINE_H_FACTOR     1.5
-#macro UI_GAME_OVER_GAP_FACTOR    0.3
+// Minimum pixel delta before mouse movement counts as "the player is using the mouse" in a menu —
+// filters out sensor jitter from a resting hand so it never fights keyboard/gamepad navigation.
+#macro MENU_MOUSE_MOVE_THRESHOLD  4

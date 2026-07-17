@@ -8,19 +8,11 @@ function scr_game_update() {
 		surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 
-	if (global.game_state == STATE_LOGOS) {
-		scr_screen_logos_update();
-		return;
-	}
-
 	scr_game_input_keyboard();
 	scr_game_input_gamepad();
 
-	if (global.game_state == STATE_SPLASH) {
-		scr_screen_splash_update();
-		return;
-	}
-
+	// DEBUG: available everywhere, regardless of screen — checked before any state-specific
+	// early return below.
 	if (global.input_restart) {
 		audio_stop_all();
 		room_restart();
@@ -32,14 +24,37 @@ function scr_game_update() {
 		exit;
 	}
 
-	if (global.help_active && (global.input_help || global.input_pause)) {
+	if (global.game_state == STATE_LOGOS) {
+		scr_screen_logos_update();
+		return;
+	}
+
+	if (global.game_state == STATE_SPLASH) {
+		scr_screen_splash_update();
+		return;
+	}
+
+	if (global.help_active && global.input_pause) {
+		// Escape always force-closes Help straight back to gameplay. Enter never does this —
+		// its only role in Help is confirming the Back button (see scr_help_menu_update),
+		// which returns to Pause instead.
 		global.help_active = false;
 		global.paused = false;
-	} else if (global.input_help && !global.game_over && !global.countdown_active && !global.fade_active) {
-		global.help_active = true;
-		global.paused = true;
 	} else if (global.input_pause && !global.game_over && !global.countdown_active && !global.fade_active) {
 		scr_game_over_pause();
+		return; // don't let scr_game_pause_update() also process this same keypress this frame
+	} else if (global.input_pause_alt && !global.paused && !global.game_over && !global.countdown_active && !global.fade_active) {
+		// Enter also opens the pause menu, same as Escape — but only to open it. Once paused,
+		// Enter is reserved for confirming a menu selection (see scr_game_pause_update).
+		scr_game_over_pause();
+		return; // same reason — Enter would otherwise also read as "confirm" the instant the menu opens
+	}
+
+	if (global.help_active) {
+		scr_help_menu_update();
+		if (!global.help_active) return; // Back/Escape just closed Help this frame — don't let
+		                                  // scr_game_pause_update() also read the same keypress
+		                                  // (the pause cursor is still sitting on "Help")
 	}
 
 	if (global.input_grid_lines) {
@@ -75,7 +90,7 @@ function scr_game_update() {
 		}
 	}
 
-	if (global.input_hold) {
+	if (global.input_hold && global.hold_swap_enabled) {
 		scr_game_hold();
 	}
 
@@ -108,8 +123,11 @@ function scr_game_update() {
 					global.game_over_tap_timer = GAME_OVER_TAP_DELAY;
 					global.game_over_blink_timer = 0;
 					global.game_over_cursor = 0;
-					global.game_over_highlight = false;
+					global.game_over_highlight = true;
+					global.game_over_selected_index = -1;
 					global.game_over_stick_prev = false;
+					global.game_over_mouse_x = 0;
+					global.game_over_mouse_y = 0;
 					if (global.game_score > global.high_score) {
 						global.high_score = global.game_score;
 						scr_save_write();

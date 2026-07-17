@@ -1,14 +1,15 @@
 # TODO — Dice Royal - DESKTOP
 
-## THIS SESSION
-- [ ] Ajuster les menus pour controls clavier/souris + manette; focus de sélection.
-- [ ] Mute / Un Mute ne devrait pas restart la toune, juste la resume.
-- [ ] Pause devrait arrêter l'animation des dés.
-- [ ] Réorganisation des Fonts.
-- [ ] Gestion du data de difficulté avec CSV?
+## THIS SESSION PART 1
+- [ ] 
+## THIS SESSION PART 2
+- [ ] Faire diff Desktop Vs Mobile pour upload version up to date.
+- [ ] Upload version Desktop sur Itch.Io
+- [ ] Ajouter version Desktop à Portfolio
 
 ## NEXT SESSION
 - [ ] Nouveaux visuels + animations pour special dice.
+- [ ] Gestion du data de difficulté avec CSV?
 
 ## GAMEPLAY
 - [ ] 
@@ -33,7 +34,7 @@
 - [ ] Ajouter menu unlocks -> Achievements, Rewards, Theme Selection.
 - [ ] Ajouter menu options -> Music on / off, SFX.
 - [ ] Modifier menu pause -> Ajouter Toggle "Next", Help.
-- [ ] Modifier menu help -> Enlever F1/Select, ajouter Dice Index.
+- [ ] Modifier menu help -> Ajouter Dice Index.
 
 ## POLISH
 - [ ] Refaire visuel avec Pixel Composer pour un look "modern Robotron".

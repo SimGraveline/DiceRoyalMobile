@@ -21,8 +21,8 @@ function scr_game_input_gamepad() {
 	if (gamepad_button_check_pressed(_pad_index, gp_face2) || gamepad_button_check_pressed(_pad_index, gp_face4)) global.input_rotate_cw = true;
 	if (gamepad_button_check_pressed(_pad_index, gp_face1) || gamepad_button_check_pressed(_pad_index, gp_face3)) global.input_rotate_ccw = true;
 	if (gamepad_button_check_pressed(_pad_index, gp_shoulderl) || gamepad_button_check_pressed(_pad_index, gp_shoulderr)) global.input_hold = true;
-	if (gamepad_button_check_pressed(_pad_index, gp_start)) { global.input_pause = true; global.input_confirm = true; }
-	if (gamepad_button_check_pressed(_pad_index, gp_select)) global.input_help = true;
+	if (gamepad_button_check_pressed(_pad_index, gp_start)) global.input_pause = true;
+	if (gamepad_button_check_pressed(_pad_index, gp_select)) global.input_grid_lines = true;
 
 	// RT + LT = Restart
 	if (gamepad_button_check(_pad_index, gp_shoulderrb) && gamepad_button_check_pressed(_pad_index, gp_shoulderlb)) global.input_restart = true;
