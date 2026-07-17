@@ -328,6 +328,7 @@ function scr_game_over_menu_layout() {
 	var _title_h = string_height(STR_GAME_OVER);
 	draw_set_font(fnt_gameover_scores_bungee_med);
 	var _score_line_h = string_height("M") * UI_SCORE_LINE_H_FACTOR;
+	var _value_gap = string_height("M") * UI_SCORE_VALUE_GAP_FACTOR;
 	draw_set_font(fnt_gameover_buttons_bungee_med);
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _gap = string_height("M") * UI_MENU_BLANK_LINE_FACTOR;
@@ -336,7 +337,9 @@ function scr_game_over_menu_layout() {
 	if (global.high_score_beaten) {
 		_new_best_h = _score_line_h;
 	}
-	var _scores_h = _new_best_h + _score_line_h * 4;
+	// Current Score/High Score each get a tight label->value gap, with the normal (larger)
+	// line height separating the two groups and trailing after the last value.
+	var _scores_h = _new_best_h + _score_line_h * 2 + _value_gap * 2;
 	var _menu_h = array_length(_items) * _line_h;
 	var _block_h = _title_h + _scores_h + _gap + _menu_h;
 	var _box_top = GRID_Y - GRID_OUTLINE_WIDTH;
@@ -348,6 +351,7 @@ function scr_game_over_menu_layout() {
 		items: _items,
 		line_h: _line_h,
 		score_line_h: _score_line_h,
+		value_gap: _value_gap,
 		title_h: _title_h,
 		scores_h: _scores_h,
 		gap: _gap,

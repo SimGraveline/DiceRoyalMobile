@@ -128,8 +128,9 @@ function scr_game_update() {
 					global.game_over_stick_prev = false;
 					global.game_over_mouse_x = 0;
 					global.game_over_mouse_y = 0;
-					if (global.game_score > global.high_score) {
-						global.high_score = global.game_score;
+					// global.high_score is already kept live-synced below as soon as it's beaten,
+					// so this only needs to persist it to disk once the run is over.
+					if (global.high_score_beaten) {
 						scr_save_write();
 					}
 				}
@@ -160,9 +161,14 @@ function scr_game_update() {
 	scr_level_update();
 	scr_game_bg_update();
 
-	if (!global.high_score_beaten && global.game_score > global.high_score) {
-		global.high_score_beaten = true;
-		scr_audio_play_sfx(snd_highscore);
+	if (global.game_score > global.high_score) {
+		// Keeps the HUD's High Score box live-accurate for the rest of the run instead of only
+		// updating global.high_score once at game over.
+		global.high_score = global.game_score;
+		if (!global.high_score_beaten) {
+			global.high_score_beaten = true;
+			scr_audio_play_sfx(snd_highscore);
+		}
 	}
 
 	scr_screen_fade_update();

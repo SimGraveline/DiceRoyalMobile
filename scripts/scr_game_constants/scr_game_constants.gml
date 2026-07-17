@@ -82,12 +82,12 @@
 #macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) --- constant for life once unlocked, no endless-tier change
-#macro DICE_MIMIC_CHANCE     20
-#macro DICE_BOMB_CHANCE      20
-#macro DICE_RANDOM_CHANCE    20
-#macro DICE_BRICK_CHANCE     20
-#macro DICE_CLEAR_R_CHANCE   20
-#macro DICE_CLEAR_C_CHANCE   20
+#macro DICE_MIMIC_CHANCE     33
+#macro DICE_BOMB_CHANCE      33
+#macro DICE_RANDOM_CHANCE    33
+#macro DICE_BRICK_CHANCE     33
+#macro DICE_CLEAR_R_CHANCE   33
+#macro DICE_CLEAR_C_CHANCE   33
 
 // --- Junk Drop ---
 // Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
@@ -99,7 +99,13 @@
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1
 
-// --- Dice colors ---
+// --- Dice colors --- (DXR background tint, scr_die_color) — GML literals are $BBGGRR, reversed
+// from the CSS #RRGGBB Sim tunes these against.
+#macro COLOR_DIE_2      $00FFFF
+#macro COLOR_DIE_3      $0000FF
+#macro COLOR_DIE_4      $00FF00
+#macro COLOR_DIE_5      $FF0000
+#macro COLOR_DIE_6      $000000
 #macro COLOR_DIE_7      $00A5FF
 #macro COLOR_DIE_8      $90536F
 #macro COLOR_DIE_9      $6B25E3
@@ -118,6 +124,12 @@
 #macro DICE_SPECIALS_SUB_BOMB     3
 #macro DICE_SPECIALS_SUB_BRICK    4
 #macro DICE_SPECIALS_SUB_MIMIC    5
+// HUD-only icons (Unlocks Tracker) — never used for the actual in-game die, only to represent it
+// in the box: Random's live cycling animation is distracting there, Junk Drop has no die value of
+// its own, and Clear R/Clear C unlock together so they share one combined icon.
+#macro DICE_SPECIALS_SUB_RANDOM_ICON  6
+#macro DICE_SPECIALS_SUB_JUNK_ICON    7
+#macro DICE_SPECIALS_SUB_CLEAR_ICON   8
 
 // --- Score ---
 #macro SCORE_STACK       10
@@ -128,6 +140,9 @@
 #macro SCORE_SUITE_9     10000
 
 // --- Ghost ---
+// Trail/preview color for special dice only (regular 1-9 dice keep their own die color instead).
+// GML color literals are $BBGGRR (reversed from CSS #RRGGBB) — this is #FF9D00 (orange).
+#macro GHOST_COLOR  $009DFF
 #macro GHOST_TRAIL_ALPHA  0.08
 #macro GHOST_PREVIEW_ALPHA  0.2
 // Fixed corner radius for the trail — draw_roundrect_ext keeps this constant regardless of the
@@ -149,6 +164,8 @@
 
 // --- Colors ---
 #macro COLOR_BG           $662300
+// #F5A600 (CSS) — GML color literals are $BBGGRR, reversed from CSS #RRGGBB.
+#macro COLOR_GOLD         $00A6F5
 #macro COLOR_GRID_BG      $CF8964
 #macro COLOR_GRID_OUTLINE $04BFEF
 #macro COLOR_BOX_FILL     $8FE6FD
@@ -227,11 +244,22 @@
 #macro BOX_WIDTH       (CELL_SIZE * 3)
 #macro BOX_HEIGHT      (CELL_SIZE * 1.5)
 #macro BOX_LABEL_OFFSET  8
+// --- HUD side-column boxes (Score/High Score/Level/Chains left, Next/Hold/Unlocks right) ---
+#macro UI_BOX_PADDING        (CELL_SIZE * 0.15)
+#macro UI_BOX_TITLE_GAP      (CELL_SIZE * 0.08)
+#macro UI_HUD_BOX_GAP        (CELL_SIZE * 0.35)
+#macro UI_UNLOCKS_TILE_SIZE  (CELL_SIZE * 0.55)
+#macro UI_UNLOCKS_TILE_GAP   (CELL_SIZE * 0.12)
+#macro UI_UNLOCKS_COLS       4
+#macro UI_UNLOCKS_LOCKED_ALPHA  0.35
 #macro UI_MENU_LINE_H_FACTOR      1.8
 // "-space-" gap between menu groups — smaller than an actual line, shared by Pause/Help/Game Over.
 #macro UI_MENU_BLANK_LINE_FACTOR  0.8
 #macro MENU_OVERLAY_ALPHA         0.9
 #macro UI_SCORE_LINE_H_FACTOR     1.5
+// Tighter gap used only between a score label and its own value (Game Over), so the value sits
+// closer to its label than to the next label below it.
+#macro UI_SCORE_VALUE_GAP_FACTOR  0.9
 // Minimum pixel delta before mouse movement counts as "the player is using the mouse" in a menu —
 // filters out sensor jitter from a resting hand so it never fights keyboard/gamepad navigation.
 #macro MENU_MOUSE_MOVE_THRESHOLD  4

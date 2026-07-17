@@ -101,6 +101,7 @@ function scr_junk_drop_check_start() {
 	}
 	global.junk_drop_timer = 0;
 	global.junk_state = "falling";
+	scr_chain_finalize();
 	global.combo_count = 0;
 }
 

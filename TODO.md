@@ -1,13 +1,12 @@
-# TODO — Dice Royal - DESKTOP
+# TODO — Dice Royal - DESKTO P
 
-## THIS SESSION PART 1
-- [ ] 
-## THIS SESSION PART 2
-- [ ] Faire diff Desktop Vs Mobile pour upload version up to date.
+## THIS SESSION
 - [ ] Upload version Desktop sur Itch.Io
-- [ ] Ajouter version Desktop à Portfolio
+- [ ] Faire Post LinkedIn
 
 ## NEXT SESSION
+- [ ] Ajouter version Desktop à Portfolio
+- [ ] Faire diff Desktop Vs Mobile pour updaté version mobile et upload version up to date sur itch + porfolio.
 - [ ] Nouveaux visuels + animations pour special dice.
 - [ ] Gestion du data de difficulté avec CSV?
 

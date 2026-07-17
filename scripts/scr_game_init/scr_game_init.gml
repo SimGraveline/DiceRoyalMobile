@@ -2,7 +2,7 @@ function scr_game_init() {
 	randomize();
 	scr_grid_init();
 
-	global.spawn_weights = [0, 1, 1, 1, 1, 1, 1, 0, 0, 0];
+	global.spawn_weights = [0, 0.5, 1, 1, 1, 1, 1, 0, 0, 0];
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;
@@ -34,6 +34,8 @@ function scr_game_init() {
 	}
 	global.drop_speed = LEVEL_SPEEDS[0];
 	global.combo_count = 0;
+	global.chain_count = 0;
+	global.chain_best = 0;
 	global.hold_val1 = -1;
 	global.hold_val2 = -1;
 	global.hold_used = false;
@@ -89,6 +91,8 @@ function scr_game_restart() {
 	global.level_pulse_timer = 0;
 	global.high_score_beaten = false;
 	global.combo_count = 0;
+	global.chain_count = 0;
+	global.chain_best = 0;
 	global.hold_val1 = -1;
 	global.hold_val2 = -1;
 	global.hold_used = false;

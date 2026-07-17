@@ -1,6 +1,6 @@
 {
   "$GMFont":"",
-  "%Name":"fnt_bungee_countdown_1",
+  "%Name":"fnt_hud_countdown_bungee_big",
   "AntiAlias":1,
   "applyKerning":0,
   "ascender":87,
@@ -117,10 +117,10 @@
   "last":0,
   "lineHeight":113,
   "maintainGms1Font":false,
-  "name":"fnt_bungee_countdown_1",
+  "name":"fnt_hud_countdown_bungee_big",
   "parent":{
-    "name":"old",
-    "path":"folders/Fonts/old.yy",
+    "name":"Fonts",
+    "path":"folders/Fonts.yy",
   },
   "pointRounding":0,
   "ranges":[

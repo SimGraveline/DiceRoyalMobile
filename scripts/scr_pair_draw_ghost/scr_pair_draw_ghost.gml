@@ -6,7 +6,7 @@ function scr_pair_draw_ghost() {
 	if (!global.pair_active || !global.ghost_enabled) return;
 
 	// Indices 10 (Bomb) and 11 (Mimic) are never read — both are always classified as
-	// "special" below and short-circuit to c_white before this array is consulted.
+	// "special" below and short-circuit to GHOST_COLOR before this array is consulted.
 	var _colors = [
 		c_black,           // 0 = unused
 		c_white,           // 1
@@ -70,18 +70,19 @@ function scr_pair_draw_ghost() {
 	var _mval = (global.pair_val1 == DIE_RANDOM) ? global.pair_random_val : global.pair_val1;
 	var _sval = (global.pair_val2 == DIE_RANDOM) ? global.pair_random_val : global.pair_val2;
 
-	// Bomb/Mimic/Brick/Clear R/Clear C have no per-type color, so they draw as white
+	// Specials (Bomb/Mimic/Brick/Clear R/Clear C) have no per-value color, so they use the
+	// dedicated ghost accent color instead — regular 1-9 dice keep their own die color.
 	var _m_is_special = (_mval == DIE_BOMB) || (_mval == DIE_MIMIC) || (_mval == DIE_BRICK) || (_mval == DIE_CLEAR_R) || (_mval == DIE_CLEAR_C);
 	var _s_is_special = (_sval == DIE_BOMB) || (_sval == DIE_MIMIC) || (_sval == DIE_BRICK) || (_sval == DIE_CLEAR_R) || (_sval == DIE_CLEAR_C);
-	var _m_color = _m_is_special ? c_white : _colors[_mval];
-	var _s_color = _s_is_special ? c_white : _colors[_sval];
+	var _m_color = _m_is_special ? GHOST_COLOR : _colors[_mval];
+	var _s_color = _s_is_special ? GHOST_COLOR : _colors[_sval];
 
 	if (_draw_master) {
 		var _m_x = GRID_X + (_mc * CELL_SIZE);
 		var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE * 0.5;
 		var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
-		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_m_color);
+		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_roundrect_ext(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 		draw_set_alpha(GHOST_PREVIEW_ALPHA);
 		draw_roundrect_ext(_m_x, _m_land_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
@@ -91,8 +92,8 @@ function scr_pair_draw_ghost() {
 		var _s_x = GRID_X + (_sc * CELL_SIZE);
 		var _s_top_y = GRID_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE * 0.5;
 		var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
-		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_set_color(_s_color);
+		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_roundrect_ext(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
 		draw_set_alpha(GHOST_PREVIEW_ALPHA);
 		draw_roundrect_ext(_s_x, _s_land_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
