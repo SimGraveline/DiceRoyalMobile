@@ -221,7 +221,17 @@ function scr_ui_draw_unlocks_box(_x, _y, _w, _h) {
 // Computes both HUD columns so they share the same top Y and bottom Y — whichever column is
 // naturally shorter gets its inter-box gaps stretched to fill the same span, rather than the
 // two columns drifting to different heights.
+// Cached: every box height here only depends on the screen size (font metrics + CELL_SIZE, which
+// itself derives from GAME_HEIGHT) — none of it changes frame to frame. Recomputing it from
+// scratch every single step (several draw_set_font/string_height calls plus fresh arrays/struct,
+// forever) was pure waste; this reuses the last result unless GAME_WIDTH/GAME_HEIGHT actually change.
 function scr_ui_hud_layout() {
+	if (variable_global_exists("hud_layout_cache")
+		&& global.hud_layout_w == GAME_WIDTH
+		&& global.hud_layout_h == GAME_HEIGHT) {
+		return global.hud_layout_cache;
+	}
+
 	var _stat_h    = scr_ui_stat_box_height();
 	var _chains_h  = scr_ui_chains_box_height();
 	var _pair_h    = scr_ui_pair_box_height();
@@ -257,7 +267,7 @@ function scr_ui_hud_layout() {
 		_y += _right_h[_i] + _right_gap;
 	}
 
-	return {
+	global.hud_layout_cache = {
 		left_x:  GRID_X / 2 - BOX_WIDTH / 2,
 		right_x: (GRID_X + GRID_WIDTH + GAME_WIDTH) / 2 - BOX_WIDTH / 2,
 		left_h:  _left_h,
@@ -265,14 +275,18 @@ function scr_ui_hud_layout() {
 		left_y:  _left_y,
 		right_y: _right_y,
 	};
+	global.hud_layout_w = GAME_WIDTH;
+	global.hud_layout_h = GAME_HEIGHT;
+	return global.hud_layout_cache;
 }
 
 function scr_ui_draw() {
-	var _score_col = global.high_score_beaten ? c_yellow : c_white;
 	var _layout = scr_ui_hud_layout();
 
 	// --- Left column: Score / High Score / Level / Chains ---
-	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[0], BOX_WIDTH, _layout.left_h[0], STR_SCORE, string(global.game_score), _score_col);
+	// Score always stays white, even once it beats the High Score — high_score_beaten still
+	// drives the SFX (once) and the Game Over "NEW BEST" pulse, just not this box's color anymore.
+	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[0], BOX_WIDTH, _layout.left_h[0], STR_SCORE, string(global.game_score), c_white);
 	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[1], BOX_WIDTH, _layout.left_h[1], STR_HUD_HIGH_SCORE, string(global.high_score), COLOR_GOLD);
 	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[2], BOX_WIDTH, _layout.left_h[2], STR_LEVEL, string(global.level), c_white);
 	scr_ui_draw_chains_box(_layout.left_x, _layout.left_y[3], BOX_WIDTH, _layout.left_h[3]);

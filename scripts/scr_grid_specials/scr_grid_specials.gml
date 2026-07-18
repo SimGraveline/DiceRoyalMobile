@@ -40,7 +40,8 @@ function scr_die_bomb_activate(_col, _row, _target_val) {
 		}
 	}
 
-	scr_audio_play_sfx(snd_chain_dying);
+	// Bomb kills never shake (no grid_dying_chain) — the calmer, "artificial elimination" SFX plays instead.
+	scr_audio_play_sfx(snd_dice_dying);
 	scr_grid_propagate_dying();
 }
 
@@ -85,7 +86,8 @@ function scr_die_clear_trigger(_col, _row) {
 		}
 	}
 
-	scr_audio_play_sfx(snd_chain_dying);
+	// Clear kills never shake (grid_dying_clear, not grid_dying_chain) — same calmer SFX as Bomb.
+	scr_audio_play_sfx(snd_dice_dying);
 }
 
 // Checks whether a Clear die at (_col, _row) has reached its final resting spot and triggers it if so.

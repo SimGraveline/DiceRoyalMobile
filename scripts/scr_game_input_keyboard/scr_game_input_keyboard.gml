@@ -15,4 +15,5 @@ function scr_game_input_keyboard() {
 	global.input_mute_music = keyboard_check_pressed(ord("M"));
 	global.input_restart    = keyboard_check_pressed(ord("R")); // DEBUG
 	global.input_exit       = keyboard_check_pressed(ord("Q")); // DEBUG
+	global.input_reset_highscore = keyboard_check_pressed(vk_f5); // DEBUG
 }

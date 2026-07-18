@@ -2,10 +2,24 @@ function scr_game_update() {
 	// application_surface stays fixed at whatever size it was created at (the initial
 	// windowed size) unless explicitly resized — without this, switching to fullscreen
 	// just stretches that lower-res surface instead of rendering at full detail.
-	if (window_get_fullscreen()) {
-		surface_resize(application_surface, GAME_WIDTH, GAME_HEIGHT);
-	} else {
-		surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
+	// Only resize on an actual fullscreen-state change, never on a live pixel comparison —
+	// GAME_WIDTH/HEIGHT are room_width/room_height, and in the HTML5/itch.io embed the browser
+	// can jitter the canvas by a pixel on its own (page reflow, DPI rounding) with no real
+	// window_get_fullscreen() change; comparing raw dimensions every step would still resize
+	// (and reallocate the surface's render target) far too often. Gating on the boolean instead
+	// means this only ever fires on a genuine transition — at most once, since this game has no
+	// runtime fullscreen toggle anymore.
+	var _is_fullscreen = window_get_fullscreen();
+	if (!variable_global_exists("app_surface_fullscreen")) {
+		global.app_surface_fullscreen = !_is_fullscreen; // force the first frame to resize once
+	}
+	if (_is_fullscreen != global.app_surface_fullscreen) {
+		global.app_surface_fullscreen = _is_fullscreen;
+		if (_is_fullscreen) {
+			surface_resize(application_surface, GAME_WIDTH, GAME_HEIGHT);
+		} else {
+			surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
+		}
 	}
 
 	scr_game_input_keyboard();
@@ -22,6 +36,13 @@ function scr_game_update() {
 	if (global.input_exit) {
 		game_end();
 		exit;
+	}
+
+	if (global.input_reset_highscore) {
+		global.high_score = 0;
+		global.high_score_name = "";
+		global.high_score_beaten = false;
+		scr_save_write();
 	}
 
 	if (global.game_state == STATE_LOGOS) {

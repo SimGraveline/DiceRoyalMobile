@@ -26,9 +26,10 @@ The game supports keyboard, gamepad, and mouse (menus only — piece control is 
 - Left stick / D-Pad = Move / Soft drop / Hard drop (up)
 - B / Y = Rotate CW
 - A / X = Rotate CCW
-- LB / RB = Hold
-- Start = Pause / Confirm
-- Select = Help
+- LB / RB = Hold / Swap
+- Start = Pause
+- A = Confirm (in menus)
+- Select = Toggle grid lines
 - RT + LT = Restart
 - Select + Start = Quit
 
@@ -38,15 +39,14 @@ The game supports keyboard, gamepad, and mouse (menus only — piece control is 
 - S or Down = Soft drop
 - Space = Rotate CW
 - Ctrl = Rotate CCW
-- Shift = Hold
-- ESC = Pause
-- Enter = Confirm
-- F1 = Help
-- M = Mute/unmute music
+- Shift = Hold / Swap
+- Escape or Enter = Pause
+- Enter or Space = Confirm (in menus)
 - Tab = Toggle grid lines
+- M = Mute/unmute music
 
 ### Mouse
-- Click Pause / Help buttons and menu items (splash, pause, help, game over)
+- Click Pause / Game Over menu items, and Back in Help (Help is reachable via Pause → Help)
 
 ## Levels
 
