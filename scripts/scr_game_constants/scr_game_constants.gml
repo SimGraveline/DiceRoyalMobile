@@ -1,3 +1,16 @@
+// --- Enums ---
+// Typed states instead of bare strings: a typo in an enum member is a compile error, where a typo
+// in a string is a state that silently never matches.
+
+// Junk Drop lifecycle: idle -> telegraphed in the dead zone -> actually falling -> idle again.
+enum JUNK_STATE { NONE, TELEGRAPH, FALLING }
+
+// What confirming a pause menu row does. The row list itself lives in scr_pause_menu_items.
+enum PAUSE_ACTION { RESUME, RESTART, HELP, MUTE_MUSIC, MUTE_SFX, SHOW_GRID, SHOW_QUEUE, HOLD_SWAP, GHOST, QUIT }
+
+// Same idea for the Game Over menu — see scr_game_over_menu_items.
+enum GAME_OVER_ACTION { RESTART, QUIT }
+
 // --- Display ---
 // GAME_WIDTH/HEIGHT follow the room's own size directly (the fullscreen render target —
 // see scr_game_update, which resizes application_surface to this or WINDOW_WIDTH/HEIGHT
@@ -49,11 +62,24 @@
 #macro LOCK_RESETS_MAX  10
 #macro DYING_DURATION   1.1
 #macro DYING_ALPHA_MIN  0.1
+// Lowest value that forms a matchable color group. 1 sits below it because it's wild: it dies by
+// its own rule (any chain-dying neighbor clears every 1 on the board), never by grouping, and it
+// has no color of its own to drive the background tint with.
+#macro MATCH_MIN_VALUE  2
+// Shortest run of consecutive values that counts as a suite. Doubles as the gate: if the highest
+// unlocked value is below this, no suite can exist at all (see scr_grid_check_suite).
+#macro SUITE_MIN_LENGTH  6
 
 // --- Spawn restrictions ---
 #macro PAIR_MIN_VALUE   1
 #macro PAIR_MAX_VALUE   9
 #macro SPAWN_RETRY_MAX  20
+// A pair of identical dice at or below this value gets rerolled at spawn — a pair of 2's is
+// already a finished match the moment it lands, and 1's are wild.
+#macro PAIR_NO_DOUBLE_MAX_VALUE  2
+// How many columns a pair occupies while horizontal — used to clamp the master column so the
+// slave still has a column to sit in.
+#macro PAIR_WIDTH  2
 
 // --- Special die values ---
 #macro DIE_BOMB      10
@@ -84,10 +110,13 @@
 // --- Special dice spawn chances (1 in N) --- constant for life once unlocked, no endless-tier change
 #macro DICE_MIMIC_CHANCE     33
 #macro DICE_BOMB_CHANCE      33
-#macro DICE_RANDOM_CHANCE    33
+#macro DICE_RANDOM_CHANCE    44
 #macro DICE_BRICK_CHANCE     33
 #macro DICE_CLEAR_R_CHANCE   33
 #macro DICE_CLEAR_C_CHANCE   33
+// How fast a Random die cycles its face, as a fraction of the current drop period — 0.5 means it
+// flips twice for every step the pair falls, so it tracks the level's speed automatically.
+#macro DICE_RANDOM_CYCLE_FACTOR  0.5
 
 // --- Junk Drop ---
 // Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
@@ -99,8 +128,9 @@
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1
 
-// --- Dice colors --- (DXR background tint, scr_die_color) — GML literals are $BBGGRR, reversed
-// from the CSS #RRGGBB Sim tunes these against.
+// --- Dice colors --- The one palette per die value, served by scr_die_color: used by both the
+// DXR background tint during a chain and the ghost trail/preview. GML literals are $BBGGRR,
+// reversed from the CSS #RRGGBB Sim tunes these against.
 #macro COLOR_DIE_2      $00FFFF
 #macro COLOR_DIE_3      $0000FF
 #macro COLOR_DIE_4      $00FF00
@@ -109,10 +139,6 @@
 #macro COLOR_DIE_7      $00A5FF
 #macro COLOR_DIE_8      $90536F
 #macro COLOR_DIE_9      $6B25E3
-
-// --- Level up VFX ---
-#macro LEVEL_PULSE_DURATION     1.0
-#macro LEVEL_PULSE_SCALE_BOOST  0.4
 
 // --- Audio ---
 #macro MUSIC_VOLUME              0.4
@@ -133,8 +159,26 @@
 
 // --- Score ---
 #macro SCORE_STACK       10
+// A regular die is worth SCORE_BASE x its face value (1-9). Anything still holding a special
+// value when it dies (Bomb, Brick, Clear R/C, an unresolved Mimic) is worth SCORE_SPECIAL flat —
+// see scr_die_score_value. Deliberately NOT derived from the DIE_* constants: what a special pays
+// out is a design decision, not a side effect of the order they happen to be declared in.
 #macro SCORE_BASE        100
-#macro COMBO_MULTIPLIER  0.10
+#macro SCORE_SPECIAL     1000
+// Chain reward, one entry per wave within a single chain (index = waves already resolved, so
+// wave 1 = x1, wave 2 = x1.5, wave 3 = x2.25...). A deep chain is the hardest thing to pull off
+// in the game, so the reward climbs — and the step between entries grows as it goes (+0.5, +0.75,
+// +1.0, +1.25...), which accelerates without the runaway of a straight doubling. Hand-tunable on
+// purpose: change any single entry without reshaping the rest of the curve.
+// Values live in scr_game_init — a macro can't hold an array literal, same pattern as
+// LEVEL_THRESHOLDS. Past the last entry the table holds; see scr_combo_multiplier.
+#macro COMBO_MULTIPLIERS  global.__combo_multipliers
+// Flat bonus for completing a run of every unlocked value in order (1-2-3-...-N, ascending or
+// descending, in a line). Awarded on top of what the dice themselves score when they die — a suite
+// is the hardest formation in the game to build on purpose, so it can't just pay like an ordinary
+// group of the same size. Which one applies depends on the highest unlocked value (see
+// scr_grid_check_suite); with dice 7-9 dormant, SCORE_SUITE_6 is the live one.
+#macro SCORE_SUITE_6     6000
 #macro SCORE_SUITE_7     7000
 #macro SCORE_SUITE_8     8000
 #macro SCORE_SUITE_9     10000
@@ -198,6 +242,11 @@
 #macro RAIN_SHAKE_MIN      0.90
 #macro RAIN_SHAKE_MAX      1.10
 #macro RAIN_DESTROY_BUFFER 100
+// Faces available on spr_dice_rain — the rain is decorative, so it stays on real 1-6 die faces
+// regardless of which values are unlocked in the actual game.
+#macro RAIN_DICE_FACES     6
+// "Press Any Key" blink: full cycles per second of sin(t * pi * this).
+#macro SPLASH_BLINK_SPEED  2
 
 // --- Splash credits ---
 #macro CREDITS_MARGIN_BOTTOM  20
@@ -220,6 +269,9 @@
 
 // --- Game over ---
 #macro GAME_OVER_TAP_DELAY  1.0
+// "NEW BEST!" pulse rate, same sin(t * pi * this) form as SPLASH_BLINK_SPEED — faster than the
+// splash blink so it reads as excitement rather than an idle prompt.
+#macro GAME_OVER_PULSE_SPEED  3
 
 // --- Countdown ---
 #macro COUNTDOWN_STEPS      3
@@ -239,11 +291,7 @@
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-// Margin between screen-edge UI (Score/Level) and the window edge
-#macro UI_SCREEN_MARGIN   (CELL_SIZE * 0.5)
 #macro BOX_WIDTH       (CELL_SIZE * 3)
-#macro BOX_HEIGHT      (CELL_SIZE * 1.5)
-#macro BOX_LABEL_OFFSET  8
 // --- HUD side-column boxes (Score/High Score/Level/Chains left, Next/Hold/Unlocks right) ---
 #macro UI_BOX_PADDING        (CELL_SIZE * 0.15)
 #macro UI_BOX_TITLE_GAP      (CELL_SIZE * 0.08)

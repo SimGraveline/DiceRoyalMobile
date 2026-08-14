@@ -51,11 +51,25 @@ function scr_pair_detach() {
 		while (!scr_grid_cell_blocked(_solo_col, _solo_row - 1)) {
 			_solo_row -= 1;
 		}
-		scr_die_place(_solo_col, _solo_row, _solo_val);
-		global.game_score += SCORE_STACK;
 
-		scr_grid_check_join(_solo_col, _solo_row);
-		scr_grid_match();
+		// The grid only exists up to DEAD_ZONE_ROW — scr_grid_cell_blocked deliberately reports
+		// everything above it as free so a pair can spawn and move up there, but there is no cell
+		// to land in. A vertical pair locking with its lower die in the dead zone leaves the upper
+		// one resting one row past the end of the column: writing it anyway created a phantom row
+		// that nothing draws, nothing applies gravity to and nothing ever clears, and every read
+		// that followed it (the join check, a Clear R/C sweep scanning that row) reached past the
+		// end of the arrays. Discard the die instead — its partner is sitting in the dead zone at
+		// this point, so the run is ending on the next update either way (see scr_game_update).
+		// Clearing _solo_col also skips the Clear trigger further below, for the same reason.
+		if (_solo_row > DEAD_ZONE_ROW) {
+			_solo_col = -1;
+		} else {
+			scr_die_place(_solo_col, _solo_row, _solo_val);
+			global.game_score += SCORE_STACK;
+
+			scr_grid_check_join(_solo_col, _solo_row);
+			scr_grid_match();
+		}
 	}
 
 	// Clear R/C trigger checks run last, once every die from this detach (master, slave, and any

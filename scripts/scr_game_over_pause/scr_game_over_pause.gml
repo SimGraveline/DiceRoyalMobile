@@ -96,7 +96,7 @@ function scr_game_pause_update() {
 
 	global.pause_selected_index = -1;
 
-	var _menu_count = 10;
+	var _menu_count = array_length(scr_pause_menu_items());
 	var _moved = false;
 
 	// Navigation — keyboard
@@ -162,49 +162,104 @@ function scr_game_pause_update() {
 	}
 }
 
+// THE description of the pause menu — the only place a row is defined. The layout, the navigation
+// wrap-around, the mouse hit-test, the draw and the confirm action all read this same list, so
+// adding, removing or reordering a row is a one-place change. It used to be spelled out in four
+// separate spots (a string array, a hardcoded count of 10, a chain of index comparisons, and an
+// array of blank-line indices) that had to be kept in sync by hand.
+//   label       what's drawn
+//   action      which PAUSE_ACTION confirming this row performs
+//   checked     present only on a toggle row — whether its X is currently showing
+//   blank_after present only where a group separator gap follows this row
+function scr_pause_menu_items() {
+	return [
+		{ label: STR_MENU_RESUME,  action: PAUSE_ACTION.RESUME },
+		{ label: STR_MENU_RESTART, action: PAUSE_ACTION.RESTART },
+		{ label: STR_MENU_HELP,    action: PAUSE_ACTION.HELP, blank_after: true },
+		{ label: STR_MENU_MUTE_MUSIC, action: PAUSE_ACTION.MUTE_MUSIC, checked: global.music_muted },
+		{ label: STR_MENU_MUTE_SFX,   action: PAUSE_ACTION.MUTE_SFX,   checked: global.sfx_muted, blank_after: true },
+		{ label: STR_MENU_SHOW_GRID,  action: PAUSE_ACTION.SHOW_GRID,  checked: global.grid_lines },
+		{ label: STR_MENU_SHOW_QUEUE, action: PAUSE_ACTION.SHOW_QUEUE, checked: global.show_queue },
+		{ label: STR_MENU_HOLD_SWAP,  action: PAUSE_ACTION.HOLD_SWAP,  checked: global.hold_swap_enabled },
+		{ label: STR_MENU_GHOST,      action: PAUSE_ACTION.GHOST,      checked: global.ghost_enabled, blank_after: true },
+		{ label: STR_MENU_QUIT,    action: PAUSE_ACTION.QUIT }
+	];
+}
+
+// The two optional fields of a menu row, each read through one accessor so the field name is
+// spelled once instead of at every site that asks about it.
+// A toggle is exactly a row that carries a checked state.
+function scr_menu_item_is_toggle(_item) {
+	return variable_struct_exists(_item, "checked");
+}
+
+// A group separator gap follows this row.
+function scr_menu_item_has_gap(_item) {
+	return variable_struct_exists(_item, "blank_after");
+}
+
+// The row as it reads on screen, checkbox included. Used for width/centering; the draw code
+// re-composes the same pieces when it needs to color them independently (see scr_ui_draw).
+function scr_pause_item_text(_item) {
+	if (!scr_menu_item_is_toggle(_item)) return _item.label;
+	return STR_TOGGLE_OPEN + (_item.checked ? STR_TOGGLE_ON : STR_TOGGLE_OFF) + STR_TOGGLE_CLOSE + _item.label;
+}
+
 function scr_pause_menu_select(_index) {
-	if (_index == 0) {
-		scr_game_over_pause();
-	} else if (_index == 1) {
-		scr_game_restart();
-	} else if (_index == 2) {
-		global.help_active = true; // stays paused — Back (or Escape) returns from here, see scr_help_menu_update
-	} else if (_index == 3) {
-		scr_audio_toggle_music();
-	} else if (_index == 4) {
-		scr_audio_toggle_sfx();
-	} else if (_index == 5) {
-		global.grid_lines = !global.grid_lines; // same flag as the Tab/Select in-game toggle
-	} else if (_index == 6) {
-		global.show_queue = !global.show_queue;
-	} else if (_index == 7) {
-		global.hold_swap_enabled = !global.hold_swap_enabled;
-	} else if (_index == 8) {
-		scr_ghost_toggle();
-	} else if (_index == 9) {
-		audio_stop_all();
-		global.paused = false;
-		global.game_state = STATE_SPLASH;
-		scr_screen_splash_init();
+	var _items = scr_pause_menu_items();
+	if (_index < 0 || _index >= array_length(_items)) return;
+
+	switch (_items[_index].action) {
+		case PAUSE_ACTION.RESUME:
+			scr_game_over_pause();
+			break;
+		case PAUSE_ACTION.RESTART:
+			scr_game_restart();
+			break;
+		case PAUSE_ACTION.HELP:
+			global.help_active = true; // stays paused — Back (or Escape) returns from here, see scr_help_menu_update
+			break;
+		case PAUSE_ACTION.MUTE_MUSIC:
+			scr_audio_toggle_music();
+			break;
+		case PAUSE_ACTION.MUTE_SFX:
+			scr_audio_toggle_sfx();
+			break;
+		case PAUSE_ACTION.SHOW_GRID:
+			global.grid_lines = !global.grid_lines; // same flag as the Tab/Select in-game toggle
+			break;
+		case PAUSE_ACTION.SHOW_QUEUE:
+			global.show_queue = !global.show_queue;
+			break;
+		case PAUSE_ACTION.HOLD_SWAP:
+			global.hold_swap_enabled = !global.hold_swap_enabled;
+			break;
+		case PAUSE_ACTION.GHOST:
+			scr_ghost_toggle();
+			break;
+		case PAUSE_ACTION.QUIT:
+			audio_stop_all();
+			global.paused = false;
+			global.game_state = STATE_SPLASH;
+			scr_screen_splash_init();
+			break;
 	}
 }
 
 function scr_pause_menu_layout() {
-	var _items = [STR_MENU_RESUME, STR_MENU_RESTART, STR_MENU_HELP,
-	              global.music_muted ? STR_MENU_MUTE_ON : STR_MENU_MUTE_OFF,
-	              global.sfx_muted ? STR_MENU_SFX_ON : STR_MENU_SFX_OFF,
-	              global.grid_lines ? STR_MENU_SHOW_GRID_ON : STR_MENU_SHOW_GRID_OFF,
-	              global.show_queue ? STR_MENU_SHOW_QUEUE_ON : STR_MENU_SHOW_QUEUE_OFF,
-	              global.hold_swap_enabled ? STR_MENU_HOLD_SWAP_ON : STR_MENU_HOLD_SWAP_OFF,
-	              global.ghost_enabled ? STR_MENU_GHOST_ON : STR_MENU_GHOST_OFF,
-	              STR_MENU_QUIT];
-	// Blank line inserted after each of these item indices
-	var _blank_after = [2, 4, 8];
+	var _items = scr_pause_menu_items();
+
+	// Blank lines come from the rows themselves, so a group separator can never end up attached
+	// to the wrong row after a reorder.
+	var _blank_count = 0;
+	for (var _i = 0; _i < array_length(_items); _i++) {
+		if (scr_menu_item_has_gap(_items[_i])) _blank_count++;
+	}
 
 	draw_set_font(fnt_pause_buttons_bungee_med);
 	var _line_h = string_height("M") * UI_MENU_LINE_H_FACTOR;
 	var _blank_h = string_height("M") * UI_MENU_BLANK_LINE_FACTOR;
-	var _menu_h = array_length(_items) * _line_h + array_length(_blank_after) * _blank_h;
+	var _menu_h = array_length(_items) * _line_h + _blank_count * _blank_h;
 	draw_set_font(fnt_pause_title_bungee_med);
 	var _title_h = string_height(STR_PAUSED);
 	var _gap = _title_h * 0.5;
@@ -214,13 +269,14 @@ function scr_pause_menu_layout() {
 	var _top = _box_top + (_box_h - _block_h) / 2;
 	var _menu_top = _top + _title_h + _gap;
 
+	// Walk the rows in order, adding a gap after any row that asks for one — the offset accumulates
+	// naturally instead of being recomputed from a separate list of indices.
 	var _item_y = array_create(array_length(_items));
+	var _y = _menu_top;
 	for (var _i = 0; _i < array_length(_items); _i++) {
-		var _shift = 0;
-		for (var _b = 0; _b < array_length(_blank_after); _b++) {
-			if (_blank_after[_b] < _i) _shift += 1;
-		}
-		_item_y[_i] = _menu_top + _i * _line_h + _shift * _blank_h;
+		_item_y[_i] = _y;
+		_y += _line_h;
+		if (scr_menu_item_has_gap(_items[_i])) _y += _blank_h;
 	}
 
 	return {
@@ -250,7 +306,7 @@ function scr_pause_menu_hit(_mouse_y) {
 function scr_game_over_menu_update() {
 	global.game_over_selected_index = -1;
 
-	var _menu_count = 2;
+	var _menu_count = array_length(scr_game_over_menu_items());
 	var _moved = false;
 
 	if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W"))) { global.game_over_cursor--; _moved = true; }
@@ -310,19 +366,34 @@ function scr_game_over_menu_update() {
 	}
 }
 
+// Same single-source-of-truth rule as scr_pause_menu_items, on a much shorter menu. No toggles
+// and no group separators here, so a row is just a label and its action.
+function scr_game_over_menu_items() {
+	return [
+		{ label: STR_MENU_RESTART, action: GAME_OVER_ACTION.RESTART },
+		{ label: STR_MENU_QUIT,    action: GAME_OVER_ACTION.QUIT }
+	];
+}
+
 function scr_game_over_menu_select(_index) {
-	if (_index == 0) {
-		scr_game_restart();
-	} else if (_index == 1) {
-		audio_stop_all();
-		global.game_over = false;
-		global.game_state = STATE_SPLASH;
-		scr_screen_splash_init();
+	var _items = scr_game_over_menu_items();
+	if (_index < 0 || _index >= array_length(_items)) return;
+
+	switch (_items[_index].action) {
+		case GAME_OVER_ACTION.RESTART:
+			scr_game_restart();
+			break;
+		case GAME_OVER_ACTION.QUIT:
+			audio_stop_all();
+			global.game_over = false;
+			global.game_state = STATE_SPLASH;
+			scr_screen_splash_init();
+			break;
 	}
 }
 
 function scr_game_over_menu_layout() {
-	var _items = [STR_MENU_RESTART, STR_MENU_QUIT];
+	var _items = scr_game_over_menu_items();
 
 	draw_set_font(fnt_gameover_title_bungee_med);
 	var _title_h = string_height(STR_GAME_OVER);

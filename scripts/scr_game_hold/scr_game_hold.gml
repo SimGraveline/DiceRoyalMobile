@@ -12,7 +12,7 @@ function scr_game_hold() {
 		global.pair_col = global.last_pair_col;
 		var _slave_col = global.pair_col + global.pair_offset_col;
 		if (_slave_col >= GRID_COLS) {
-			global.pair_col = GRID_COLS - 2;
+			global.pair_col = GRID_COLS - PAIR_WIDTH;
 		}
 		if (global.pair_col < 0) {
 			global.pair_col = 0;

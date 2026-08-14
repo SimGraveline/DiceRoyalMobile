@@ -5,21 +5,6 @@ function scr_ghost_toggle() {
 function scr_pair_draw_ghost() {
 	if (!global.pair_active || !global.ghost_enabled) return;
 
-	// Indices 10 (Bomb) and 11 (Mimic) are never read — both are always classified as
-	// "special" below and short-circuit to GHOST_COLOR before this array is consulted.
-	var _colors = [
-		c_black,           // 0 = unused
-		c_white,           // 1
-		c_yellow,          // 2
-		c_red,             // 3
-		c_green,           // 4
-		c_blue,            // 5
-		c_black,           // 6
-		COLOR_DIE_7,       // 7
-		COLOR_DIE_8,       // 8
-		COLOR_DIE_9        // 9
-	];
-
 	var _mc = global.pair_col;
 	var _mr = global.pair_row;
 	var _oc = global.pair_offset_col;
@@ -71,11 +56,13 @@ function scr_pair_draw_ghost() {
 	var _sval = (global.pair_val2 == DIE_RANDOM) ? global.pair_random_val : global.pair_val2;
 
 	// Specials (Bomb/Mimic/Brick/Clear R/Clear C) have no per-value color, so they use the
-	// dedicated ghost accent color instead — regular 1-9 dice keep their own die color.
+	// dedicated ghost accent color instead — regular 1-9 dice keep their own die color, taken
+	// straight from scr_die_color so the trail and the background chain tint can never drift
+	// apart (they used to be two hand-maintained palettes, and the green had already diverged).
 	var _m_is_special = (_mval == DIE_BOMB) || (_mval == DIE_MIMIC) || (_mval == DIE_BRICK) || (_mval == DIE_CLEAR_R) || (_mval == DIE_CLEAR_C);
 	var _s_is_special = (_sval == DIE_BOMB) || (_sval == DIE_MIMIC) || (_sval == DIE_BRICK) || (_sval == DIE_CLEAR_R) || (_sval == DIE_CLEAR_C);
-	var _m_color = _m_is_special ? GHOST_COLOR : _colors[_mval];
-	var _s_color = _s_is_special ? GHOST_COLOR : _colors[_sval];
+	var _m_color = _m_is_special ? GHOST_COLOR : scr_die_color(_mval);
+	var _s_color = _s_is_special ? GHOST_COLOR : scr_die_color(_sval);
 
 	if (_draw_master) {
 		var _m_x = GRID_X + (_mc * CELL_SIZE);

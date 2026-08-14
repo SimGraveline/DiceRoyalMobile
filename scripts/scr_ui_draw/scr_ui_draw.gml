@@ -41,7 +41,7 @@ function scr_ui_draw_text_plain(_x, _y, _str, _col) {
 // Draws a "KEY = ACTION" help control row as three colored segments, centered as one unit
 // (font must already be set by the caller).
 function scr_ui_draw_control_row(_y, _key, _action) {
-	var _eq = " = ";
+	var _eq = STR_HELP_CTRL_SEPARATOR;
 	var _full_w = string_width(_key) + string_width(_eq) + string_width(_action);
 	var _cx = GAME_WIDTH / 2 - _full_w / 2;
 	draw_set_halign(fa_left);
@@ -210,7 +210,7 @@ function scr_ui_draw_unlocks_box(_x, _y, _w, _h) {
 
 	var _rows = ceil(array_length(_list) / UI_UNLOCKS_COLS);
 	var _sub_y = _tiles_y + _rows * (UI_UNLOCKS_TILE_SIZE + UI_UNLOCKS_TILE_GAP) - UI_UNLOCKS_TILE_GAP + UI_BOX_TITLE_GAP;
-	var _next_str = is_undefined(_next_locked) ? STR_UNLOCKS_ALL_DONE : (STR_UNLOCKS_NEXT_PREFIX + _next_locked.name + " - LV" + string(_next_locked.level));
+	var _next_str = is_undefined(_next_locked) ? STR_UNLOCKS_ALL_DONE : (STR_UNLOCKS_NEXT_PREFIX + _next_locked.name + STR_UNLOCKS_LEVEL_PREFIX + string(_next_locked.level));
 
 	draw_set_font(fnt_hud_boxsub_bungee_small);
 	draw_set_halign(fa_left);
@@ -226,9 +226,7 @@ function scr_ui_draw_unlocks_box(_x, _y, _w, _h) {
 // scratch every single step (several draw_set_font/string_height calls plus fresh arrays/struct,
 // forever) was pure waste; this reuses the last result unless GAME_WIDTH/GAME_HEIGHT actually change.
 function scr_ui_hud_layout() {
-	if (variable_global_exists("hud_layout_cache")
-		&& global.hud_layout_w == GAME_WIDTH
-		&& global.hud_layout_h == GAME_HEIGHT) {
+	if (global.hud_layout_w == GAME_WIDTH && global.hud_layout_h == GAME_HEIGHT) {
 		return global.hud_layout_cache;
 	}
 
@@ -281,28 +279,28 @@ function scr_ui_hud_layout() {
 }
 
 function scr_ui_draw() {
-	var _layout = scr_ui_hud_layout();
+	var _hud = scr_ui_hud_layout();
 
 	// --- Left column: Score / High Score / Level / Chains ---
 	// Score always stays white, even once it beats the High Score — high_score_beaten still
 	// drives the SFX (once) and the Game Over "NEW BEST" pulse, just not this box's color anymore.
-	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[0], BOX_WIDTH, _layout.left_h[0], STR_SCORE, string(global.game_score), c_white);
-	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[1], BOX_WIDTH, _layout.left_h[1], STR_HUD_HIGH_SCORE, string(global.high_score), COLOR_GOLD);
-	scr_ui_draw_stat_box(_layout.left_x, _layout.left_y[2], BOX_WIDTH, _layout.left_h[2], STR_LEVEL, string(global.level), c_white);
-	scr_ui_draw_chains_box(_layout.left_x, _layout.left_y[3], BOX_WIDTH, _layout.left_h[3]);
+	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[0], BOX_WIDTH, _hud.left_h[0], STR_SCORE, string(global.game_score), c_white);
+	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[1], BOX_WIDTH, _hud.left_h[1], STR_HUD_HIGH_SCORE, string(global.high_score), COLOR_GOLD);
+	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[2], BOX_WIDTH, _hud.left_h[2], STR_LEVEL, string(global.level), c_white);
+	scr_ui_draw_chains_box(_hud.left_x, _hud.left_y[3], BOX_WIDTH, _hud.left_h[3]);
 
 	// --- Right column: Unlocks / Next / Hold+Swap ---
-	scr_ui_draw_unlocks_box(_layout.right_x, _layout.right_y[0], BOX_WIDTH, _layout.right_h[0]);
+	scr_ui_draw_unlocks_box(_hud.right_x, _hud.right_y[0], BOX_WIDTH, _hud.right_h[0]);
 	if (global.show_queue) {
-		scr_ui_draw_pair_box(_layout.right_x, _layout.right_y[1], BOX_WIDTH, _layout.right_h[1], global.next_val1, global.next_val2, STR_NEXT);
+		scr_ui_draw_pair_box(_hud.right_x, _hud.right_y[1], BOX_WIDTH, _hud.right_h[1], global.next_val1, global.next_val2, STR_NEXT);
 	}
 	if (global.hold_swap_enabled) {
-		scr_ui_draw_pair_box(_layout.right_x, _layout.right_y[2], BOX_WIDTH, _layout.right_h[2], global.hold_val1, global.hold_val2, STR_HOLD);
+		scr_ui_draw_pair_box(_hud.right_x, _hud.right_y[2], BOX_WIDTH, _hud.right_h[2], global.hold_val1, global.hold_val2, STR_HOLD);
 	}
 
 	// Paused
 	if (global.help_active) {
-		var _layout = scr_help_menu_layout();
+		var _help = scr_help_menu_layout();
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
@@ -313,31 +311,31 @@ function scr_ui_draw() {
 		draw_set_valign(fa_top);
 
 		draw_set_font(fnt_help_title_bungee_med);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.title_y, STR_HELP_TITLE, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.title_y, STR_HELP_TITLE, c_white);
 
 		draw_set_font(fnt_help_text_bungee_med);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules1_y, STR_HELP_RULES_1, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules2_y, STR_HELP_RULES_2, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules3_y, STR_HELP_RULES_3, c_white);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules4_y, STR_HELP_RULES_4, COLOR_BOX_FILL);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules5_y, STR_HELP_RULES_5, c_white);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.rules6_y, STR_HELP_RULES_6, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules1_y, STR_HELP_RULES_1, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules2_y, STR_HELP_RULES_2, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules3_y, STR_HELP_RULES_3, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules4_y, STR_HELP_RULES_4, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules5_y, STR_HELP_RULES_5, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.rules6_y, STR_HELP_RULES_6, c_white);
 
 		draw_set_font(fnt_help_title_bungee_med);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.controls_title_y, STR_HELP_CONTROLS_TITLE, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.controls_title_y, STR_HELP_CONTROLS_TITLE, c_white);
 
 		draw_set_font(fnt_help_text_bungee_med);
-		scr_ui_draw_control_row(_layout.ctrl1_y, STR_HELP_CTRL_KEY_1, STR_HELP_CTRL_ACTION_1);
-		scr_ui_draw_control_row(_layout.ctrl2_y, STR_HELP_CTRL_KEY_2, STR_HELP_CTRL_ACTION_2);
-		scr_ui_draw_control_row(_layout.ctrl3_y, STR_HELP_CTRL_KEY_3, STR_HELP_CTRL_ACTION_3);
-		scr_ui_draw_control_row(_layout.ctrl4_y, STR_HELP_CTRL_KEY_4, STR_HELP_CTRL_ACTION_4);
-		scr_ui_draw_control_row(_layout.ctrl5_y, STR_HELP_CTRL_KEY_5, STR_HELP_CTRL_ACTION_5);
+		scr_ui_draw_control_row(_help.ctrl1_y, STR_HELP_CTRL_KEY_1, STR_HELP_CTRL_ACTION_1);
+		scr_ui_draw_control_row(_help.ctrl2_y, STR_HELP_CTRL_KEY_2, STR_HELP_CTRL_ACTION_2);
+		scr_ui_draw_control_row(_help.ctrl3_y, STR_HELP_CTRL_KEY_3, STR_HELP_CTRL_ACTION_3);
+		scr_ui_draw_control_row(_help.ctrl4_y, STR_HELP_CTRL_KEY_4, STR_HELP_CTRL_ACTION_4);
+		scr_ui_draw_control_row(_help.ctrl5_y, STR_HELP_CTRL_KEY_5, STR_HELP_CTRL_ACTION_5);
 
 		// Back — always highlighted, it's the only option on this screen
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.back_y, STR_HELP_BACK, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _help.back_y, STR_HELP_BACK, COLOR_BOX_FILL);
 	} else if (global.paused) {
-		var _layout = scr_pause_menu_layout();
-		var _items = _layout.items;
+		var _pause = scr_pause_menu_layout();
+		var _items = _pause.items;
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
@@ -347,49 +345,46 @@ function scr_ui_draw() {
 
 		draw_set_font(fnt_pause_title_bungee_med);
 		draw_set_valign(fa_top);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.top, STR_PAUSED, c_white);
+		scr_ui_draw_text(GAME_WIDTH / 2, _pause.top, STR_PAUSED, c_white);
 
 		draw_set_font(fnt_pause_buttons_bungee_med);
 		for (var _i = 0; _i < array_length(_items); _i++) {
 			var _item = _items[_i];
-			var _y = _layout.item_y[_i];
+			var _y = _pause.item_y[_i];
+			var _text = scr_pause_item_text(_item);
 			var _highlighted = (global.pause_highlight && _i == global.pause_cursor);
-			var _is_toggle = (string_char_at(_item, 1) == "[");
 
 			if (_i == global.pause_selected_index) {
-				scr_ui_draw_text(GAME_WIDTH / 2, _y, _item, c_black);
-			} else if (_is_toggle && !_highlighted) {
-				// "[" and "]" are always dark gray. The X (only present when on) is always red.
-				// The label is always the same pale gray as every other item — none of this
-				// changes based on on/off, only whether the X itself is there at all.
-				var _bracket_open = string_copy(_item, 1, 1);
-				var _state_char = string_copy(_item, 2, 1);
-				var _bracket_close = string_copy(_item, 3, 1);
-				var _label = string_copy(_item, 4, string_length(_item) - 3);
-				var _state_col = (_state_char == "X") ? c_red : c_dkgray;
+				scr_ui_draw_text(GAME_WIDTH / 2, _y, _text, c_black);
+			} else if (scr_menu_item_is_toggle(_item) && !_highlighted) {
+				// Brackets always dark gray, the X always red (simply absent when off), the label
+				// the same pale gray as every other row — the on/off state only decides whether
+				// the X is there at all, never a color. Drawn as separate segments laid out from
+				// the centered whole, which is why each piece is its own string macro.
+				var _state = _item.checked ? STR_TOGGLE_ON : STR_TOGGLE_OFF;
+				var _state_col = _item.checked ? c_red : c_dkgray;
 
-				var _full_w = string_width(_item);
-				var _cx = GAME_WIDTH / 2 - _full_w / 2;
+				var _cx = GAME_WIDTH / 2 - string_width(_text) / 2;
 				draw_set_halign(fa_left);
-				scr_ui_draw_text(_cx, _y, _bracket_open, c_dkgray);
-				_cx += string_width(_bracket_open);
-				scr_ui_draw_text(_cx, _y, _state_char, _state_col);
-				_cx += string_width(_state_char);
-				scr_ui_draw_text(_cx, _y, _bracket_close, c_dkgray);
-				_cx += string_width(_bracket_close);
-				scr_ui_draw_text(_cx, _y, _label, c_silver);
+				scr_ui_draw_text(_cx, _y, STR_TOGGLE_OPEN, c_dkgray);
+				_cx += string_width(STR_TOGGLE_OPEN);
+				scr_ui_draw_text(_cx, _y, _state, _state_col);
+				_cx += string_width(_state);
+				scr_ui_draw_text(_cx, _y, STR_TOGGLE_CLOSE, c_dkgray);
+				_cx += string_width(STR_TOGGLE_CLOSE);
+				scr_ui_draw_text(_cx, _y, _item.label, c_silver);
 				draw_set_halign(fa_center);
 			} else {
 				var _col = _highlighted ? COLOR_BOX_FILL : c_silver;
-				scr_ui_draw_text(GAME_WIDTH / 2, _y, _item, _col);
+				scr_ui_draw_text(GAME_WIDTH / 2, _y, _text, _col);
 			}
 		}
 	}
 
 	// Game over
 	if (global.game_over) {
-		var _layout = scr_game_over_menu_layout();
-		var _items = _layout.items;
+		var _over = scr_game_over_menu_layout();
+		var _items = _over.items;
 
 		draw_set_alpha(MENU_OVERLAY_ALPHA);
 		draw_set_color(COLOR_BG);
@@ -400,29 +395,29 @@ function scr_ui_draw() {
 		// Title
 		draw_set_font(fnt_gameover_title_bungee_med);
 		draw_set_valign(fa_top);
-		scr_ui_draw_text(GAME_WIDTH / 2, _layout.top, STR_GAME_OVER, c_red);
+		scr_ui_draw_text(GAME_WIDTH / 2, _over.top, STR_GAME_OVER, c_red);
 
 		// Scores
-		var _sy = _layout.top + _layout.title_h;
+		var _sy = _over.top + _over.title_h;
 
 		if (global.high_score_beaten) {
-			var _pulse = 0.5 + 0.5 * sin(global.game_over_blink_timer * pi * 3);
+			var _pulse = 0.5 + 0.5 * sin(global.game_over_blink_timer * pi * GAME_OVER_PULSE_SPEED);
 			draw_set_font(fnt_gameover_text_bungee_med);
 			draw_set_alpha(_pulse);
 			scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_NEW_BEST, c_yellow);
 			draw_set_alpha(1.0);
-			_sy += _layout.score_line_h;
+			_sy += _over.score_line_h;
 		}
 
 		draw_set_font(fnt_gameover_scorestitle_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_CURRENT_SCORE, COLOR_BOX_FILL);
-		_sy += _layout.value_gap;
+		_sy += _over.value_gap;
 		draw_set_font(fnt_gameover_scores_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.game_score), c_white);
-		_sy += _layout.score_line_h;
+		_sy += _over.score_line_h;
 		draw_set_font(fnt_gameover_scorestitle_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_HIGH_SCORE, COLOR_BOX_FILL);
-		_sy += _layout.value_gap;
+		_sy += _over.value_gap;
 		draw_set_font(fnt_gameover_scores_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.high_score), c_white);
 
@@ -437,7 +432,7 @@ function scr_ui_draw() {
 			} else {
 				_col = c_silver;
 			}
-			scr_ui_draw_text(GAME_WIDTH / 2, _layout.menu_top + _i * _layout.line_h, _items[_i], _col);
+			scr_ui_draw_text(GAME_WIDTH / 2, _over.menu_top + _i * _over.line_h, _items[_i].label, _col);
 		}
 	}
 

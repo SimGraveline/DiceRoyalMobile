@@ -21,15 +21,20 @@ function scr_grid_resolve() {
 			if (global.grid_dying[_col][_row] > 0) {
 				global.grid_dying[_col][_row] -= delta_time / DELTA_TO_SECONDS;
 				if (global.grid_dying[_col][_row] <= 0) {
-					// Uniform scoring — every die (regular or special) scores the same way on death,
-					// using whatever value is in its grid cell. No exceptions.
+					// Uniform scoring — every die, regular or special, goes through the same formula
+					// on death: base points x chain multiplier, no exceptions and no special case
+					// for any one die. Only the base points differ by type (scr_die_score_value).
+					// chain_count is how many waves of this chain have already resolved, so the
+					// multiplier climbs with every cascade — the deeper the chain, the more each
+					// remaining die is worth. See COMBO_MULTIPLIERS.
 					var _val = global.grid[_col][_row];
-					var _combo = power(COMBO_MULTIPLIER, global.combo_count);
-					if (_val == 1) {
-						global.game_score += floor(SCORE_BASE * _combo);
-					} else {
-						global.game_score += floor(SCORE_BASE * _val * _combo);
-					}
+					var _combo = scr_combo_multiplier(global.chain_count);
+					// floor(x + 0.5) rather than round(): GML's round() is banker's rounding (half
+					// to even — round(2.5) is 2 but round(3.5) is 4), so an exact .5 would land
+					// unpredictably. This always sends a half up. The current curve never produces
+					// a fraction anyway (every multiplier is a multiple of 0.25), but that holds
+					// only as long as nobody retunes an entry to something like 1.33.
+					global.game_score += floor(scr_die_score_value(_val) * _combo + 0.5);
 					// Chains Tracker only counts genuine chain waves (grid_dying_chain) — Bomb/Clear
 					// kills never set this flag, same distinction already used for shake/tint.
 					if (global.grid_dying_chain[_col][_row]) {
@@ -43,7 +48,7 @@ function scr_grid_resolve() {
 					_any_expired = true;
 				} else if (global.grid_dying_chain[_col][_row]) {
 					var _chain_val = global.grid[_col][_row];
-					if (_chain_val >= 2 && _chain_val <= PAIR_MAX_VALUE) {
+					if (_chain_val >= MATCH_MIN_VALUE && _chain_val <= PAIR_MAX_VALUE) {
 						_any_dying = true;
 						if (global.grid_dying[_col][_row] > _best_timer) {
 							_best_timer = global.grid_dying[_col][_row];
@@ -67,10 +72,12 @@ function scr_grid_resolve() {
 
 	// If any died, apply gravity then check for new matches (chain combo)
 	if (_any_expired) {
-		global.combo_count += 1;
-		// chain_count is the Chains Tracker's live "Last" value — it counts consecutive genuine
-		// chain waves within the current combo (not dice), climbing 1, 2, 3... in real time as
-		// each wave resolves. A wave made up entirely of Bomb/Clear kills doesn't advance it.
+		// chain_count is both the Chains Tracker's live "Last" value and the index into
+		// COMBO_MULTIPLIERS — deliberately one counter and not two, so the number shown to the
+		// player and the reward they actually receive can never drift into telling two different
+		// stories. It counts genuine chain waves only: a wave made up entirely of Bomb/Clear kills
+		// still eliminates and scores its dice, but never advances the chain — exactly as it never
+		// shakes, never tints the background and never shows in the tracker (see grid_dying_chain).
 		if (_any_chain_expired) {
 			global.chain_count += 1;
 		}
@@ -78,6 +85,25 @@ function scr_grid_resolve() {
 		scr_grid_clear_check_pending();
 		scr_grid_match();
 	}
+}
+
+// Base points a die is worth when it dies, before the chain multiplier.
+// A die that still has a face value scores that value — this covers regular 1-9 dice, a Random
+// (which locks to a real value the moment it lands) and a resolved Mimic (which holds the value it
+// copied), so all three score exactly like the die they are.
+// Everything else is still a special at the moment it dies — Bomb, Brick, Clear R, Clear C, and an
+// unresolved Mimic that never found a value to copy — and they all pay the same flat SCORE_SPECIAL.
+function scr_die_score_value(_val) {
+	if (_val >= PAIR_MIN_VALUE && _val <= PAIR_MAX_VALUE) return SCORE_BASE * _val;
+	return SCORE_SPECIAL;
+}
+
+// Score multiplier for a die dying on wave (_wave + 1) of the current chain — _wave is how many
+// waves already resolved, so it indexes COMBO_MULTIPLIERS directly. Anything past the end of the
+// table holds the last entry: on a grid this size, a chain that deep is already beyond what the
+// curve was tuned for, and holding keeps it predictable instead of extrapolating into nonsense.
+function scr_combo_multiplier(_wave) {
+	return COMBO_MULTIPLIERS[clamp(_wave, 0, array_length(COMBO_MULTIPLIERS) - 1)];
 }
 
 // Called wherever the grid is confirmed fully idle (next pair about to spawn, Junk Drop about to
@@ -88,8 +114,10 @@ function scr_chain_finalize() {
 	global.chain_count = 0;
 }
 
-// Maps a die value to its representative color, same palette used by the ghost trail. Only ever
-// called with a value in the 2-9 chain range (see scr_grid_resolve), so no other case is reachable.
+// Maps a die value to its representative color. The single palette for the whole game: the
+// background tint during a chain (scr_grid_resolve) and the ghost trail/preview
+// (scr_pair_draw_ghost) both read it here, so they can never drift apart.
+// Value 1 has no color of its own and falls through to white, like any value with no entry.
 function scr_die_color(_val) {
 	switch (_val) {
 		case 2: return COLOR_DIE_2;

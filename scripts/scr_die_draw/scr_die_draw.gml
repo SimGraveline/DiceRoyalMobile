@@ -111,10 +111,10 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 // Shared draw call for every die sprite — applies the squash/stretch scale on top of the base
 // scale/jitter, offsetting position so the effect pivots on the center (stretch) or the bottom
 // (squash) instead of the sprite's top-left draw origin.
-function scr_die_draw_sprite(_sprite, _subimg, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha, _color = c_white) {
+function scr_die_draw_sprite(_sprite, _subimg, _x, _y, _scale, _xs, _ys, _sqx, _sqy, _pivot_bottom, _alpha) {
 	var _draw_x = _x + CELL_SIZE * (1 - _sqx) * 0.5;
 	var _draw_y = _pivot_bottom
 		? _y + CELL_SIZE * (1 - _sqy)
 		: _y + CELL_SIZE * (1 - _sqy) * 0.5;
-	draw_sprite_ext(_sprite, _subimg, _draw_x, _draw_y, _scale * _xs * _sqx, _scale * _ys * _sqy, 0, _color, _alpha);
+	draw_sprite_ext(_sprite, _subimg, _draw_x, _draw_y, _scale * _xs * _sqx, _scale * _ys * _sqy, 0, c_white, _alpha);
 }

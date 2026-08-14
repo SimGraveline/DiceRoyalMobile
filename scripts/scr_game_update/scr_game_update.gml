@@ -9,10 +9,9 @@ function scr_game_update() {
 	// (and reallocate the surface's render target) far too often. Gating on the boolean instead
 	// means this only ever fires on a genuine transition — at most once, since this game has no
 	// runtime fullscreen toggle anymore.
+	// app_surface_fullscreen is seeded to the opposite of the real state in scr_game_init, so the
+	// very first frame always counts as a transition and resizes once.
 	var _is_fullscreen = window_get_fullscreen();
-	if (!variable_global_exists("app_surface_fullscreen")) {
-		global.app_surface_fullscreen = !_is_fullscreen; // force the first frame to resize once
-	}
 	if (_is_fullscreen != global.app_surface_fullscreen) {
 		global.app_surface_fullscreen = _is_fullscreen;
 		if (_is_fullscreen) {
@@ -155,7 +154,7 @@ function scr_game_update() {
 						scr_save_write();
 					}
 				}
-			} else if (global.junk_state == "none") {
+			} else if (global.junk_state == JUNK_STATE.NONE) {
 				scr_pair_spawn_next();
 			}
 		}
@@ -165,9 +164,9 @@ function scr_game_update() {
 	}
 
 	// --- Random die cycling (always active for next box display) ---
-	// Cycle speed always tracks the current drop speed (twice as fast), so it speeds up/slows down in lockstep with it.
+	// Cycle speed always tracks the current drop speed, so it speeds up/slows down in lockstep with it.
 	global.pair_random_timer += delta_time / DELTA_TO_SECONDS;
-	var _random_cycle_speed = global.drop_speed / 2;
+	var _random_cycle_speed = global.drop_speed * DICE_RANDOM_CYCLE_FACTOR;
 	if (global.pair_random_timer >= _random_cycle_speed) {
 		global.pair_random_timer -= _random_cycle_speed;
 		var _max_rnd = PAIR_MIN_VALUE;

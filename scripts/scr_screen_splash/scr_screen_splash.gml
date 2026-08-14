@@ -18,7 +18,7 @@ function scr_screen_splash_update() {
 		var _die = {
 			x: random(GAME_WIDTH),
 			y: random(GAME_HEIGHT),
-			frame: irandom_range(1, 6),
+			frame: irandom_range(1, RAIN_DICE_FACES),
 			alpha: random_range(RAIN_ALPHA_MIN, RAIN_ALPHA_MAX),
 			speed: random_range(RAIN_SPEED_MIN, RAIN_SPEED_MAX),
 			shaking: (irandom(RAIN_SHAKE_ODDS) < RAIN_SHAKE_CHANCE)
@@ -97,7 +97,7 @@ function scr_screen_splash_draw() {
 
 	// Tap to Stack (blink)
 	var _title_h = string_height(STR_TITLE);
-	var _blink_alpha = 0.5 + 0.5 * sin(global.splash_blink_timer * pi * 2);
+	var _blink_alpha = 0.5 + 0.5 * sin(global.splash_blink_timer * pi * SPLASH_BLINK_SPEED);
 	draw_set_alpha(_blink_alpha);
 	draw_set_font(fnt_splash_pressstart_inkfree_med);
 	draw_set_valign(fa_top);

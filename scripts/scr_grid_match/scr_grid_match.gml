@@ -24,7 +24,7 @@ function scr_grid_match() {
 	for (var _col = 0; _col < GRID_COLS; _col++) {
 		for (var _row = 0; _row <= GRID_ROWS; _row++) {
 			var _val = global.grid[_col][_row];
-			if (_val < 2 || _val > PAIR_MAX_VALUE || _visited[_col][_row] || global.grid_dying[_col][_row] > 0) continue;
+			if (_val < MATCH_MIN_VALUE || _val > PAIR_MAX_VALUE || _visited[_col][_row] || global.grid_dying[_col][_row] > 0) continue;
 
 			var _group = array_create(GRID_COLS);
 			for (var _c = 0; _c < GRID_COLS; _c++) {
