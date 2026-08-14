@@ -65,9 +65,9 @@ function scr_pair_draw_ghost() {
 	var _s_color = _s_is_special ? GHOST_COLOR : scr_die_color(_sval);
 
 	if (_draw_master) {
-		var _m_x = GRID_X + (_mc * CELL_SIZE);
-		var _m_top_y = GRID_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE * 0.5;
-		var _m_land_y = GRID_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
+		var _m_x = GRID_DRAW_X + (_mc * CELL_SIZE);
+		var _m_top_y = GRID_DRAW_Y + ((GRID_ROWS - _mr) * CELL_SIZE) + CELL_SIZE * 0.5;
+		var _m_land_y = GRID_DRAW_Y + ((GRID_ROWS - _final_mr) * CELL_SIZE);
 		draw_set_color(_m_color);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_roundrect_ext(_m_x, _m_top_y, _m_x + CELL_SIZE - 1, _m_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);
@@ -76,9 +76,9 @@ function scr_pair_draw_ghost() {
 	}
 
 	if (_draw_slave) {
-		var _s_x = GRID_X + (_sc * CELL_SIZE);
-		var _s_top_y = GRID_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE * 0.5;
-		var _s_land_y = GRID_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
+		var _s_x = GRID_DRAW_X + (_sc * CELL_SIZE);
+		var _s_top_y = GRID_DRAW_Y + ((GRID_ROWS - _sr) * CELL_SIZE) + CELL_SIZE * 0.5;
+		var _s_land_y = GRID_DRAW_Y + ((GRID_ROWS - _final_sr) * CELL_SIZE);
 		draw_set_color(_s_color);
 		draw_set_alpha(GHOST_TRAIL_ALPHA);
 		draw_roundrect_ext(_s_x, _s_top_y, _s_x + CELL_SIZE - 1, _s_land_y + CELL_SIZE - 1, GHOST_TRAIL_CORNER_RADIUS, GHOST_TRAIL_CORNER_RADIUS, false);

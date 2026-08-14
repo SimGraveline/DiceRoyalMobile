@@ -1,4 +1,6 @@
-function scr_pair_detach() {
+// _drop_type only feeds the landing impact's weight (see scr_grid_shake_impact) — it never changes
+// where anything lands or how it resolves.
+function scr_pair_detach(_drop_type) {
 	var _master_col = global.pair_col;
 	var _master_row = global.pair_row;
 	var _slave_col = _master_col + global.pair_offset_col;
@@ -81,5 +83,17 @@ function scr_pair_detach() {
 	if (_solo_col >= 0) scr_die_clear_try_trigger(_solo_col, _solo_row);
 
 	scr_audio_play_sfx(snd_dice_stack);
+
+	// Hard drops only. A normal or soft landing detaches at the END of the lock delay, so the pair
+	// has already been sitting visibly at rest on the stack for up to LOCK_DELAY by the time this
+	// runs — the punch would land well after the player saw the dice settle, reading as a random
+	// jolt rather than as impact. A hard drop has no such gap: it detaches the same frame it lands.
+	// One impact per detach, not per die: both dice of a pair land as a single event, and it fires
+	// with the stack SFX so the punch, the rumble and the sound are all the same beat.
+	if (_drop_type == DROP_TYPE.HARD) {
+		scr_grid_shake_impact();
+		scr_pad_rumble_impact();
+	}
+
 	global.last_pair_col = _master_col;
 }

@@ -60,6 +60,11 @@ function scr_game_reset_run() {
 	global.bg_combo_color = c_white;
 	global.bg_combo_alpha = BG_ALPHA;
 
+	// Grid must start at rest — a shake left running when the player quit mid-chain would otherwise
+	// carry its offset into the next game, same trap as the bg tint above.
+	scr_grid_shake_init();
+	scr_pad_rumble_init();
+
 	scr_audio_init();
 	scr_pair_generate_next();
 	scr_pair_spawn();

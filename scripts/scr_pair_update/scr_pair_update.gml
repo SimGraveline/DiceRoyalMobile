@@ -64,7 +64,9 @@ function scr_pair_update() {
 		global.lock_timer += delta_time / DELTA_TO_SECONDS;
 
 		if (global.lock_timer >= LOCK_DELAY) {
-			scr_pair_detach();
+			// Locking while the player holds Down still counts as a soft drop landing — they drove
+			// it into the stack, so it lands heavier than one that simply timed out.
+			scr_pair_detach(global.input_soft_drop ? DROP_TYPE.SOFT : DROP_TYPE.NORMAL);
 			global.lock_active = false;
 			return;
 		}
@@ -82,7 +84,7 @@ function scr_pair_update() {
 			if (_mb || _sb) break;
 			global.pair_row -= 1;
 		}
-		scr_pair_detach();
+		scr_pair_detach(DROP_TYPE.HARD);
 		global.lock_active = false;
 		return;
 	}

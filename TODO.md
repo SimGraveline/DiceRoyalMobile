@@ -1,8 +1,8 @@
 # TODO — Dice Royal - DESKTO P
 
 ## THIS SESSION
-- [ ] Ajout de screenshake
-- [ ] Ajout de rumble
+- [X] Ajout de screenshake
+- [X] Ajout de rumble
 - [ ] Ajout / Remplacement de SFX
 - [ ] Ajout de VFX
 

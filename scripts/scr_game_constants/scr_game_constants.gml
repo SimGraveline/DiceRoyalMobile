@@ -11,6 +11,10 @@ enum PAUSE_ACTION { RESUME, RESTART, HELP, MUTE_MUSIC, MUTE_SFX, SHOW_GRID, SHOW
 // Same idea for the Game Over menu — see scr_game_over_menu_items.
 enum GAME_OVER_ACTION { RESTART, QUIT }
 
+// How a pair reached the stack. Only drives the weight of the landing impact (see scr_grid_shake_impact) —
+// nothing about the actual placement changes.
+enum DROP_TYPE { NORMAL, SOFT, HARD }
+
 // --- Display ---
 // GAME_WIDTH/HEIGHT follow the room's own size directly (the fullscreen render target —
 // see scr_game_update, which resizes application_surface to this or WINDOW_WIDTH/HEIGHT
@@ -34,6 +38,12 @@ enum GAME_OVER_ACTION { RESTART, QUIT }
 // --- Grid position (centered horizontally) ---
 #macro GRID_X      ((GAME_WIDTH - GRID_WIDTH) / 2)
 #macro GRID_Y      ((GAME_HEIGHT - GRID_HEIGHT) / 2)
+// Where grid CONTENT actually gets drawn: the resting position plus the current shake offset.
+// Anything that belongs to the grid — its frame, the stacked dice, the falling pair, the ghost —
+// draws from these. Anything anchored to the grid but not part of it (HUD columns, the pause and
+// game over panels) keeps using the static GRID_X/GRID_Y above so it never shakes along.
+#macro GRID_DRAW_X  (GRID_X + global.grid_shake_x)
+#macro GRID_DRAW_Y  (GRID_Y + global.grid_shake_y)
 
 // --- Dead zone ---
 #macro DEAD_ZONE_ROW  GRID_ROWS
@@ -201,6 +211,36 @@ enum GAME_OVER_ACTION { RESTART, QUIT }
 #macro SQUASH_SCALE_X   1.25  // wider at the instant of landing
 #macro SQUASH_SCALE_Y   0.5   // shorter at the instant of landing
 #macro SQUASH_DURATION  0.12  // seconds to ease back to normal after landing
+
+// --- Grid shake (purely visual — the grid's DRAWN position only, never its logic or collision) ---
+// Only grid content moves (frame, dice, ghost). The HUD boxes and the pause/help/game over panels
+// keep reading the static GRID_X/GRID_Y, so they stay put while the grid shakes underneath them.
+#macro GRID_SHAKE_ENABLED  true
+// Landing impact: the grid punches DOWN (+Y is down) the instant a die stacks, then eases back to
+// rest over the duration. HARD DROPS ONLY — see scr_pair_detach for why a normal or soft landing
+// deliberately gets no punch at all.
+// Expressed as a fraction of CELL_SIZE, not raw pixels: an early pass used 1-2px, which is ~1% of
+// a cell and was invisible in play. A fraction also keeps the punch feeling the same on any
+// desktop resolution, since CELL_SIZE derives from screen height. A stack is small feedback, not
+// a celebration, so this stays well under a fifth of a cell.
+#macro GRID_IMPACT_OFFSET    (CELL_SIZE * 0.12)
+#macro GRID_IMPACT_DURATION  0.75
+// Chain rumble: the whole grid jitters on both axes for as long as a chain is firing. Retriggered
+// by every new chain wave, so a long cascade keeps the grid shaking throughout.
+#macro GRID_RUMBLE_AMOUNT    1.5
+#macro GRID_RUMBLE_DURATION  1.0
+
+// --- Gamepad rumble ---
+// Deliberately mirrors the grid shake: same two triggers, same moments, and the durations are the
+// grid's own constants so the motor can never drift out of sync with what's on screen. Only the
+// strengths are separate, because a motor and a pixel offset don't scale the same way.
+// The impact ramps down on the same squared curve as the visual punch; the chain rumble holds a
+// flat, lower strength for as long as the grid is jittering.
+#macro PAD_RUMBLE_ENABLED           true
+#macro PAD_RUMBLE_IMPACT_STRENGTH   0.35
+#macro PAD_RUMBLE_IMPACT_DURATION   GRID_IMPACT_DURATION
+#macro PAD_RUMBLE_CHAIN_STRENGTH    0.20
+#macro PAD_RUMBLE_CHAIN_DURATION    GRID_RUMBLE_DURATION
 
 // --- Background combo feel (bg dice tint to the active dying chain's color) ---
 #macro BG_COMBO_ENABLED  true

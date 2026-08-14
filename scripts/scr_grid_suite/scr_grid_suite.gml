@@ -63,6 +63,8 @@ function scr_grid_check_suite() {
 
 	if (_found) {
 		scr_audio_play_sfx(snd_chain_dying);
+		scr_grid_shake_chain();
+		scr_pad_rumble_chain();
 		scr_grid_propagate_dying();
 	}
 

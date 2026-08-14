@@ -24,15 +24,21 @@ function scr_game_update() {
 	scr_game_input_keyboard();
 	scr_game_input_gamepad();
 
+	// Ticked here, above every state-specific early return — a spinning motor has to be shut off
+	// on any screen the game jumps to, it can't just freeze like a visual effect can.
+	scr_pad_rumble_update();
+
 	// DEBUG: available everywhere, regardless of screen — checked before any state-specific
 	// early return below.
 	if (global.input_restart) {
 		audio_stop_all();
+		scr_pad_rumble_apply(0); // don't leave the pad buzzing through the room reload
 		room_restart();
 		exit;
 	}
 
 	if (global.input_exit) {
+		scr_pad_rumble_apply(0);
 		game_end();
 		exit;
 	}
@@ -180,6 +186,7 @@ function scr_game_update() {
 	scr_grid_resolve();
 	scr_level_update();
 	scr_game_bg_update();
+	scr_grid_shake_update();
 
 	if (global.game_score > global.high_score) {
 		// Keeps the HUD's High Score box live-accurate for the rest of the run instead of only

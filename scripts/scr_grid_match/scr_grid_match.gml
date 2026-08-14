@@ -60,6 +60,8 @@ function scr_grid_match() {
 	// Propagate dying to adjacent same-value dice (and 1's special case)
 	if (_found) {
 		scr_audio_play_sfx(snd_chain_dying);
+		scr_grid_shake_chain();
+		scr_pad_rumble_chain();
 		scr_grid_propagate_dying();
 	}
 

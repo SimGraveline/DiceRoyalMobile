@@ -1,6 +1,6 @@
 function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false) {
-	var _x = GRID_X + (_col * CELL_SIZE);
-	var _y = GRID_Y + ((GRID_ROWS - _row) * CELL_SIZE);
+	var _x = GRID_DRAW_X + (_col * CELL_SIZE);
+	var _y = GRID_DRAW_Y + ((GRID_ROWS - _row) * CELL_SIZE);
 
 	// Dying fade out
 	var _alpha = 1.0;
