@@ -49,6 +49,8 @@ Dying dice do not fall — they float in place if their support is removed. They
 
 **Ghost:** A semi-transparent preview shows where the pair would land if hard-dropped, with a trail connecting it to the falling pair. Can be toggled on/off from the pause screen, where it's called "Enable Preview". A Junk Drop never shows one.
 
+**Match preview:** While the player moves the pair around, any chain it would complete on landing lights up — the whole group on the stack, plus the die still in the player's hands, so the connection between the two is explicit. It reads the board exactly as it stands at that moment and never anticipates what the board will become: dice already fading count as solid ground to land on, but can't be part of the group, since a die on its way out can't join a new chain. Only ordinary same-value chains are shown; suites, the 1's rule and the special dice have no preview.
+
 ### Score
 
 Player scores points by:
@@ -223,4 +225,5 @@ Two versions of the game theme exist: a vocal version for the splash screen and 
 - **High score beaten:** Visual "bling" effect
 - **Impact:** The grid itself takes a downward punch when a landing is the player's own doing, easing back to rest. Only the grid and its contents move — the HUD boxes and menu panels stay perfectly still around it, and nothing about the shake can affect where a die actually lands. A hard drop punches at full weight; a soft drop punches lighter. A pair that simply times out on the lock delay gets nothing, and neither does a Junk Drop: the punch and the rumble are feedback for an action the player took, so an event they merely receive stays silent. The timing matters as much as the weight — a hit that arrives long after the dice visibly settled reads as a random jolt instead of an impact, which is why a soft drop commits on a much shorter lock delay than a pair left to time out.
 - **Chain shake:** While a chain is going off, the grid jitters on both axes, re-triggered by each new wave, so a long cascade shakes continuously.
+- **Match preview glow:** The dice about to be eliminated light up from within and breathe slowly, rather than being outlined — the group reads as one glowing mass. Tinted to the value going out, brightened enough that even the darkest values carry light. Visual direction not final.
 - **Gamepad rumble:** Mirrors both effects on the same triggers and durations — a short decaying punch on landing, a sustained buzz through a chain, the stronger of the two winning if they overlap. It cuts out immediately on pause or game over rather than being left buzzing.

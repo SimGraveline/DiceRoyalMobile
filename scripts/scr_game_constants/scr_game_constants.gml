@@ -205,10 +205,32 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro GHOST_COLOR  $009DFF
 #macro GHOST_TRAIL_ALPHA  0.08
 #macro GHOST_PREVIEW_ALPHA  0.2
+
+// --- Match preview (chain the pair is about to complete lights up) ---
+// Separate from the ghost toggle on purpose: this is a readability aid, not a landing preview, and
+// they're worth evaluating independently. Border thickness is a fraction of CELL_SIZE like the rest
+// of the grid visuals, so it holds up at any desktop resolution.
+#macro MATCH_PREVIEW_ENABLED       true
+// Drawn in additive blend: the dice about to go LIGHT UP rather than getting boxed in. A bright core
+// over each die, then a few progressively larger, fainter passes around it for a soft halo. No
+// shader involved — this is only a blend mode, unrelated to the abandoned glow shader.
+#macro MATCH_PREVIEW_CORE_ALPHA    0.16
+#macro MATCH_PREVIEW_GLOW_ALPHA    0.075
+#macro MATCH_PREVIEW_GLOW_LAYERS   3
+#macro MATCH_PREVIEW_GLOW_SPREAD   0.07   // how far each halo layer grows, as a fraction of CELL_SIZE
+#macro MATCH_PREVIEW_CORNER_FACTOR 0.22   // corner radius, fraction of CELL_SIZE — matches the dice
+// Slow breathing so the group reads as "pending" instead of "selected". Frozen while paused, like
+// every other effect that resamples per frame.
+// Minimum perceived brightness a die's color is lifted to before being used as glow light — see
+// scr_match_preview_glow_color. Raise it if the dark values still read as too faint, lower it if the
+// glow washes their hue out.
+#macro MATCH_PREVIEW_MIN_LUMA      0.7
+#macro MATCH_PREVIEW_PULSE_SPEED   3.0
+#macro MATCH_PREVIEW_PULSE_AMOUNT  0.25
 // Fixed corner radius for the trail — draw_roundrect_ext keeps this constant regardless of the
 // trail's aspect ratio, unlike plain draw_roundrect whose auto radius makes short/near-square
 // trails (small drop distance) look almost circular.
-#macro GHOST_TRAIL_CORNER_RADIUS  20
+#macro GHOST_TRAIL_CORNER_RADIUS  22
 
 // --- Squash & Stretch (purely visual, no effect on grid/collision) ---
 #macro SQUASH_STRETCH_ENABLED  true

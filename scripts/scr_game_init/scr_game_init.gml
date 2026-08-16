@@ -11,6 +11,7 @@ function scr_game_reset_run() {
 	// rest. Values 7-9 sit at 0 and are gated behind DICE_HIGH_VALUES_ENABLED (see scr_level_update).
 	global.spawn_weights = [0, 0.5, 1, 1, 1, 1, 1, 0, 0, 0];
 
+	global.match_preview_pulse = 0; // breathing phase for the match preview glow
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;
