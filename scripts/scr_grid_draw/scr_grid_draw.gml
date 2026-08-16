@@ -16,10 +16,11 @@ function scr_grid_shake_init() {
 	global.grid_rumble_timer = 0;
 }
 
-// Punches the grid down. Only ever called for a hard drop — see scr_pair_detach.
+// Punches the grid down. Called for a hard drop at full weight, and for a soft drop scaled down —
+// see scr_pair_detach for which landings get one at all.
 // Retriggering mid-punch restarts it rather than stacking offsets.
-function scr_grid_shake_impact() {
-	global.grid_impact_peak = GRID_IMPACT_OFFSET;
+function scr_grid_shake_impact(_scale) {
+	global.grid_impact_peak = GRID_IMPACT_OFFSET * _scale;
 	global.grid_impact_duration = GRID_IMPACT_DURATION;
 	global.grid_impact_timer = global.grid_impact_duration;
 }

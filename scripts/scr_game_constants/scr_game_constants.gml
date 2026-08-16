@@ -69,6 +69,12 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro DAS_DELAY  0.2
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
+// Shorter lock delay while the player is holding Down. Driving a pair into the stack is a
+// deliberate act, so it should commit close to the moment of contact — and that gap is exactly
+// what decides whether the landing punch reads as an impact or as a random jolt some time after
+// the dice visibly settled. Keep it short enough that the punch lands with the contact, but not
+// so short that the player loses the window to nudge or rotate once down.
+#macro LOCK_DELAY_SOFT  0.15
 #macro LOCK_RESETS_MAX  10
 #macro DYING_DURATION   1.1
 #macro DYING_ALPHA_MIN  0.1
@@ -217,17 +223,25 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 // keep reading the static GRID_X/GRID_Y, so they stay put while the grid shakes underneath them.
 #macro GRID_SHAKE_ENABLED  true
 // Landing impact: the grid punches DOWN (+Y is down) the instant a die stacks, then eases back to
-// rest over the duration. HARD DROPS ONLY — see scr_pair_detach for why a normal or soft landing
-// deliberately gets no punch at all.
+// rest over the duration. Hard and soft drops only — a NORMAL landing (the lock timer simply
+// running out) still gets no punch at all, see scr_pair_detach.
 // Expressed as a fraction of CELL_SIZE, not raw pixels: an early pass used 1-2px, which is ~1% of
 // a cell and was invisible in play. A fraction also keeps the punch feeling the same on any
 // desktop resolution, since CELL_SIZE derives from screen height. A stack is small feedback, not
 // a celebration, so this stays well under a fifth of a cell.
-#macro GRID_IMPACT_OFFSET    (CELL_SIZE * 0.12)
+#macro GRID_IMPACT_OFFSET    (CELL_SIZE * 0.085)
 #macro GRID_IMPACT_DURATION  0.75
+// How much of a full impact a soft-drop landing is worth. One scale for both the visual punch and
+// the pad rumble (scr_pair_detach passes it to each), so "a soft drop lands lighter than a hard
+// drop" stays a single number and the motor can't drift away from what's on screen.
+#macro GRID_IMPACT_SOFT_SCALE  0.5
 // Chain rumble: the whole grid jitters on both axes for as long as a chain is firing. Retriggered
 // by every new chain wave, so a long cascade keeps the grid shaking throughout.
-#macro GRID_RUMBLE_AMOUNT    1.5
+// A fraction of CELL_SIZE like the impact above, for the same reason — this one was raw pixels
+// until the feel settled. Far smaller than the impact offset because it re-randomizes every frame:
+// a constant two-axis jitter reads as much bigger movement than a single static offset of the
+// same size.
+#macro GRID_RUMBLE_AMOUNT    (CELL_SIZE * 0.010)
 #macro GRID_RUMBLE_DURATION  1.0
 
 // --- Gamepad rumble ---
@@ -237,9 +251,9 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 // The impact ramps down on the same squared curve as the visual punch; the chain rumble holds a
 // flat, lower strength for as long as the grid is jittering.
 #macro PAD_RUMBLE_ENABLED           true
-#macro PAD_RUMBLE_IMPACT_STRENGTH   0.35
+#macro PAD_RUMBLE_IMPACT_STRENGTH   0.25
 #macro PAD_RUMBLE_IMPACT_DURATION   GRID_IMPACT_DURATION
-#macro PAD_RUMBLE_CHAIN_STRENGTH    0.20
+#macro PAD_RUMBLE_CHAIN_STRENGTH    0.14
 #macro PAD_RUMBLE_CHAIN_DURATION    GRID_RUMBLE_DURATION
 
 // --- Background combo feel (bg dice tint to the active dying chain's color) ---

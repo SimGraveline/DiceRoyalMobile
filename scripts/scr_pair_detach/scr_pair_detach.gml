@@ -84,15 +84,19 @@ function scr_pair_detach(_drop_type) {
 
 	scr_audio_play_sfx(snd_dice_stack);
 
-	// Hard drops only. A normal or soft landing detaches at the END of the lock delay, so the pair
-	// has already been sitting visibly at rest on the stack for up to LOCK_DELAY by the time this
-	// runs — the punch would land well after the player saw the dice settle, reading as a random
-	// jolt rather than as impact. A hard drop has no such gap: it detaches the same frame it lands.
+	// Player-driven landings only. The punch and the rumble are feedback for something the player
+	// DID — a hard drop lands the frame it hits, a soft drop commits after the much shorter
+	// LOCK_DELAY_SOFT, so in both cases the hit arrives while the contact is still being read as
+	// the player's own action. A NORMAL landing gets nothing: it detaches at the end of the full
+	// LOCK_DELAY, with the pair already sitting visibly at rest on the stack, so the punch would
+	// read as a random jolt rather than an impact. For the same reason a Junk Drop never punches at
+	// all — the player didn't do it.
 	// One impact per detach, not per die: both dice of a pair land as a single event, and it fires
 	// with the stack SFX so the punch, the rumble and the sound are all the same beat.
-	if (_drop_type == DROP_TYPE.HARD) {
-		scr_grid_shake_impact();
-		scr_pad_rumble_impact();
+	if (_drop_type == DROP_TYPE.HARD || _drop_type == DROP_TYPE.SOFT) {
+		var _impact_scale = (_drop_type == DROP_TYPE.HARD) ? 1 : GRID_IMPACT_SOFT_SCALE;
+		scr_grid_shake_impact(_impact_scale);
+		scr_pad_rumble_impact(_impact_scale);
 	}
 
 	global.last_pair_col = _master_col;

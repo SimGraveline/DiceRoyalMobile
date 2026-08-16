@@ -6,14 +6,18 @@
 
 function scr_pad_rumble_init() {
 	global.pad_impact_timer = 0;
+	global.pad_impact_strength = 0;
 	global.pad_chain_timer = 0;
 	global.pad_rumble_current = -1; // forces the first apply through, whatever the motor is doing
 	scr_pad_rumble_apply(0);
 }
 
-function scr_pad_rumble_impact() {
+// _scale is the same factor the visual punch gets (scr_pair_detach passes one value to both), so a
+// soft-drop landing buzzes exactly as much lighter as it looks.
+function scr_pad_rumble_impact(_scale) {
 	if (!PAD_RUMBLE_ENABLED) return;
 	global.pad_impact_timer = PAD_RUMBLE_IMPACT_DURATION;
+	global.pad_impact_strength = PAD_RUMBLE_IMPACT_STRENGTH * _scale;
 }
 
 function scr_pad_rumble_chain() {
@@ -50,7 +54,7 @@ function scr_pad_rumble_update() {
 			if (global.pad_impact_timer < 0) global.pad_impact_timer = 0;
 			if (PAD_RUMBLE_IMPACT_DURATION > 0) {
 				var _t = global.pad_impact_timer / PAD_RUMBLE_IMPACT_DURATION;
-				_strength = max(_strength, PAD_RUMBLE_IMPACT_STRENGTH * _t * _t);
+				_strength = max(_strength, global.pad_impact_strength * _t * _t);
 			}
 		}
 
