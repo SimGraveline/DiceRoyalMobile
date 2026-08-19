@@ -1,70 +1,283 @@
-# TODO — Dice Royal - DESKTO P
+# TODO — DICE ROYAL
 
-## THIS SESSION
-- [X] Ajout de screenshake
-- [X] Ajout de rumble
-- [ ] Ajout / Remplacement de SFX
-- [ ] Ajout de VFX
+> **Deux phases séquentielles, pas de travail en parallèle.** Desktop d'abord (GameMaker / Steam),
+> mobile ensuite (Unity / mobile stores).
+>
+> **Les dates sont des cibles de _release candidate_, pas des dates de sortie.** Ce qui se passe
+> ensuite (approbation Steam / iOS / Android, roll-out) se décidera une fois le candidat en main.
+> Si ça déborde, ça déborde.
 
-## NEXT SESSION
-- [ ] Faire diff Desktop Vs Mobile, mettre à jour version mobile avec nouveau gameplay et features.
-- [ ] Mettre version Mobile mise à jour sur GX, itch, GameJolt et update porfolio.
-- [ ] Nouveaux visuels + animations pour special dice.
-- [ ] Gestion du data de difficulté avec CSV?
+---
 
-## GAMEPLAY
-- [ ] Décider si le match preview (highlight de la chaîne à venir) reste dans sa forme actuelle pour la release. La fonctionnalité communique ce qu'elle doit, mais la direction visuelle n'est pas arrêtée. Interrupteur : `MATCH_PREVIEW_ENABLED`. À considérer aussi : est-ce que ça devrait avoir son propre toggle dans le menu pause, comme Enable Preview.
-- [ ] Étendre (ou non) le match preview aux suites, à la règle des 1 et aux spéciaux (Bomb, Clear R/C). Volontairement exclus du premier jet : chacun aurait besoin de son propre langage visuel, un Clear qui va balayer une rangée ne se montre pas comme une chaîne.
+# PHASE 1 — DICE ROYAL DESKTOP
 
-## GAME MODES
-- [ ] Ajouter Mode Casual/ Zen (après balancing final).
-- [ ] Ajouter Mode Multiplayer du Main Mode. - GROS CHANTIER
-- [ ] Ajouter Mode Bonus ala "Bejeweled". - GROS CHANTIER
-- [ ] Ajouter Mode Bonus ala "Money Puzzle Exchanger". - GROS CHANTIER
+| | |
+|---|---|
+| **Moteur** | GameMaker |
+| **Plateforme commerciale** | Steam — 4,99 $ |
+| **Plateformes version light / démo** | Itch, GameJolt, GX.games — gratuit |
+| **Langues** | Anglais + Français |
+| **Cible RC** | 13 septembre 2026 |
 
-## SYSTEMS
-- [ ] Ajouter online leaderboard.
-- [ ] Ajouter achievements.
-- [ ] Ajouter rewards (thèmes visuels; Dice, Cards, Dominio, Chips (unlock avec achievements)).
+---
 
-## MENUS
-- [ ] Ajouter attract mode -> Après X secondes dans Splash Screen.
-- [ ] Ajouter menu après splash screen; start, how to play, bonus modes, unlocks, leaderboard, options.
-- [ ] Ajouter menu start -> Sélection Arcade / Casual.
-- [ ] Ajouter menu how to play -> Controls, Interface, Dice Index.
-- [ ] Ajouter menu bonus modes -> Sélection Bejeweled / Money Puzzle Exchanger.
-- [ ] Ajouter menu unlocks -> Achievements, Rewards, Theme Selection.
-- [ ] Ajouter menu options -> Music on / off, SFX.
-- [ ] Modifier menu pause -> Ajouter Toggle "Next", Help.
-- [ ] Modifier menu help -> Ajouter Dice Index.
+## 1. MENUS
 
-## POLISH
-- [ ] Ajouter une indication visuelle des touches utiles dans les menus.
-- [ ] Refaire visuel avec Pixel Composer pour un look "modern Robotron".
-- [ ] Ajouter VFX.
-- [ ] Changer le thème musical.
-- [ ] Refaire les SFX / Ajouter SFX.
+### 1.1 Main Menu
+- [ ] Ajouter le MAIN MENU : Start, Zen Mode, Achievements, Leaderboard, Help, Options, Credits
+  - **Start** = mode régulier
+  - **Zen Mode** = mode facile : courbe de difficulté plus basse, pas de junk, pas de brick
 
-## TEST & DEBUG
-- [ ] 
+### 1.2 Nouveaux écrans
+- [ ] Écran message « this game saves automatically when this appears »
+- [ ] **ACHIEVEMENTS** — liste des achievements Steam avec thumbnail et complétion
+- [ ] **LEADERBOARD** — tableau Steam : World / Player
+  - _Périodes (All Time / Month / Week / Day) coupées — pas de notion de période côté Steam, pas assez important pour le travail que ça demanderait._
+- [ ] **HELP** — contrôles, explication du gameplay, **Dice Index**
+- [ ] **OPTIONS** — On/Off : Grid, Hold, Next, Rumble, Grid Shake, Dice Preview, Chain Preview, Music, SFX, Theme
+  - **Theme** : option du visuel des dés et/ou random based on levelling up
+  - `TBD` On/Off vs sliders de volume pour Music et SFX
+  - `TBD` Remappage clavier / manette
+- [ ] **CREDITS** — écran unique : mon nom + licences et crédits d'assets
 
-## BUGS
-- [ ] 
+### 1.3 Écrans existants à modifier
+- [ ] **PAUSE** — retrait du Help, ajout des On/Off : Rumble, Grid Shake, Chain Preview
+- [ ] **GAME OVER** — texte qui incite le joueur à rejouer : « You are in the Top 5 today »,
+      « You are this close to beating your record », etc.
+  - [ ] Sauvegarde automatique au Game Over + icône animée
 
-## PENDING
-- [ ] Solo Dice Instant Drop Vs Normal Drop
+---
 
-## PUBLISHING
-- [ ] Créer compte développeur Steam.
-- [ ] Demander à Jonathan pour co-credits d'Aftergrinder.
-- [ ] Produire les assets pour publication Steam.
+## 2. HUD
+- [ ] Boutons de navigation à l'interface dans les menus : A / Enter → Confirm, B / Backspace → Back
+- [ ] Adapter le HUD in-game quand Hold et/ou Next sont désactivés
+- [ ] Ajouter une CROWN à côté du high score quand le record personnel est battu
+- [ ] Changer le visuel des dés / de la grille en montant de niveau (si l'option est active)
 
-## ISSUE TRACKING
-- [ ] Recalibrer les seuils de niveaux (LEVEL_THRESHOLDS) et possiblement les vitesses (LEVEL_SPEEDS). Ils ont été calibrés quand les chaînes profondes ne rapportaient presque rien; depuis que le multiplicateur monte au lieu de descendre et que les suites donnent 6000, la même partie rapporte beaucoup plus, donc les niveaux arrivent plus tôt et la vitesse grimpe plus tôt. Repère : une seule belle chaîne ou une seule suite suffit maintenant à franchir le seuil du niveau 2 (5000). À reprendre dans DR_DifficultyProgression.xlsx après quelques parties de feeling.
-- [ ] Le score peut déborder de sa boîte HUD. Le texte est justifié à gauche dans une boîte de largeur fixe (BOX_WIDTH), sans aucune gestion d'overflow — un score assez long dépasse vers la droite, en direction de la grille. Touche autant Score que High Score. Va se manifester plus tôt maintenant que le multiplicateur de chaîne monte au lieu de descendre. Pistes : rapetisser la police quand le texte dépasse la largeur utile, formater le nombre (séparateurs de milliers, ou notation courte type 1.2M), ou élargir la boîte.
-- [ ] Si ta meilleure chaîne d'une partie est la toute dernière (celle qui te fait perdre), elle n'est jamais comptabilisée dans "BEST". Le compteur ne se fige qu'au spawn de la paire suivante, qui n'arrive jamais en game over.
-- [ ] AVANT RELEASE : remettre la musique à ON par défaut. scr_save_load lit music_muted avec 1 (muté) comme valeur par défaut — volontaire en dev pour ne pas subir la musique à chaque test, mais un joueur qui lance le jeu pour la première fois (aucun .ini sur sa machine) démarre en silence. Le SFX est déjà à 0 (actif), c'est seulement la musique.
-- [ ] AVANT RELEASE : désactiver les raccourcis de debug. Q ferme le jeu instantanément, R relance la partie, F5 efface le high score — les trois sont actifs partout (logos, splash, en jeu), sans confirmation, et pollés tout en haut de scr_game_update. Pratiques en dev, inacceptables dans un build public.
-- [ ] COMPORTEMENT INTENTIONNEL, NE PAS "RÉPARER" : une paire verticale Bomb-en-bas fait exploser la Bomb deux fois, avec deux cibles différentes. La Bomb se pose d'abord et cible la valeur sous elle (tous les 3 de la grille, par exemple); elle entre en dying sans disparaître. Le partenaire du dessus tombe ensuite sur elle et la re-déclenche — scr_die_try_activate_below vérifie seulement que la case en dessous est une Bomb, jamais si elle est déjà en dying ou a déjà explosé — donc elle cible aussi la valeur de ce partenaire (tous les 2). La re-activation remet aussi son timer de dying au maximum. Sim l'a vu en jeu le 2026-08-16 et a décidé de le garder : le joueur doit sortir la paire, la garder verticale, l'orienter Bomb-en-bas et viser la bonne colonne, et il paie le dé du dessus comme simple détonateur. À surveiller au playtest : si poser une Bomb autrement devient irrationnel, l'exploit a mangé le reste du design du dé.
-- [ ] NON REPRODUIT : un cas où le highlight du match preview manquait alors qu'il aurait dû s'allumer. Observé le 2026-08-16 — trois 4 posés sur cinq 5 en train de mourir, le 4 de la paire amené au-dessus des trois 4, aucun highlight. Tentative de reproduction avec une séquence de spawn forcée : le cas se comporte correctement, donc quelque chose du plateau réel n'a pas été remarqué. La lecture du code ne montre aucun défaut sur ce scénario (les 4 ne sont pas mourants, donc ils passent les filtres; groupe de 4 pour un seuil de 4). L'instrumentation (log + séquence de spawn forcée) a été retirée. Si ça se revoit, noter l'orientation de la paire et l'état exact de la grille avant de rebrancher un log.
-- [ ] Trous dans la colonne droite du HUD quand Show Queue ou Enable Hold/Swap sont désactivés dans le menu pause. scr_ui_hud_layout réserve toujours les 3 emplacements (Unlocks, Next, Hold) et scr_ui_draw saute seulement le dessin — l'espace reste vide au lieu d'être récupéré par les boîtes restantes.
+---
+
+## 3. AUDIO
+- [ ] Remplacer le thème musical : splash screen et main game
+- [ ] Remplacer les SFX 8-bits
+- [ ] Ajouter les SFX de navigation de menu : change focus, menu confirm, menu back
+- [ ] Ajouter le Voice Over pour les chaînes : « Nice », « Superb », « Legendary », etc.
+  - Source : banques d'assets, avec crédit au créateur à l'écran Credits
+  - VO : text-to-speech ou IA, selon ce qui donne les meilleurs résultats
+
+---
+
+## 4. VFX
+- [ ] Jeter un coup d'œil à Pixel Composer pour les effets visuels
+- [ ] Ajouter les textes pour les chaînes : « Nice », « Superb », « Legendary », etc.
+- [ ] Améliorer le Chain Preview
+
+---
+
+## 5. VISUEL
+- [ ] Jeter un coup d'œil à Pixel Composer pour les visuels
+- [ ] Refaire les dés spéciaux avec une version miniature pour le HUD (au lieu du scale down)
+- [ ] Faire 20 variations de visuel de dés
+- [ ] Faire 20 variations de visuel de grille
+- [ ] Faire 20 variations de visuel de HUD (color match du thème courant)
+- [ ] Refaire le logo Grave Games (proper vector)
+
+---
+
+## 6. GAMEPLAY
+- [ ] Revoir le levelling up
+- [ ] Revoir la courbe de progression de vitesse
+- [ ] Revoir l'ordre d'unlock des specials
+- [ ] Se donner un outil plus efficace pour gérer les constantes de difficulté et de progression
+      (CSV externe ? autre chose ? à évaluer rendu là)
+
+---
+
+## 7. AUTRES
+- [ ] Trouver le titre final : Dice Royal Stacked, Dice Stacks!, Royal Stacks!, TBD
+  - [ ] Ajuster le nouveau nom partout dans le jeu
+- [ ] Localisation anglais + français, avec fichier externe pour gérer les strings
+- [ ] Ajouter un Attract Mode après X secondes sur le splash screen
+- [ ] Mettre à jour les informations sauvegardées (à ce jour, seul le high score est écrit sur
+      disque — les options ne le sont pas)
+- [ ] Mettre le jeu en pause quand la fenêtre perd le focus (alt-tab)
+- [ ] Ajouter un léger rumble de manette sur le Chain Preview
+- [ ] Évaluer la possibilité d'ajouter des Rewards / Unlocks (et ajouter l'accès dans le main menu)
+- [ ] Évaluer les options de résolution d'écran
+- [ ] Retirer tous les éléments de debug
+- [ ] Adresser la liste d'ISSUE TRACKING
+- [ ] Mettre à jour TODO.md, README.md et le GDD (DICEROYAL.md) - quand le projet est fini.
+- [ ] Version « strip down » / démo sur Itch, GameJolt et GX.games : pas d'achievements,
+      pas de leaderboard, pas de rewards
+  - [ ] Flag de build Steam ON/OFF, pour que la version light compile sans le code Steam
+  - [ ] Évaluer CrazyGames (et autres portails de jeux)
+- [ ] Updater LinkedIn et le portfolio
+- [ ] Effacer les repos des vieilles versions sur GitHub
+- [ ] Évaluer forme de passe de QA.
+
+---
+
+## 8. STEAM
+- [ ] Création du compte développeur
+- [ ] Intégration des meta-datas et des autres features Steam
+- [ ] Intégration Steam : achievements, leaderboard
+- [ ] Produire les assets de la page boutique : capsules (plusieurs formats), screenshots, trailer,
+      icônes d'achievements
+- [ ] Évaluer la compatibilité Steam Deck (le jeu tourne via Proton ; vérification à demander à
+      Valve — Verified / Playable / Unsupported)
+- [ ] Demander à Jonathan pour le co-crédit Aftergrinder
+- [ ] Upload de la version à accès restreints
+- [ ] Faire faire plein de playtests à « friends and family » (informel, rien de structuré)
+- [ ] Publier
+- `TBD` Stratégie de roll-out — à décider une fois qu'on a un release candidate, selon le budget,
+  le temps et les ressources du moment
+
+---
+
+## 9. POST-LAUNCH — TBD
+- [ ] Mode multiplayer
+- [ ] « More Games » / « Bonus Games » : variation Money Puzzle Exchanger, Bejeweled, etc.
+
+---
+---
+
+# PHASE 2 — DICE ROYAL MOBILE
+
+| | |
+|---|---|
+| **Moteur** | Unity |
+| **Plateformes** | App Store, Google Play |
+| **Prix** | Gratuit — revenus publicitaires |
+| **Cible RC** | 4 octobre 2026 |
+
+> **Port Unity plutôt qu'adaptation de la version GameMaker.** J'ai besoin d'XP en Unity, l'AdSense
+> est plus accessible et la publication est plus simple. Pas impossible que je rechange d'idée en
+> cours de route, mais c'est le plan pour l'instant.
+>
+> Je vais suivre des formations Unity en ligne pendant le développement de la version desktop, pour
+> être plus à l'aise au moment de faire la version mobile.
+>
+> **La liste ci-dessous assume que la partie desktop est terminée et contient tout ce qui précède.**
+> Liste initiale — va évoluer en fonction du développement desktop.
+
+- [ ] Création d'un nouveau repo GitHub (dissociation de la version desktop)
+
+---
+
+## 10. FEATURES À RETIRER
+- [ ] **Hold** — le feature se cut pour la version mobile (ne pas mettre d'option On/Off dans le menu)
+- [ ] **Unlock Info** — retirer du HUD
+
+---
+
+## 11. FEATURES À AJOUTER
+- [ ] **Ads** — bannière dans le bas de l'écran in-game, écouter une pub après X parties,
+      écouter une pub pour « annuler » un game over
+- [ ] **MTX** `TBD` — très basse priorité. Le balancing que ça demanderait ne se justifie pas.
+      Probablement une seule MTX : payer 5,00 $ pour retirer les pubs.
+      À réévaluer en fonction de mes cours de design économique.
+
+---
+
+## 12. FEATURES À MODIFIER
+- [ ] Adapter le Zen Mode en fonction du nouveau gameplay mobile
+- [ ] Retirer la box NEXT et mettre la next paire « floating above » la grille
+- [ ] Adapter le Main Menu
+- [ ] Repenser le HUD in-game
+- [ ] Repenser le menu Pause
+- [ ] Repenser le menu Game Over
+- [ ] Adapter le Help Screen
+- [ ] Les specials ne sont plus des « drops », ils deviennent des boutons : soit collectés in-game,
+      soit proposés avec une pub pour poursuivre après un game over
+- [ ] Passer le leaderboard sur Firebase ou quelque chose du genre
+- [ ] Ajuster la courbe de difficulté (level + speed) en fonction du support mobile et du nouveau
+      gameplay
+
+---
+
+## 13. AUTRES
+- [ ] Évaluer le support tablettes
+- [ ] Faire faire plein de playtests à « friends and family »
+- [ ] Mettre à jour TODO.md, README.md et le GDD (DICEROYAL.md) - quand le projet est fini.
+- [ ] Retirer les versions sur Itch, GameJolt, GX.games
+- [ ] Updater LinkedIn et le portfolio
+- [ ] Effacer les repos des vieilles versions sur GitHub
+- [ ] Évaluer forme de passe de QA
+
+---
+
+## 14. APP STORE / GOOGLE PLAY
+- [ ] Créer les comptes de développeur
+- [ ] Intégration des requirements
+- [ ] Publication
+- [ ] Plus TBD
+
+---
+
+## 15. POST-LAUNCH — TBD
+- [ ] « More Games » / « Bonus Games » : variation Money Puzzle Exchanger, Bejeweled, etc.
+
+---
+---
+
+# ISSUE TRACKING
+
+- [ ] **Recalibrer les seuils de niveaux** (`LEVEL_THRESHOLDS`) et possiblement les vitesses
+  (`LEVEL_SPEEDS`). Ils ont été calibrés quand les chaînes profondes ne rapportaient presque rien ;
+  depuis que le multiplicateur monte au lieu de descendre et que les suites donnent 6000, la même
+  partie rapporte beaucoup plus, donc les niveaux arrivent plus tôt et la vitesse grimpe plus tôt.
+  Repère : une seule belle chaîne ou une seule suite suffit maintenant à franchir le seuil du
+  niveau 2 (5000). À reprendre dans `DR_DifficultyProgression.xlsx` après quelques parties de feeling.
+
+- [ ] **Le score peut déborder de sa boîte HUD.** Le texte est justifié à gauche dans une boîte de
+  largeur fixe (`BOX_WIDTH`), sans aucune gestion d'overflow — un score assez long dépasse vers la
+  droite, en direction de la grille. Touche autant Score que High Score. Va se manifester plus tôt
+  maintenant que le multiplicateur de chaîne monte au lieu de descendre. Pistes : rapetisser la
+  police quand le texte dépasse la largeur utile, formater le nombre (séparateurs de milliers, ou
+  notation courte type 1.2M), ou élargir la boîte.
+
+- [ ] **La meilleure chaîne d'une partie n'est pas comptabilisée si c'est la dernière.** Si ta
+  meilleure chaîne est celle qui te fait perdre, elle n'entre jamais dans « BEST » : le compteur ne
+  se fige qu'au spawn de la paire suivante, qui n'arrive jamais en game over.
+
+- [ ] **Lag / fuite mémoire sur le build HTML5.** Deux causes trouvées et corrigées le 2026-07-17
+  (`surface_resize` appelé à chaque frame, layout du HUD recalculé à chaque frame), mais le problème
+  n'a été qu'atténué, pas résolu — le lag apparaît plus tard qu'avant. Redevient bloquant dès qu'on
+  publie la version light sur Itch / GameJolt / GX.games. Prochaine étape : profiling réel avec les
+  DevTools Chrome (Performance / Memory) pendant une session de jeu.
+
+- [ ] **Trous dans la colonne droite du HUD** quand Show Queue ou Enable Hold/Swap sont désactivés
+  dans le menu pause. `scr_ui_hud_layout` réserve toujours les 3 emplacements (Unlocks, Next, Hold)
+  et `scr_ui_draw` saute seulement le dessin — l'espace reste vide au lieu d'être récupéré par les
+  boîtes restantes.
+
+- [ ] **AVANT RELEASE — remettre la musique à ON par défaut.** `scr_save_load` lit `music_muted`
+  avec 1 (muté) comme valeur par défaut — volontaire en dev pour ne pas subir la musique à chaque
+  test, mais un joueur qui lance le jeu pour la première fois (aucun `.ini` sur sa machine) démarre
+  en silence. Le SFX est déjà à 0 (actif), c'est seulement la musique.
+
+- [ ] **AVANT RELEASE — désactiver les raccourcis de debug.** Q ferme le jeu instantanément, R
+  relance la partie, F5 efface le high score — les trois sont actifs partout (logos, splash, en jeu),
+  sans confirmation, et pollés tout en haut de `scr_game_update`. Pratiques en dev, inacceptables
+  dans un build public.
+
+- [ ] **NON REPRODUIT — highlight du match preview manquant.** Observé le 2026-08-16 : trois 4 posés
+  sur cinq 5 en train de mourir, le 4 de la paire amené au-dessus des trois 4, aucun highlight.
+  Tentative de reproduction avec une séquence de spawn forcée : le cas se comporte correctement, donc
+  quelque chose du plateau réel n'a pas été remarqué. La lecture du code ne montre aucun défaut sur
+  ce scénario (les 4 ne sont pas mourants, donc ils passent les filtres ; groupe de 4 pour un seuil
+  de 4). L'instrumentation (log + séquence de spawn forcée) a été retirée. Si ça se revoit, noter
+  l'orientation de la paire et l'état exact de la grille avant de rebrancher un log.
+
+- [ ] **[MOBILE] Déplacement tactile plus smooth** pour la version mobile.
+
+- [ ] **COMPORTEMENT INTENTIONNEL, NE PAS « RÉPARER » — double explosion de la Bomb verticale.**
+  Une paire verticale Bomb-en-bas fait exploser la Bomb deux fois, avec deux cibles différentes. La
+  Bomb se pose d'abord et cible la valeur sous elle (tous les 3 de la grille, par exemple) ; elle
+  entre en dying sans disparaître. Le partenaire du dessus tombe ensuite sur elle et la re-déclenche
+  — `scr_die_try_activate_below` vérifie seulement que la case en dessous est une Bomb, jamais si
+  elle est déjà en dying ou a déjà explosé — donc elle cible aussi la valeur de ce partenaire (tous
+  les 2). La re-activation remet aussi son timer de dying au maximum. Vu en jeu le 2026-08-16 et
+  décidé de le garder : le joueur doit sortir la paire, la garder verticale, l'orienter Bomb-en-bas
+  et viser la bonne colonne, et il paie le dé du dessus comme simple détonateur. À surveiller au
+  playtest : si poser une Bomb autrement devient irrationnel, l'exploit a mangé le reste du design
+  du dé.
