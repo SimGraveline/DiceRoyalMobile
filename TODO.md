@@ -23,24 +23,77 @@
 
 ## 1. MENUS
 
-### 1.1 Main Menu
-- [ ] Ajouter le MAIN MENU : Start, Zen Mode, Achievements, Leaderboard, Help, Options, Credits
-  - **Start** = mode régulier
-  - **Zen Mode** = mode facile : courbe de difficulté plus basse, pas de junk, pas de brick
+> **Structure arrêtée le 2026-08-20**, à partir du flow Miro et du mock-up de template.
+> Elle fait autorité sur la **navigation**, pas sur le layout : les mock-ups détaillés de chaque
+> écran restent à faire. Challenge Mode et Rewards font partie du plan complet, mais leur design
+> n'est pas fait — si l'un des deux se coupe, les menus s'ajustent en conséquence.
 
-### 1.2 Nouveaux écrans
-- [ ] Écran message « this game saves automatically when this appears »
-- [ ] **ACHIEVEMENTS** — liste des achievements Steam avec thumbnail et complétion
-- [ ] **LEADERBOARD** — tableau Steam : World / Player
+### 1.1 Template de menu
+- [ ] Template commun aux écrans de navigation : titre de page en haut à gauche, cadre de
+      « selection preview » à gauche, liste des items alignée à droite avec un dé par rang
+      (la face du dé = la position dans la liste), sous-titre de l'item sélectionné sous la liste,
+      prompt d'input en bas à droite
+  - Le cadre de preview sert à toutes les sauces : texte, tableau de scores, animation d'aide,
+    schéma de contrôles, etc.
+  - Le Main Menu a 7 items — le 7e (Quit) porte un **dé blanc**, hors de la série 1-6
+  - Certains écrans auront leur propre layout (Options, Leaderboards, Controls, Customize) —
+    à définir au mock-up
+- [ ] **Dice rain en arrière-plan de tous les menus** (le même effet que le splash screen)
+  - Tourne **en continu** d'un écran à l'autre — ne jamais le réinitialiser sur un changement de
+    menu, sinon la pluie saute à chaque navigation
+  - Le fond du cadre de preview est **opaque** — la pluie ne passe pas derrière
+- [ ] `TBD` **Look du focus et du mouse over** — à déterminer
+- [ ] Faire les mock-ups détaillés de chaque écran
+- [ ] SFX de navigation (voir section AUDIO) et souris fonctionnelle dans les menus
+      (la souris ne sert jamais en jeu)
+
+### 1.2 Séquence de boot
+- [ ] Logo GameMaker → Logo Grave Games → **Sélection de langue** → **Message Autosave +
+      Photosensibilité** → Splash Screen → Main Menu
+  - [ ] Écran Sélection de langue : **au premier boot seulement**, ensuite changeable dans Options
+  - [ ] Écran message « this game saves automatically when this appears » + « this game may
+        trigger photosensitive » : **à chaque boot**
+  - [ ] **Localiser le texte du logo GameMaker** (« proudly made with ») — il passe *avant* la
+        sélection de langue, donc il est forcément en anglais au tout premier boot, puis dans la
+        langue choisie à partir du boot suivant
+    - _Aucune plateforme visée (Steam, App Store, Google Play) ne l'exige — c'est un requirement de
+      certification console. Gardé quand même : ça coûte presque rien et ça couvre l'aspect santé._
+
+### 1.3 Arborescence
+- [ ] **MAIN MENU** — Select Mode, Rewards, Stats, Achievements, Help, Options, Quit
+- [ ] **MODE SELECTION** — Arcade, Challenge, Casual, Back
+  - **Arcade** = mode régulier
+  - **Casual** = mode facile : courbe de difficulté plus basse, pas de junk, pas de brick
+  - **Challenge** = défis à débloquer, design `TBD` (ex. : « clear X dice in Y minutes »)
+- [ ] **ARCADE MODE** — Start, Customize, Leaderboards, Options, Back
+- [ ] **CASUAL MODE** — Start, Customize, Options, Back _(pas de leaderboard)_
+- [ ] **CHALLENGE MODE** — Select Challenge `<##>`, Back
+  - Le setup de chaque challenge est imposé par le challenge lui-même (ex. : celui-ci sans ghost,
+    celui-là sans Next) — donc pas de sous-menu Options pour ce mode
+  - Pas de Start séparé : confirmer un challenge le lance
+- [ ] **CUSTOMIZE** — Random Theme On/Off, Select Theme `<##>`, Back _(pas final)_
+- [ ] **STATS** — Arcade, Challenge, Casual, Back
+- [ ] **REWARDS** — `TBD`, design à faire
+- [ ] **LEADERBOARDS** — Your Ranks, Top Players, Back
+  - Tableau Steam
   - _Périodes (All Time / Month / Week / Day) coupées — pas de notion de période côté Steam, pas assez important pour le travail que ça demanderait._
-- [ ] **HELP** — contrôles, explication du gameplay, **Dice Index**
-- [ ] **OPTIONS** — On/Off : Grid, Hold, Next, Rumble, Grid Shake, Dice Preview, Chain Preview, Music, SFX, Theme
-  - **Theme** : option du visuel des dés et/ou random based on levelling up
+- [ ] **ACHIEVEMENTS** — List, Back
+  - Liste des achievements Steam avec thumbnail et complétion
+- [ ] **HELP** — Rules, Specials, Controls, Back
+  - **Specials** = le Dice Index
+  - **CONTROLS** — Keyboard, Gamepad, Back
+- [ ] **OPTIONS — global** — Language, Music, Sound FX, Rumble, Shake, Credits, Back
   - `TBD` On/Off vs sliders de volume pour Music et SFX
-  - `TBD` Remappage clavier / manette
-- [ ] **CREDITS** — écran unique : mon nom + licences et crédits d'assets
+  - `TBD` Remappage clavier / manette — s'il entre, la liste passe à 7 items
+  - **CREDITS** — écran unique : mon nom + licences et crédits d'assets
+- [ ] **OPTIONS — par mode** (Arcade et Casual séparément) — Dice Preview, Chain Preview,
+      Next Preview, Enable Hold, Show Grid, Back
+  - [ ] **Chaque mode a ses propres settings, sauvegardés séparément** — le menu pause écrit dans
+        le set du mode en cours, pas dans un set global
+  - **Theme** : option du visuel des dés et/ou random based on levelling up (via Customize)
 
-### 1.3 Écrans existants à modifier
+### 1.4 Écrans existants à modifier
+- [ ] **SPLASH** — mène maintenant au Main Menu au lieu de lancer une partie directement
 - [ ] **PAUSE** — retrait du Help, ajout des On/Off : Rumble, Grid Shake, Chain Preview
 - [ ] **GAME OVER** — texte qui incite le joueur à rejouer : « You are in the Top 5 today »,
       « You are this close to beating your record », etc.
@@ -70,6 +123,7 @@
 - [ ] Jeter un coup d'œil à Pixel Composer pour les effets visuels
 - [ ] Ajouter les textes pour les chaînes : « Nice », « Superb », « Legendary », etc.
 - [ ] Améliorer le Chain Preview
+- [ ] Ajouter Curseur et VFX sur Clic
 
 ---
 
@@ -84,6 +138,9 @@
 ---
 
 ## 6. GAMEPLAY
+- [ ] **Casual Mode** — courbe de difficulté plus basse, pas de Junk Drop, pas de Brick
+- [ ] **Challenge Mode** — designer les challenges et le système de déblocage. Chaque challenge
+      impose son propre setup (ghost, Next, Hold, etc. forcés on/off)
 - [ ] Revoir le levelling up
 - [ ] Revoir la courbe de progression de vitesse
 - [ ] Revoir l'ordre d'unlock des specials
@@ -98,10 +155,12 @@
 - [ ] Localisation anglais + français, avec fichier externe pour gérer les strings
 - [ ] Ajouter un Attract Mode après X secondes sur le splash screen
 - [ ] Mettre à jour les informations sauvegardées (à ce jour, seul le high score est écrit sur
-      disque — les options ne le sont pas)
+      disque). À couvrir : les options globales, **un jeu de settings par mode**, les stats par
+      mode, la langue choisie, les rewards / unlocks, et le fait que la sélection de langue a
+      déjà été faite une fois
 - [ ] Mettre le jeu en pause quand la fenêtre perd le focus (alt-tab)
 - [ ] Ajouter un léger rumble de manette sur le Chain Preview
-- [ ] Évaluer la possibilité d'ajouter des Rewards / Unlocks (et ajouter l'accès dans le main menu)
+- [ ] **Rewards / Unlocks** — design `TBD`. L'accès existe dans le Main Menu (voir section 1)
 - [ ] Évaluer les options de résolution d'écran
 - [ ] Retirer tous les éléments de debug
 - [ ] Adresser la liste d'ISSUE TRACKING
@@ -173,7 +232,7 @@
 - [ ] **Ads** — bannière dans le bas de l'écran in-game, écouter une pub après X parties,
       écouter une pub pour « annuler » un game over
 - [ ] **MTX** `TBD` — très basse priorité. Le balancing que ça demanderait ne se justifie pas.
-      Probablement une seule MTX : payer 5,00 $ pour retirer les pubs.
+      Probablement une seule MTX : payer 5,00 $ pour retirer les pubs (ne pas oublier "restore my purchase".
       À réévaluer en fonction de mes cours de design économique.
 
 ---
@@ -214,6 +273,7 @@
 ---
 
 ## 15. POST-LAUNCH — TBD
+- [ ] Challenge Mode
 - [ ] « More Games » / « Bonus Games » : variation Money Puzzle Exchanger, Bejeweled, etc.
 
 ---

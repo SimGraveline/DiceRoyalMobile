@@ -36,7 +36,7 @@
 #macro STR_MENU_SHOW_QUEUE  "Show Queue"
 #macro STR_MENU_HOLD_SWAP   "Enable Hold / Swap"
 #macro STR_MENU_GHOST       "Enable Preview"
-#macro STR_BETA_VERSION    "Beta Version"
+#macro STR_VERSION    "Alpha Demo Version"
 #macro STR_HELP_TITLE  "HOW TO PLAY"
 #macro STR_HELP_RULES_1  "CONNECT DICE OF THE SAME VALUE"
 #macro STR_HELP_RULES_2  "TO ELIMINATE THEM"

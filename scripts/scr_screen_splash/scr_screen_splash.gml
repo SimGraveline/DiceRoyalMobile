@@ -113,7 +113,7 @@ function scr_screen_splash_draw() {
 	// Beta version tag
 	draw_set_font(fnt_splash_version_bebasneue_small);
 	draw_set_valign(fa_top);
-	scr_ui_draw_text(GAME_WIDTH / 2, BETA_VERSION_MARGIN_TOP, STR_BETA_VERSION, c_white);
+	scr_ui_draw_text(GAME_WIDTH / 2, BETA_VERSION_MARGIN_TOP, STR_VERSION, c_white);
 
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);

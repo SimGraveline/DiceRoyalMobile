@@ -2,7 +2,7 @@
 
 Dice Royal is a falling block puzzle game, inspired by Tetris, Puyo Puyo and Devil Dice. Built in GameMaker Studio, this build targets PC (Steam), fullscreen, with keyboard and gamepad controls. A mobile version is planned as a follow-up port once the PC version ships.
 
-This is a proof of concept / prototype with only logo, splash, game, pause, help and game over screens — no ads, monetization or achievements yet.
+The build currently runs logo, splash, game, pause, help and game over screens. The full menu structure described below is designed but not yet built, and achievements, leaderboards and rewards are not in yet.
 
 ## Project History
 
@@ -66,7 +66,7 @@ The counter feeding this multiplier is the same one shown as "Chains" on screen:
 
 The game saves the high score persistently.
 
-An online leaderboard feature is to be evaluated.
+Scores are also posted to an online leaderboard, presented as the player's own standing and as a global ranking.
 
 ### Special Dice
 
@@ -112,6 +112,40 @@ All values are adjustable per level. Default values are starting points for play
 | Dying duration | How long eliminated dice stay in "dying" state before being removed (shorter = less time to chain) |
 | Junk Drop rate & quantity | How often a Junk Drop triggers, and how many dice it drops each time |
 
+## Menus
+
+*Designed, not yet built. This section is the authority on navigation — not on layout, which is still being mocked up screen by screen.*
+
+### Shared Template
+
+Navigation screens share one page: the page title top left, a large "selection preview" frame filling the left side, the list of items right-aligned on the right, a one-line subtitle for the highlighted item below the list, and the input prompt bottom right.
+
+Each item in the list carries a die, and the face it shows is the item's rank in the list — first item is a 1, second is a 2, and so on. That caps a list at six items. The one exception is the main menu's Quit row, which sits outside the series and carries a blank die face.
+
+The preview frame is deliberately generic: it holds whatever the current screen needs it to hold — a block of text, a score table, an animated demonstration of a rule, a control diagram. A few screens (options, leaderboards, controls, customize) will need a layout of their own rather than this one.
+
+Menus are navigable by mouse, keyboard and gamepad. The mouse is never used to play.
+
+### Boot Sequence
+
+GameMaker logo, studio logo, language selection, a notice screen, the splash screen, then the main menu.
+
+Language selection appears on the first launch only; afterwards the language is changed from the options. The notice screen — telling the player the game saves automatically when a given icon appears, and carrying a photosensitivity warning — appears on every launch.
+
+### Structure
+
+- **Main Menu** — Select Mode, Rewards, Stats, Achievements, Help, Options, Quit
+- **Select Mode** — Arcade, Challenge, Casual
+  - **Arcade** is the standard mode. **Casual** is the gentler one: a lower difficulty curve, no Junk Drop, no Bricks. **Challenge** is a set of unlockable set-piece runs, still to be designed.
+  - Arcade offers Start, Customize, Leaderboards and Options. Casual offers the same minus Leaderboards — it isn't a competitive mode. Challenge offers only a challenge picker: confirming a challenge starts it, and its settings are dictated by the challenge itself rather than by the player, so it has no options of its own.
+- **Customize** — pick a visual theme, or let it change on its own as the player levels up
+- **Stats** — per mode
+- **Rewards** — to be designed
+- **Leaderboards** — the player's own standing, and the global ranking
+- **Achievements** — the full list with completion state
+- **Help** — the rules, a dice index covering the specials, and the control schemes for keyboard and gamepad
+- **Options** — split in two. Global settings (language, music, sound effects, rumble, grid shake, credits) apply everywhere. Gameplay settings (dice preview, chain preview, next preview, hold, grid lines) belong to each mode separately and are saved that way, so a player can run Arcade bare and Casual fully assisted.
+
 ## Screens
 
 ### Logo Screens
@@ -120,7 +154,7 @@ Two logo screens displayed on launch (timings adjustable): a "proudly made with"
 
 ### Splash Screen
 
-Title screen shown after the logos: game title centered, with a blinking "Press Any Key / Buttons" prompt below, a "Beta Version" tag above and a credits line at the bottom of the screen. Background features a falling dice rain effect. Almost any input starts the game — keyboard, mouse click, or a gamepad face/shoulder/Start/Select button, but deliberately not the D-Pad or the analog sticks, so a resting hand can't launch a run. Confirming begins the game via a fade transition.
+Title screen shown after the logos: game title centered, with a blinking "Press Any Key / Buttons" prompt below, a "Beta Version" tag above and a credits line at the bottom of the screen. Background features a falling dice rain effect. Almost any input starts the game — keyboard, mouse click, or a gamepad face/shoulder/Start/Select button, but deliberately not the D-Pad or the analog sticks, so a resting hand can't launch a run. Confirming leads to the main menu via a fade transition.
 
 ### Game Screen
 
@@ -139,7 +173,7 @@ Accessed via ESC or Enter (keyboard), or Start (gamepad). Not available during t
 - Show Grid / Show Queue / Enable Hold / Swap / Enable Preview toggles
 - Quit (return to splash)
 
-The three display toggles change the game screen directly: Show Queue hides the Next box, Enable Hold / Swap hides the Hold box *and* disables the action itself, and Enable Preview turns off the landing ghost.
+The three display toggles change the game screen directly: Show Queue hides the Next box, Enable Hold / Swap hides the Hold box *and* disables the action itself, and Enable Preview turns off the landing ghost. Once the mode structure is in, these settings will belong to the mode being played rather than to the game as a whole — changing one mid-run will change it for that mode only.
 
 Navigable by mouse, keyboard or gamepad, all live at once. One row is always highlighted, starting on the first. The mouse only takes the highlight on an actual mouse movement past a small threshold — a hand resting on the desk can't steal the selection from the keyboard — and keyboard/gamepad always win on the frame they move.
 
