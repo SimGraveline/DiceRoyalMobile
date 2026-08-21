@@ -6,7 +6,7 @@ function scr_game_over_pause() {
 	}
 }
 
-// Layout for the Help screen (reached only from the Pause menu) — single source of truth shared
+// Layout for the Help screen (reached from the Pause menu or the HUD's "?" button) — single source of truth shared
 // by the draw code and the Back button's hit-test, same pattern as the pause/game over layouts.
 function scr_help_menu_layout() {
 	draw_set_font(fnt_help_title_bungee_med);
@@ -23,7 +23,7 @@ function scr_help_menu_layout() {
 		+ _line_h * 3 + _blank_h * 2         // Rules 4-6, space, space
 		+ (_title_h + _title_gap)            // CONTROLS
 		+ _line_h * 3 + _blank_h             // Ctrl 1-3, space
-		+ _line_h * 2 + _blank_h             // Ctrl 4-5, space
+		+ _line_h + _blank_h                 // Ctrl 4, space
 		+ _back_h;                           // Back
 
 	var _box_top = GRID_Y - GRID_OUTLINE_WIDTH;
@@ -42,8 +42,7 @@ function scr_help_menu_layout() {
 	var _ctrl1_y = _y; _y += _line_h;
 	var _ctrl2_y = _y; _y += _line_h;
 	var _ctrl3_y = _y; _y += _line_h + _blank_h;
-	var _ctrl4_y = _y; _y += _line_h;
-	var _ctrl5_y = _y; _y += _line_h + _blank_h;
+	var _ctrl4_y = _y; _y += _line_h + _blank_h;
 	var _back_y = _y;
 
 	return {
@@ -59,7 +58,6 @@ function scr_help_menu_layout() {
 		ctrl2_y: _ctrl2_y,
 		ctrl3_y: _ctrl3_y,
 		ctrl4_y: _ctrl4_y,
-		ctrl5_y: _ctrl5_y,
 		back_y: _back_y,
 		back_h: _back_h
 	};
@@ -70,9 +68,9 @@ function scr_help_back_hit(_mouse_y) {
 	return (_mouse_y >= _layout.back_y && _mouse_y < _layout.back_y + _layout.back_h);
 }
 
-// Help is reached only from the Pause menu (see scr_pause_menu_select) — the only interaction
-// here is confirming Back, which returns to Pause without fully closing it. Escape still fully
-// closes both (see scr_game_update).
+// The only interaction here is confirming Back, which returns wherever Help was opened from: the
+// pause menu (see scr_pause_menu_select) or straight to the game (the HUD's "?" button). Escape
+// still fully closes both (see scr_game_update).
 function scr_help_menu_update() {
 	if (!global.help_active) return;
 
@@ -88,6 +86,13 @@ function scr_help_menu_update() {
 
 	if (_confirm) {
 		global.help_active = false;
+		// Help opened from the HUD's "?" button never passed through the pause menu, so Back has
+		// nothing to return to — it goes straight back to the game. Opened from the pause menu,
+		// it stays paused with the menu still up, which is where the player came from.
+		if (global.help_from_hud) {
+			global.help_from_hud = false;
+			global.paused = false;
+		}
 	}
 }
 
@@ -182,6 +187,7 @@ function scr_pause_menu_items() {
 		{ label: STR_MENU_SHOW_QUEUE, action: PAUSE_ACTION.SHOW_QUEUE, checked: global.show_queue },
 		{ label: STR_MENU_HOLD_SWAP,  action: PAUSE_ACTION.HOLD_SWAP,  checked: global.hold_swap_enabled },
 		{ label: STR_MENU_GHOST,      action: PAUSE_ACTION.GHOST,      checked: global.ghost_enabled, blank_after: true },
+		{ label: STR_MENU_RUMBLE,     action: PAUSE_ACTION.RUMBLE,     checked: global.rumble_enabled, blank_after: true },
 		{ label: STR_MENU_QUIT,    action: PAUSE_ACTION.QUIT }
 	];
 }
@@ -218,6 +224,10 @@ function scr_pause_menu_select(_index) {
 			break;
 		case PAUSE_ACTION.HELP:
 			global.help_active = true; // stays paused — Back (or Escape) returns from here, see scr_help_menu_update
+			break;
+		case PAUSE_ACTION.RUMBLE:
+			global.rumble_enabled = !global.rumble_enabled;
+			if (!global.rumble_enabled) scr_pad_rumble_stop();
 			break;
 		case PAUSE_ACTION.MUTE_MUSIC:
 			scr_audio_toggle_music();
@@ -412,11 +422,12 @@ function scr_game_over_menu_layout() {
 	// line height separating the two groups and trailing after the last value.
 	var _scores_h = _new_best_h + _score_line_h * 2 + _value_gap * 2;
 	var _menu_h = array_length(_items) * _line_h;
-	var _block_h = _title_h + _scores_h + _gap + _menu_h;
+	var _title_gap = string_height("M") * UI_GAME_OVER_TITLE_GAP_FACTOR;
+	var _block_h = _title_h + _title_gap + _scores_h + _gap + _menu_h;
 	var _box_top = GRID_Y - GRID_OUTLINE_WIDTH;
 	var _box_h = GRID_HEIGHT + GRID_OUTLINE_WIDTH * 2;
 	var _top = _box_top + (_box_h - _block_h) / 2;
-	var _menu_top = _top + _title_h + _scores_h + _gap;
+	var _menu_top = _top + _title_h + _title_gap + _scores_h + _gap;
 
 	return {
 		items: _items,
@@ -424,6 +435,7 @@ function scr_game_over_menu_layout() {
 		score_line_h: _score_line_h,
 		value_gap: _value_gap,
 		title_h: _title_h,
+		title_gap: _title_gap,
 		scores_h: _scores_h,
 		gap: _gap,
 		block_h: _block_h,

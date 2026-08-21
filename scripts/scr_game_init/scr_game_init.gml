@@ -85,20 +85,25 @@ function scr_game_init() {
 	// Chain reward curve — see COMBO_MULTIPLIERS. Steps: +0.5, +0.75, +1.0, +1.25, +1.5, ...
 	COMBO_MULTIPLIERS = [1, 1.5, 2.25, 3.25, 4.5, 6, 7.75, 9.75, 12, 14.5];
 
-	scr_save_load(); // sets high_score(_name), music_muted, sfx_muted, grid_lines, show_queue, hold_swap_enabled, ghost_enabled
+	scr_save_load(); // sets high_score(_name), music_muted, sfx_muted, grid_lines, show_queue, hold_swap_enabled, ghost_enabled, rumble_enabled
 
 	// Screen-transition state — launch-only, because a restart can legitimately happen mid-fade
 	// (Splash -> Game goes through one) and must not cancel it.
 	global.fade_active = false;
 	global.countdown_active = false;
 
-	// Display state, launch-only. Both are seeded to a deliberately invalid value so their first
-	// check always misses: app_surface_fullscreen starts as the opposite of the real window state
-	// so the first frame performs exactly one application_surface resize (scr_game_update), and
-	// the HUD layout cache starts on a size no screen can have so its first lookup always rebuilds
-	// (scr_ui_hud_layout). Seeding them here is what lets both spots read the globals directly
-	// instead of asking whether they exist yet by name.
-	global.app_surface_fullscreen = !window_get_fullscreen();
+	// Display state, launch-only. The HUD layout cache is seeded to a deliberately invalid size so
+	// its first check always misses and it builds once.
+	global.help_from_hud = false; // which entry point opened Help — see scr_help_menu_update
+
+	// Touch state — launch-only, like the rest of the input state.
+	global.touch_active = false;
+	global.touch_start_x = 0;
+	global.touch_start_y = 0;
+	global.touch_dragging = false;
+	global.touch_drag_col = 0;
+
+	global.app_surface_sized = false; // see scr_game_update — the surface is matched to the room once
 	global.hud_layout_cache = undefined;
 	global.hud_layout_w = -1;
 	global.hud_layout_h = -1;

@@ -60,6 +60,7 @@
     {"id":{"name":"scr_game_init","path":"scripts/scr_game_init/scr_game_init.yy",},},
     {"id":{"name":"scr_game_input_gamepad","path":"scripts/scr_game_input_gamepad/scr_game_input_gamepad.yy",},},
     {"id":{"name":"scr_game_input_keyboard","path":"scripts/scr_game_input_keyboard/scr_game_input_keyboard.yy",},},
+    {"id":{"name":"scr_game_input_touch","path":"scripts/scr_game_input_touch/scr_game_input_touch.yy",},},
     {"id":{"name":"scr_game_over_pause","path":"scripts/scr_game_over_pause/scr_game_over_pause.yy",},},
     {"id":{"name":"scr_game_strings","path":"scripts/scr_game_strings/scr_game_strings.yy",},},
     {"id":{"name":"scr_game_update","path":"scripts/scr_game_update/scr_game_update.yy",},},

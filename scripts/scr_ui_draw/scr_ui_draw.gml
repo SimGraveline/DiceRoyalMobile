@@ -135,25 +135,30 @@ function scr_ui_pair_box_height() {
 	return UI_BOX_PADDING * 2 + _title_h + UI_BOX_TITLE_GAP + CELL_SIZE;
 }
 
-function scr_ui_draw_pair_box(_x, _y, _w, _h, _val1, _val2, _label) {
-	scr_ui_draw_box_bg(_x, _y, _w, _h);
-	scr_ui_draw_box_title(_x + UI_BOX_PADDING, _y + UI_BOX_PADDING, _label);
+// Draws a Hold/Next style box + dice preview + label at an arbitrary anchor.
+// _val1 < 0 skips the preview (used for an empty Hold slot). Mobile version: fixed box size from
+// BOX_WIDTH/BOX_HEIGHT with the label underneath, rather than the desktop columns' measured height.
+function scr_ui_draw_pair_box(_x, _y, _val1, _val2, _label) {
+	draw_set_color(COLOR_BOX_FILL);
+	draw_roundrect(_x, _y, _x + BOX_WIDTH - 1, _y + BOX_HEIGHT - 1, false);
+	draw_set_color(COLOR_BOX_OUTLINE);
+	for (var _o = 0; _o < BOX_OUTLINE_WIDTH; _o++) {
+		draw_roundrect(_x - _o, _y - _o, _x + BOX_WIDTH - 1 + _o, _y + BOX_HEIGHT - 1 + _o, true);
+	}
 
 	if (_val1 >= 0) {
-		draw_set_font(fnt_hud_boxtitle_bungee_med);
-		var _title_h = string_height("A");
-		var _content_y = _y + UI_BOX_PADDING + _title_h + UI_BOX_TITLE_GAP;
-		var _dx = _x + (_w - CELL_SIZE * 2) / 2;
-		scr_ui_draw_die(_dx, _content_y, _val1);
-		scr_ui_draw_die(_dx + CELL_SIZE, _content_y, _val2);
+		var _dx = _x + (BOX_WIDTH - CELL_SIZE * 2) / 2;
+		var _dy = _y + (BOX_HEIGHT - CELL_SIZE) / 2;
+		scr_ui_draw_die(_dx, _dy, _val1);
+		scr_ui_draw_die(_dx + CELL_SIZE, _dy, _val2);
 	}
+
+	draw_set_font(fnt_hud_boxtitle_bungee_med);
+	draw_set_halign(fa_center);
+	draw_set_valign(fa_top);
+	scr_ui_draw_text(_x + BOX_WIDTH / 2, _y + BOX_HEIGHT + BOX_LABEL_OFFSET, _label, c_white);
 }
 
-// --- Unlocks: title + die-icon tiles (real unlock order/levels, see scr_game_constants) + "next" line ---
-// All tiles use dedicated HUD-only icons on spr_dice_specials (subimages 6-8) rather than each
-// die's actual in-game sprite: Random's live cycling animation would be distracting sitting static
-// in a box, Junk Drop has no die value of its own, and Clear R/Clear C unlock together so they
-// share one combined icon instead of two near-duplicate tiles.
 function scr_ui_unlocks_list() {
 	return [
 		{ spr: spr_dice_specials, sub: DICE_SPECIALS_SUB_RANDOM_ICON, level: DICE_RANDOM_UNLOCK_LEVEL,  name: STR_DIE_NAME_RANDOM },
@@ -279,24 +284,51 @@ function scr_ui_hud_layout() {
 }
 
 function scr_ui_draw() {
-	var _hud = scr_ui_hud_layout();
+	// --- Title / Score / Level, centered in the headroom above the grid ---
+	draw_set_halign(fa_center);
+	draw_set_valign(fa_top);
 
-	// --- Left column: Score / High Score / Level / Chains ---
-	// Score always stays white, even once it beats the High Score — high_score_beaten still
-	// drives the SFX (once) and the Game Over "NEW BEST" pulse, just not this box's color anymore.
-	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[0], BOX_WIDTH, _hud.left_h[0], STR_SCORE, string(global.game_score), c_white);
-	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[1], BOX_WIDTH, _hud.left_h[1], STR_HUD_HIGH_SCORE, string(global.high_score), COLOR_GOLD);
-	scr_ui_draw_stat_box(_hud.left_x, _hud.left_y[2], BOX_WIDTH, _hud.left_h[2], STR_LEVEL, string(global.level), c_white);
-	scr_ui_draw_chains_box(_hud.left_x, _hud.left_y[3], BOX_WIDTH, _hud.left_h[3]);
+	draw_set_font(fnt_hud_boxtext_bungee_big);
+	scr_ui_draw_text(GAME_WIDTH / 2, UI_TITLE_Y, STR_TITLE, c_white);
 
-	// --- Right column: Unlocks / Next / Hold+Swap ---
-	scr_ui_draw_unlocks_box(_hud.right_x, _hud.right_y[0], BOX_WIDTH, _hud.right_h[0]);
-	if (global.show_queue) {
-		scr_ui_draw_pair_box(_hud.right_x, _hud.right_y[1], BOX_WIDTH, _hud.right_h[1], global.next_val1, global.next_val2, STR_NEXT);
-	}
+	draw_set_font(fnt_hud_boxtitle_bungee_med);
+	scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y, STR_SCORE, COLOR_BOX_FILL);
+	var _score_label_h = string_height(STR_SCORE);
+
+	draw_set_font(fnt_hud_boxtext_bungee_big);
+	scr_ui_draw_text(GAME_WIDTH / 2, UI_SCORE_Y + _score_label_h, string(global.game_score), c_white);
+	var _score_value_h = string_height(string(global.game_score));
+
+	var _level_y = UI_SCORE_Y + _score_label_h + _score_value_h * UI_SCORE_LINE_H_FACTOR;
+	draw_set_font(fnt_hud_boxtitle_bungee_med);
+	scr_ui_draw_text(GAME_WIDTH / 2, _level_y, STR_LEVEL, COLOR_BOX_FILL);
+	var _level_label_h = string_height(STR_LEVEL);
+
+	draw_set_font(fnt_hud_boxtext_bungee_big);
+	scr_ui_draw_text(GAME_WIDTH / 2, _level_y + _level_label_h, string(global.level), c_white);
+
+	// --- Hold / Next, in the gap under the grid ---
 	if (global.hold_swap_enabled) {
-		scr_ui_draw_pair_box(_hud.right_x, _hud.right_y[2], BOX_WIDTH, _hud.right_h[2], global.hold_val1, global.hold_val2, STR_HOLD);
+		scr_ui_draw_pair_box(BOX_HOLD_X, BOX_Y, global.hold_val1, global.hold_val2, STR_HOLD);
 	}
+	if (global.show_queue) {
+		scr_ui_draw_pair_box(BOX_NEXT_X, BOX_Y, global.next_val1, global.next_val2, STR_NEXT);
+	}
+
+	// --- Touch buttons (pause / help) ---
+	draw_set_font(fnt_hud_boxtitle_bungee_med);
+	draw_set_halign(fa_center);
+	draw_set_valign(fa_middle);
+
+	draw_set_color(c_gray);
+	draw_rectangle(UI_BTN_PAUSE_X, UI_BTN_PAUSE_Y, UI_BTN_PAUSE_X + UI_BTN_SIZE - 1, UI_BTN_PAUSE_Y + UI_BTN_SIZE - 1, false);
+	draw_set_color(c_white);
+	draw_text(UI_BTN_PAUSE_X + UI_BTN_SIZE / 2, UI_BTN_PAUSE_Y + UI_BTN_SIZE / 2, STR_PAUSE);
+
+	draw_set_color(c_gray);
+	draw_rectangle(UI_BTN_HELP_X, UI_BTN_HELP_Y, UI_BTN_HELP_X + UI_BTN_SIZE - 1, UI_BTN_HELP_Y + UI_BTN_SIZE - 1, false);
+	draw_set_color(c_white);
+	draw_text(UI_BTN_HELP_X + UI_BTN_SIZE / 2, UI_BTN_HELP_Y + UI_BTN_SIZE / 2, global.help_active ? STR_HELP_CLOSE : STR_HELP);
 
 	// Paused
 	if (global.help_active) {
@@ -329,7 +361,6 @@ function scr_ui_draw() {
 		scr_ui_draw_control_row(_help.ctrl2_y, STR_HELP_CTRL_KEY_2, STR_HELP_CTRL_ACTION_2);
 		scr_ui_draw_control_row(_help.ctrl3_y, STR_HELP_CTRL_KEY_3, STR_HELP_CTRL_ACTION_3);
 		scr_ui_draw_control_row(_help.ctrl4_y, STR_HELP_CTRL_KEY_4, STR_HELP_CTRL_ACTION_4);
-		scr_ui_draw_control_row(_help.ctrl5_y, STR_HELP_CTRL_KEY_5, STR_HELP_CTRL_ACTION_5);
 
 		// Back — always highlighted, it's the only option on this screen
 		scr_ui_draw_text(GAME_WIDTH / 2, _help.back_y, STR_HELP_BACK, COLOR_BOX_FILL);
@@ -398,7 +429,7 @@ function scr_ui_draw() {
 		scr_ui_draw_text(GAME_WIDTH / 2, _over.top, STR_GAME_OVER, c_red);
 
 		// Scores
-		var _sy = _over.top + _over.title_h;
+		var _sy = _over.top + _over.title_h + _over.title_gap;
 
 		if (global.high_score_beaten) {
 			var _pulse = 0.5 + 0.5 * sin(global.game_over_blink_timer * pi * GAME_OVER_PULSE_SPEED);
@@ -410,13 +441,13 @@ function scr_ui_draw() {
 		}
 
 		draw_set_font(fnt_gameover_scorestitle_bungee_med);
-		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_CURRENT_SCORE, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_CURRENT_SCORE, c_yellow);
 		_sy += _over.value_gap;
 		draw_set_font(fnt_gameover_scores_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.game_score), c_white);
 		_sy += _over.score_line_h;
 		draw_set_font(fnt_gameover_scorestitle_bungee_med);
-		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_HIGH_SCORE, COLOR_BOX_FILL);
+		scr_ui_draw_text(GAME_WIDTH / 2, _sy, STR_HIGH_SCORE, c_yellow);
 		_sy += _over.value_gap;
 		draw_set_font(fnt_gameover_scores_bungee_med);
 		scr_ui_draw_text(GAME_WIDTH / 2, _sy, string(global.high_score), c_white);

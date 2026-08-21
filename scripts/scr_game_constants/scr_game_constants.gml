@@ -6,7 +6,7 @@
 enum JUNK_STATE { NONE, TELEGRAPH, FALLING }
 
 // What confirming a pause menu row does. The row list itself lives in scr_pause_menu_items.
-enum PAUSE_ACTION { RESUME, RESTART, HELP, MUTE_MUSIC, MUTE_SFX, SHOW_GRID, SHOW_QUEUE, HOLD_SWAP, GHOST, QUIT }
+enum PAUSE_ACTION { RESUME, RESTART, HELP, MUTE_MUSIC, MUTE_SFX, SHOW_GRID, SHOW_QUEUE, HOLD_SWAP, GHOST, RUMBLE, QUIT }
 
 // Same idea for the Game Over menu — see scr_game_over_menu_items.
 enum GAME_OVER_ACTION { RESTART, QUIT }
@@ -16,22 +16,22 @@ enum GAME_OVER_ACTION { RESTART, QUIT }
 enum DROP_TYPE { NORMAL, SOFT, HARD }
 
 // --- Display ---
-// GAME_WIDTH/HEIGHT follow the room's own size directly (the fullscreen render target —
-// see scr_game_update, which resizes application_surface to this or WINDOW_WIDTH/HEIGHT
-// depending on window_get_fullscreen()). Window mode itself (windowed vs fullscreen,
-// default at launch) is managed by Sim via GameMaker's project options, not GML.
+// GAME_WIDTH/HEIGHT follow the room's own size directly. The room is the portrait play area
+// (see rm_game); everything below is laid out against it, so changing the room size is the one
+// place a resolution change has to happen.
 #macro GAME_WIDTH  room_width
 #macro GAME_HEIGHT room_height
-// Fixed windowed size — matches the room's 16:9 aspect at a smaller scale.
-#macro WINDOW_WIDTH   1600
-#macro WINDOW_HEIGHT  900
 #macro LOGO_SCALE_REFERENCE_WIDTH  400
-#macro GRID_HEIGHT_RATIO  0.75
+// How much of the screen's WIDTH the grid spans. Portrait flips which axis is the tight one:
+// on desktop the grid was sized from screen height with room to spare on the sides, here the
+// columns are what runs out first, so cell size comes from width and the leftover is vertical —
+// which is exactly where the HUD goes.
+#macro GRID_WIDTH_RATIO  0.95
 
 // --- Grid ---
-#macro CELL_SIZE   floor((GAME_HEIGHT * GRID_HEIGHT_RATIO) / (GRID_ROWS + 1))
-#macro GRID_COLS   7
-#macro GRID_ROWS   7
+#macro GRID_COLS   8
+#macro GRID_ROWS   8
+#macro CELL_SIZE   floor((GAME_WIDTH * GRID_WIDTH_RATIO) / GRID_COLS)
 #macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
 #macro GRID_HEIGHT ((GRID_ROWS + 1) * CELL_SIZE)
 
@@ -45,11 +45,40 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro GRID_DRAW_X  (GRID_X + global.grid_shake_x)
 #macro GRID_DRAW_Y  (GRID_Y + global.grid_shake_y)
 
+// --- Touch input ---
+// Restored from the pre-desktop mobile build. Distances are in pixels except DRAG_SENSITIVITY,
+// which is a fraction of a cell so a drag moves the pair the same "felt" distance at any cell size.
+#macro SWIPE_MIN_DISTANCE  15
+#macro DRAG_THRESHOLD  5
+#macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
+#macro TAP_ZONE_SPLIT  0.80
+#macro ROTATE_SPLIT  0.5
+
+// --- Touch UI buttons (pause / help) ---
+#macro UI_BTN_SIZE     32
+#macro UI_BTN_MARGIN   8
+#macro UI_BTN_PAUSE_X  UI_BTN_MARGIN
+#macro UI_BTN_PAUSE_Y  UI_BTN_MARGIN
+#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN)
+#macro UI_BTN_HELP_Y   UI_BTN_MARGIN
+
+// --- Mobile HUD anchors ---
+#macro BOX_WIDTH       (CELL_SIZE * 3)
+// Portrait puts the free space above and below the grid instead of beside it: title and score
+// stack in the headroom, Hold/Next sit in the gap under the grid, aligned to its edges.
+#macro UI_TITLE_Y      36
+#macro UI_SCORE_Y      80
+#macro BOX_HEIGHT      (CELL_SIZE * 1.5)
+#macro BOX_Y           (GRID_Y + GRID_HEIGHT + CELL_SIZE)
+#macro BOX_HOLD_X      (GRID_X)
+#macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
+#macro BOX_LABEL_OFFSET  8
+
 // --- Dead zone ---
 #macro DEAD_ZONE_ROW  GRID_ROWS
 
 // --- Pair spawn ---
-#macro SPAWN_COL_LEFT   2
+#macro SPAWN_COL_LEFT   3
 #macro SPAWN_ROW        GRID_ROWS
 
 // --- Level system ---
@@ -373,7 +402,6 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-#macro BOX_WIDTH       (CELL_SIZE * 3)
 // --- HUD side-column boxes (Score/High Score/Level/Chains left, Next/Hold/Unlocks right) ---
 #macro UI_BOX_PADDING        (CELL_SIZE * 0.15)
 #macro UI_BOX_TITLE_GAP      (CELL_SIZE * 0.08)
@@ -389,6 +417,7 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro UI_SCORE_LINE_H_FACTOR     1.5
 // Tighter gap used only between a score label and its own value (Game Over), so the value sits
 // closer to its label than to the next label below it.
+#macro UI_GAME_OVER_TITLE_GAP_FACTOR  1.2  // space under the GAME OVER title, before the scores
 #macro UI_SCORE_VALUE_GAP_FACTOR  0.9
 // Minimum pixel delta before mouse movement counts as "the player is using the mouse" in a menu —
 // filters out sensor jitter from a resting hand so it never fights keyboard/gamepad navigation.

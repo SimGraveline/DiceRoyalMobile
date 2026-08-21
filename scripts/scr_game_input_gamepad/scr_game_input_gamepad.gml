@@ -16,26 +16,34 @@ function scr_pad_rumble_init() {
 // _scale is the same factor the visual punch gets (scr_pair_detach passes one value to both), so a
 // soft-drop landing buzzes exactly as much lighter as it looks.
 function scr_pad_rumble_impact(_scale) {
-	if (!PAD_RUMBLE_ENABLED) return;
+	if (!PAD_RUMBLE_ENABLED || !global.rumble_enabled) return;
 	global.pad_impact_timer = PAD_RUMBLE_IMPACT_DURATION;
 	global.pad_impact_duration = PAD_RUMBLE_IMPACT_DURATION;
 	global.pad_impact_strength = PAD_RUMBLE_IMPACT_STRENGTH * _scale;
 }
 
 function scr_pad_rumble_chain() {
-	if (!PAD_RUMBLE_ENABLED) return;
+	if (!PAD_RUMBLE_ENABLED || !global.rumble_enabled) return;
 	global.pad_chain_timer = PAD_RUMBLE_CHAIN_DURATION;
 }
 
 // Fired when the match preview lights up on a group it wasn't showing the frame before. Rides on the
 // impact timer's decay curve at a fraction of its strength, so it reads as a tick rather than a hit.
 function scr_pad_rumble_preview() {
-	if (!PAD_RUMBLE_ENABLED) return;
+	if (!PAD_RUMBLE_ENABLED || !global.rumble_enabled) return;
 	// Never step on a stronger buzz already running — a landing or a live chain outranks a hint.
 	if (global.pad_impact_timer > 0 || global.pad_chain_timer > 0) return;
 	global.pad_impact_timer = PAD_RUMBLE_PREVIEW_DURATION;
 	global.pad_impact_duration = PAD_RUMBLE_PREVIEW_DURATION;
 	global.pad_impact_strength = PAD_RUMBLE_PREVIEW_STRENGTH;
+}
+
+// Kills any buzz in progress and stops the motor. Used when the player switches vibration off —
+// the timers are what feed scr_pad_rumble_update, so clearing them is what makes it stay quiet.
+function scr_pad_rumble_stop() {
+	global.pad_impact_timer = 0;
+	global.pad_chain_timer = 0;
+	scr_pad_rumble_apply(0);
 }
 
 // Pushes a strength to the motors, skipping the call when nothing changed so the driver isn't fed

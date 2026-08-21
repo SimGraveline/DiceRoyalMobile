@@ -1,28 +1,16 @@
 function scr_game_update() {
-	// application_surface stays fixed at whatever size it was created at (the initial
-	// windowed size) unless explicitly resized — without this, switching to fullscreen
-	// just stretches that lower-res surface instead of rendering at full detail.
-	// Only resize on an actual fullscreen-state change, never on a live pixel comparison —
-	// GAME_WIDTH/HEIGHT are room_width/room_height, and in the HTML5/itch.io embed the browser
-	// can jitter the canvas by a pixel on its own (page reflow, DPI rounding) with no real
-	// window_get_fullscreen() change; comparing raw dimensions every step would still resize
-	// (and reallocate the surface's render target) far too often. Gating on the boolean instead
-	// means this only ever fires on a genuine transition — at most once, since this game has no
-	// runtime fullscreen toggle anymore.
-	// app_surface_fullscreen is seeded to the opposite of the real state in scr_game_init, so the
-	// very first frame always counts as a transition and resizes once.
-	var _is_fullscreen = window_get_fullscreen();
-	if (_is_fullscreen != global.app_surface_fullscreen) {
-		global.app_surface_fullscreen = _is_fullscreen;
-		if (_is_fullscreen) {
-			surface_resize(application_surface, GAME_WIDTH, GAME_HEIGHT);
-		} else {
-			surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
-		}
+	// application_surface keeps whatever size it was created at unless told otherwise, so on the
+	// first frame we match it to the room once. There's no fullscreen toggle on mobile and the room
+	// IS the play area, so this never needs to run again — and it must not run every step: resizing
+	// reallocates the render target, which is what was leaking memory in the HTML5 build.
+	if (!global.app_surface_sized) {
+		global.app_surface_sized = true;
+		surface_resize(application_surface, GAME_WIDTH, GAME_HEIGHT);
 	}
 
 	scr_game_input_keyboard();
 	scr_game_input_gamepad();
+	scr_game_input_touch();
 
 	// Ticked here, above every state-specific early return — a spinning motor has to be shut off
 	// on any screen the game jumps to, it can't just freeze like a visual effect can.
@@ -60,11 +48,27 @@ function scr_game_update() {
 		return;
 	}
 
+	// The touch Help button opens and closes Help on its own, without going through the pause menu
+	// (there's no pause menu row for it on the mobile HUD — the button IS the entry point). Pausing
+	// alongside it keeps the game from running underneath the panel.
+	if (global.input_help && !global.game_over && !global.countdown_active && !global.fade_active) {
+		if (global.help_active) {
+			global.help_active = false;
+			global.paused = false;
+		} else {
+			global.help_active = true;
+			global.help_from_hud = true;
+			global.paused = true;
+		}
+		return; // the same tap would otherwise be re-read below as a Back press and undo this
+	}
+
 	if (global.help_active && global.input_pause) {
 		// Escape always force-closes Help straight back to gameplay. Enter never does this —
 		// its only role in Help is confirming the Back button (see scr_help_menu_update),
 		// which returns to Pause instead.
 		global.help_active = false;
+		global.help_from_hud = false;
 		global.paused = false;
 	} else if (global.input_pause && !global.game_over && !global.countdown_active && !global.fade_active) {
 		scr_game_over_pause();

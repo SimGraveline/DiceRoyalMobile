@@ -12,6 +12,7 @@ function scr_save_load() {
 	global.show_queue = ini_read_real(STR_INI_SECTION, STR_INI_KEY_SHOW_QUEUE, 1) == 1;
 	global.hold_swap_enabled = ini_read_real(STR_INI_SECTION, STR_INI_KEY_HOLD_SWAP, 1) == 1;
 	global.ghost_enabled = ini_read_real(STR_INI_SECTION, STR_INI_KEY_GHOST_ENABLED, 1) == 1;
+	global.rumble_enabled = ini_read_real(STR_INI_SECTION, STR_INI_KEY_RUMBLE, 0) == 1;
 	ini_close();
 }
 
