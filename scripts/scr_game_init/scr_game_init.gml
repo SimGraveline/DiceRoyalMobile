@@ -12,6 +12,7 @@ function scr_game_reset_run() {
 	global.spawn_weights = [0, 0.5, 1, 1, 1, 1, 1, 0, 0, 0];
 
 	global.match_preview_pulse = 0; // breathing phase for the match preview glow
+	global.match_preview_sig = ""; // last previewed group, so the rumble tic only fires on a change
 	global.drop_timer = 0;
 	global.das_timer = 0;
 	global.das_direction = 0;

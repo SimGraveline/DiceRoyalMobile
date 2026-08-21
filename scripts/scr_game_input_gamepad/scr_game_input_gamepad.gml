@@ -7,6 +7,7 @@
 function scr_pad_rumble_init() {
 	global.pad_impact_timer = 0;
 	global.pad_impact_strength = 0;
+	global.pad_impact_duration = 0;
 	global.pad_chain_timer = 0;
 	global.pad_rumble_current = -1; // forces the first apply through, whatever the motor is doing
 	scr_pad_rumble_apply(0);
@@ -17,12 +18,24 @@ function scr_pad_rumble_init() {
 function scr_pad_rumble_impact(_scale) {
 	if (!PAD_RUMBLE_ENABLED) return;
 	global.pad_impact_timer = PAD_RUMBLE_IMPACT_DURATION;
+	global.pad_impact_duration = PAD_RUMBLE_IMPACT_DURATION;
 	global.pad_impact_strength = PAD_RUMBLE_IMPACT_STRENGTH * _scale;
 }
 
 function scr_pad_rumble_chain() {
 	if (!PAD_RUMBLE_ENABLED) return;
 	global.pad_chain_timer = PAD_RUMBLE_CHAIN_DURATION;
+}
+
+// Fired when the match preview lights up on a group it wasn't showing the frame before. Rides on the
+// impact timer's decay curve at a fraction of its strength, so it reads as a tick rather than a hit.
+function scr_pad_rumble_preview() {
+	if (!PAD_RUMBLE_ENABLED) return;
+	// Never step on a stronger buzz already running — a landing or a live chain outranks a hint.
+	if (global.pad_impact_timer > 0 || global.pad_chain_timer > 0) return;
+	global.pad_impact_timer = PAD_RUMBLE_PREVIEW_DURATION;
+	global.pad_impact_duration = PAD_RUMBLE_PREVIEW_DURATION;
+	global.pad_impact_strength = PAD_RUMBLE_PREVIEW_STRENGTH;
 }
 
 // Pushes a strength to the motors, skipping the call when nothing changed so the driver isn't fed
@@ -52,8 +65,10 @@ function scr_pad_rumble_update() {
 		if (global.pad_impact_timer > 0) {
 			global.pad_impact_timer -= _dt;
 			if (global.pad_impact_timer < 0) global.pad_impact_timer = 0;
-			if (PAD_RUMBLE_IMPACT_DURATION > 0) {
-				var _t = global.pad_impact_timer / PAD_RUMBLE_IMPACT_DURATION;
+			// Normalized against whatever duration the timer was started with, so a preview tic
+			// decays over its own short window instead of the landing punch's longer one.
+			if (global.pad_impact_duration > 0) {
+				var _t = global.pad_impact_timer / global.pad_impact_duration;
 				_strength = max(_strength, global.pad_impact_strength * _t * _t);
 			}
 		}

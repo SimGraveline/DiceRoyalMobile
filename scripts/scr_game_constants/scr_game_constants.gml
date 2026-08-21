@@ -214,11 +214,11 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 // Drawn in additive blend: the dice about to go LIGHT UP rather than getting boxed in. A bright core
 // over each die, then a few progressively larger, fainter passes around it for a soft halo. No
 // shader involved — this is only a blend mode, unrelated to the abandoned glow shader.
-#macro MATCH_PREVIEW_CORE_ALPHA    0.16
-#macro MATCH_PREVIEW_GLOW_ALPHA    0.075
-#macro MATCH_PREVIEW_GLOW_LAYERS   3
-#macro MATCH_PREVIEW_GLOW_SPREAD   0.07   // how far each halo layer grows, as a fraction of CELL_SIZE
-#macro MATCH_PREVIEW_CORNER_FACTOR 0.22   // corner radius, fraction of CELL_SIZE — matches the dice
+#macro MATCH_PREVIEW_CORE_ALPHA    0.075
+#macro MATCH_PREVIEW_GLOW_ALPHA    0.05
+#macro MATCH_PREVIEW_GLOW_LAYERS   2
+#macro MATCH_PREVIEW_GLOW_SPREAD   0.125   // how far each halo layer grows, as a fraction of CELL_SIZE
+#macro MATCH_PREVIEW_CORNER_FACTOR 0.25    // corner radius, fraction of CELL_SIZE — matches the dice
 // Slow breathing so the group reads as "pending" instead of "selected". Frozen while paused, like
 // every other effect that resamples per frame.
 // Minimum perceived brightness a die's color is lifted to before being used as glow light — see
@@ -264,7 +264,7 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 // a constant two-axis jitter reads as much bigger movement than a single static offset of the
 // same size.
 #macro GRID_RUMBLE_AMOUNT    (CELL_SIZE * 0.010)
-#macro GRID_RUMBLE_DURATION  1.0
+#macro GRID_RUMBLE_DURATION  0.75
 
 // --- Gamepad rumble ---
 // Deliberately mirrors the grid shake: same two triggers, same moments, and the durations are the
@@ -277,6 +277,12 @@ enum DROP_TYPE { NORMAL, SOFT, HARD }
 #macro PAD_RUMBLE_IMPACT_DURATION   GRID_IMPACT_DURATION
 #macro PAD_RUMBLE_CHAIN_STRENGTH    0.14
 #macro PAD_RUMBLE_CHAIN_DURATION    GRID_RUMBLE_DURATION
+
+// The match preview tic. Deliberately far weaker and shorter than the other two: this is a hint
+// that a chain is lined up, not an event that happened, so it must never compete with the real
+// chain rumble it's pointing at. No grid shake twin — the glow is already the visual channel.
+#macro PAD_RUMBLE_PREVIEW_STRENGTH  0.5
+#macro PAD_RUMBLE_PREVIEW_DURATION  0.25
 
 // --- Background combo feel (bg dice tint to the active dying chain's color) ---
 #macro BG_COMBO_ENABLED  true

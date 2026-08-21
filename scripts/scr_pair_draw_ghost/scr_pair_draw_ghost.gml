@@ -177,7 +177,7 @@ function scr_pair_draw_match_preview() {
 	if (!MATCH_PREVIEW_ENABLED) return;
 	// Still drawn while paused — the pulse below freezes instead, so the glow holds its brightness
 	// rather than vanishing out from under the pause panel.
-	if (!global.pair_active) return;
+	if (!global.pair_active) { global.match_preview_sig = ""; return; }
 
 	var _land = scr_pair_ghost_landing();
 
@@ -197,7 +197,7 @@ function scr_pair_draw_match_preview() {
 	var _landed = [];
 	if (_first.row  <= DEAD_ZONE_ROW) array_push(_landed, _first);
 	if (_second.row <= DEAD_ZONE_ROW) array_push(_landed, _second);
-	if (array_length(_landed) == 0) return;
+	if (array_length(_landed) == 0) { global.match_preview_sig = ""; return; }
 
 	// A Mimic takes the face of whatever sits directly beneath it the moment it lands, so its value
 	// is knowable now — no guessing about what the board will look like later. If there's nothing
@@ -216,6 +216,7 @@ function scr_pair_draw_match_preview() {
 
 	var _color = c_white;
 	var _any = false;
+	var _sig = "";
 
 	for (var _i = 0; _i < array_length(_landed); _i++) {
 		var _val = _landed[_i].val;
@@ -246,9 +247,20 @@ function scr_pair_draw_match_preview() {
 		}
 		_color = scr_match_preview_glow_color(_val);
 		_any = true;
+		// Value, size, and landing cell: enough to tell two different previewed chains apart, and to
+		// re-fire when the same group grows or shifts under a moved pair.
+		_sig += string(_val) + ":" + string(_count) + "@" + string(_landed[_i].col) + "," + string(_landed[_i].row) + ";";
 	}
 
-	if (!_any) return;
+	// The haptic tic. _sig identifies WHICH chain is being previewed, not merely that one is: sliding
+	// straight from one valid group to a different one never passes through "off", so a plain on/off
+	// flag would stay silent on the second. Cleared at every early return above for the same reason.
+	if (!_any) { global.match_preview_sig = ""; return; }
+
+	if (_sig != global.match_preview_sig) {
+		global.match_preview_sig = _sig;
+		if (!global.paused) scr_pad_rumble_preview();
+	}
 
 	// Breathing intensity. Advanced here rather than in the update loop because the preview is the
 	// only thing that reads it — but gated on !paused all the same, so a paused game shows the glow
