@@ -1,6 +1,6 @@
 function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false) {
-	var _x = GRID_X + (_col * CELL_SIZE);
-	var _y = GRID_Y + ((GRID_ROWS - _row) * CELL_SIZE);
+	var _x = GRID_DRAW_X + (_col * CELL_SIZE);
+	var _y = GRID_DRAW_Y + ((GRID_ROWS - _row) * CELL_SIZE);
 
 	// Dying fade out
 	var _alpha = 1.0;
@@ -12,9 +12,18 @@ function scr_die_draw(_col, _row, _value, _alpha_override = -1, _falling = false
 		_alpha = max(DYING_ALPHA_MIN, global.grid_dying[_col][_row] / DYING_DURATION);
 	}
 
-	// Dying shake (same jitter as the splash screen dice rain)
-	var _xs = _is_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
-	var _ys = _is_dying ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
+	// A genuine chain (match/join/cascade/suite) shakes while dying — a standalone dying die
+	// (Bomb, or Clear via its own isolation) stays still, so a chain reads visually distinct
+	// from an artificial elimination.
+	var _is_chain_dying = _is_dying && global.grid_dying_chain[_col][_row];
+
+	// Dying shake (same jitter as the splash screen dice rain) — chain only, and never while
+	// paused: the simulation is frozen, so nothing on the grid should visibly keep moving.
+	// Same rule any future animated die (specials included) should follow — see scr_pair_draw
+	// for the same pattern applied to the falling pair's stretch.
+	var _shaking = _is_chain_dying && !global.paused;
+	var _xs = _shaking ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
+	var _ys = _shaking ? random_range(RAIN_SHAKE_MIN, RAIN_SHAKE_MAX) : 1.0;
 
 	// Squash & stretch — stretch while airborne (pivots on the center), squash right after
 	// landing (pivots on the bottom so the die reads as pressing into the stack, not sinking

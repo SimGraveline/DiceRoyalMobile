@@ -1,11 +1,6 @@
 function scr_level_update() {
 	var _prev_level = global.level;
 
-	if (global.level_pulse_timer > 0) {
-		global.level_pulse_timer -= delta_time / DELTA_TO_SECONDS;
-		if (global.level_pulse_timer < 0) global.level_pulse_timer = 0;
-	}
-
 	if (global.game_score >= LEVEL_ENDLESS_BASE_SCORE) {
 		// Open-ended progression past the fixed table: fixed speed, recurring threshold step
 		global.level = LEVEL_COUNT + floor((global.game_score - LEVEL_ENDLESS_BASE_SCORE) / LEVEL_ENDLESS_SCORE_STEP);
@@ -29,6 +24,5 @@ function scr_level_update() {
 
 	if (global.level > _prev_level) {
 		scr_audio_play_sfx(snd_level);
-		global.level_pulse_timer = LEVEL_PULSE_DURATION;
 	}
 }

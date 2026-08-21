@@ -12,7 +12,7 @@ function scr_die_place(_col, _row, _val) {
 		scr_die_try_activate_below(_col, _row, DIE_MIMIC);
 	} else if (_val == DIE_BOMB) {
 		var _below = (_row > 0) ? global.grid[_col][_row - 1] : 0;
-		if ((_below >= 1 && _below <= PAIR_MAX_VALUE) || _below == DIE_BRICK || _below == DIE_BOMB || _below == DIE_MIMIC) {
+		if (scr_die_bomb_valid_target(_below)) {
 			scr_die_bomb_activate(_col, _row, _below);
 		} else {
 			global.grid[_col][_row] = DIE_BOMB;

@@ -29,17 +29,17 @@ function scr_screen_logos_draw() {
 	draw_set_halign(fa_center);
 
 	if (global.logo_step == 0) {
-		draw_set_font(fnt_inkfree_logo);
+		draw_set_font(fnt_logo_gamemaker_inkfree_med);
 		draw_set_valign(fa_bottom);
 		scr_ui_draw_text(_cx, _cy - LOGO_TEXT_OFFSET, STR_LOGO_MADE_WITH, c_white);
 
-		var _scale = MOBILE_GAME_WIDTH * LOGO_SCALE_GM / sprite_get_width(spr_logo_gamemaker);
+		var _scale = LOGO_SCALE_REFERENCE_WIDTH * LOGO_SCALE_GM / sprite_get_width(spr_logo_gamemaker);
 		draw_sprite_ext(spr_logo_gamemaker, 0, _cx, _cy + LOGO_TEXT_OFFSET, _scale, _scale, 0, c_white, 1.0);
 	} else {
-		var _scale = MOBILE_GAME_WIDTH * LOGO_SCALE_GG / sprite_get_width(spr_logo_gravegames);
+		var _scale = LOGO_SCALE_REFERENCE_WIDTH * LOGO_SCALE_GG / sprite_get_width(spr_logo_gravegames);
 		var _logo_h = sprite_get_height(spr_logo_gravegames) * _scale;
 
-		draw_set_font(fnt_bebasneue_logo);
+		draw_set_font(fnt_logo_gravegames_bebasneue_med);
 		draw_set_valign(fa_bottom);
 		scr_ui_draw_text(_cx, _cy - _logo_h / 2, STR_LOGO_STUDIO, c_white);
 

@@ -7,7 +7,7 @@ function scr_screen_splash_init() {
 	global.rain_spawn_timer = 0;
 	global.splash_blink_timer = 0;
 	global.splash_music_id = audio_play_sound(snd_theme, 1, true);
-	if (global.music_muted) audio_pause_sound(global.splash_music_id);
+	audio_sound_gain(global.splash_music_id, global.music_muted ? 0 : 1, 0);
 }
 
 function scr_screen_splash_update() {
@@ -18,7 +18,7 @@ function scr_screen_splash_update() {
 		var _die = {
 			x: random(GAME_WIDTH),
 			y: random(GAME_HEIGHT),
-			frame: irandom_range(1, 6),
+			frame: irandom_range(1, RAIN_DICE_FACES),
 			alpha: random_range(RAIN_ALPHA_MIN, RAIN_ALPHA_MAX),
 			speed: random_range(RAIN_SPEED_MIN, RAIN_SPEED_MAX),
 			shaking: (irandom(RAIN_SHAKE_ODDS) < RAIN_SHAKE_CHANCE)
@@ -43,8 +43,28 @@ function scr_screen_splash_update() {
 	// Fade update
 	scr_screen_fade_update();
 
-	// Input
-	if (global.input_confirm && !global.fade_active) {
+	// Input — keyboard: any key. Mouse: left/right click. Gamepad: face buttons, Start, Select,
+	// bumpers, triggers — never the d-pad or analog sticks (those move too easily by accident).
+	var _any_input = keyboard_check_pressed(vk_anykey)
+		|| mouse_check_button_pressed(mb_left)
+		|| mouse_check_button_pressed(mb_right);
+
+	var _pad = GAMEPAD_INDEX;
+	if (gamepad_is_connected(_pad)) {
+		_any_input = _any_input
+			|| gamepad_button_check_pressed(_pad, gp_face1)
+			|| gamepad_button_check_pressed(_pad, gp_face2)
+			|| gamepad_button_check_pressed(_pad, gp_face3)
+			|| gamepad_button_check_pressed(_pad, gp_face4)
+			|| gamepad_button_check_pressed(_pad, gp_start)
+			|| gamepad_button_check_pressed(_pad, gp_select)
+			|| gamepad_button_check_pressed(_pad, gp_shoulderl)
+			|| gamepad_button_check_pressed(_pad, gp_shoulderr)
+			|| gamepad_button_check_pressed(_pad, gp_shoulderlb)
+			|| gamepad_button_check_pressed(_pad, gp_shoulderrb);
+	}
+
+	if (_any_input && !global.fade_active) {
 		if (global.splash_music_id != -1 && audio_exists(global.splash_music_id)) {
 			audio_sound_gain(global.splash_music_id, 0, SPLASH_MUSIC_FADE_MS);
 		}
@@ -70,29 +90,30 @@ function scr_screen_splash_draw() {
 	}
 
 	// Title
-	draw_set_font(fnt_bungee_splash);
+	draw_set_font(fnt_splash_title_bungee_big);
 	draw_set_halign(fa_center);
 	draw_set_valign(fa_bottom);
 	scr_ui_draw_text(GAME_WIDTH / 2, GAME_HEIGHT / 2, STR_TITLE, c_white);
 
 	// Tap to Stack (blink)
 	var _title_h = string_height(STR_TITLE);
-	var _blink_alpha = 0.5 + 0.5 * sin(global.splash_blink_timer * pi * 2);
+	var _blink_alpha = 0.5 + 0.5 * sin(global.splash_blink_timer * pi * SPLASH_BLINK_SPEED);
 	draw_set_alpha(_blink_alpha);
-	draw_set_font(fnt_inkfree_logo);
+	draw_set_font(fnt_splash_pressstart_inkfree_med);
 	draw_set_valign(fa_top);
 	scr_ui_draw_text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + _title_h, STR_TAP_TO_STACK, c_white);
 	draw_set_alpha(1.0);
 
 	// Credits
-	draw_set_font(fnt_bebasneue_credits);
+	draw_set_font(fnt_splash_credits_bebasneue_small);
 	draw_set_halign(fa_center);
 	draw_set_valign(fa_bottom);
 	scr_ui_draw_text(GAME_WIDTH / 2, GAME_HEIGHT - CREDITS_MARGIN_BOTTOM, STR_CREDITS, c_white);
 
 	// Beta version tag
+	draw_set_font(fnt_splash_version_bebasneue_small);
 	draw_set_valign(fa_top);
-	scr_ui_draw_text(GAME_WIDTH / 2, BETA_VERSION_MARGIN_TOP, STR_BETA_VERSION, c_white);
+	scr_ui_draw_text(GAME_WIDTH / 2, BETA_VERSION_MARGIN_TOP, STR_VERSION, c_white);
 
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);

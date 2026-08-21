@@ -10,10 +10,10 @@ function scr_game_input_keyboard() {
 	global.input_rotate_ccw = keyboard_check_pressed(vk_control);
 	global.input_hold       = keyboard_check_pressed(vk_shift);
 	global.input_pause      = keyboard_check_pressed(vk_escape);
+	global.input_pause_alt  = keyboard_check_pressed(vk_enter); // Enter also toggles pause, but never force-closes Help — see scr_game_update
 	global.input_grid_lines = keyboard_check_pressed(vk_tab);
 	global.input_mute_music = keyboard_check_pressed(ord("M"));
-	global.input_confirm    = keyboard_check_pressed(vk_enter);
-	global.input_help       = keyboard_check_pressed(vk_f1);
 	global.input_restart    = keyboard_check_pressed(ord("R")); // DEBUG
 	global.input_exit       = keyboard_check_pressed(ord("Q")); // DEBUG
+	global.input_reset_highscore = keyboard_check_pressed(vk_f5); // DEBUG
 }

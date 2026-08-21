@@ -24,7 +24,7 @@ function scr_grid_match() {
 	for (var _col = 0; _col < GRID_COLS; _col++) {
 		for (var _row = 0; _row <= GRID_ROWS; _row++) {
 			var _val = global.grid[_col][_row];
-			if (_val < 2 || _val > PAIR_MAX_VALUE || _visited[_col][_row] || global.grid_dying[_col][_row] > 0) continue;
+			if (_val < MATCH_MIN_VALUE || _val > PAIR_MAX_VALUE || _visited[_col][_row] || global.grid_dying[_col][_row] > 0) continue;
 
 			var _group = array_create(GRID_COLS);
 			for (var _c = 0; _c < GRID_COLS; _c++) {
@@ -49,7 +49,7 @@ function scr_grid_match() {
 					for (var _gr = 0; _gr <= GRID_ROWS; _gr++) {
 						if (_group[_gc][_gr]) {
 							global.grid_dying[_gc][_gr] = DYING_DURATION;
-							global.grid_dying_match[_gc][_gr] = true;
+							global.grid_dying_chain[_gc][_gr] = true;
 						}
 					}
 				}
@@ -60,6 +60,8 @@ function scr_grid_match() {
 	// Propagate dying to adjacent same-value dice (and 1's special case)
 	if (_found) {
 		scr_audio_play_sfx(snd_chain_dying);
+		scr_grid_shake_chain();
+		scr_pad_rumble_chain();
 		scr_grid_propagate_dying();
 	}
 

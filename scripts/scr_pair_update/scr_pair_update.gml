@@ -63,8 +63,16 @@ function scr_pair_update() {
 
 		global.lock_timer += delta_time / DELTA_TO_SECONDS;
 
-		if (global.lock_timer >= LOCK_DELAY) {
-			scr_pair_detach();
+		// Holding Down shortens the wait (LOCK_DELAY_SOFT) — the player is driving the pair into the
+		// stack, so it commits close to the moment of contact instead of idling out the full delay.
+		// Read fresh every frame off the held input rather than latched at first contact: releasing
+		// Down while the timer runs hands the player the full delay back, and pressing it commits.
+		var _lock_delay = global.input_soft_drop ? LOCK_DELAY_SOFT : LOCK_DELAY;
+
+		if (global.lock_timer >= _lock_delay) {
+			// Locking while the player holds Down still counts as a soft drop landing — they drove
+			// it into the stack, so it lands heavier than one that simply timed out.
+			scr_pair_detach(global.input_soft_drop ? DROP_TYPE.SOFT : DROP_TYPE.NORMAL);
 			global.lock_active = false;
 			return;
 		}
@@ -82,7 +90,7 @@ function scr_pair_update() {
 			if (_mb || _sb) break;
 			global.pair_row -= 1;
 		}
-		scr_pair_detach();
+		scr_pair_detach(DROP_TYPE.HARD);
 		global.lock_active = false;
 		return;
 	}
@@ -105,14 +113,14 @@ function scr_pair_update() {
 // --- Spawn next pair at previous X ---
 function scr_pair_spawn_next() {
 	global.drop_timer = 0;
-	global.combo_count = 0;
+	scr_chain_finalize();
 	global.hold_used = false;
 	scr_pair_spawn();
 	global.pair_col = global.last_pair_col;
 
 	var _slave_col = global.pair_col + global.pair_offset_col;
 	if (_slave_col >= GRID_COLS) {
-		global.pair_col = GRID_COLS - 2;
+		global.pair_col = GRID_COLS - PAIR_WIDTH;
 	}
 	if (global.pair_col < 0) {
 		global.pair_col = 0;

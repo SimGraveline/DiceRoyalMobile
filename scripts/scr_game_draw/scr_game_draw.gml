@@ -15,6 +15,10 @@ function scr_game_draw() {
 	scr_junk_drop_draw();
 	scr_pair_draw_ghost();
 	scr_pair_draw();
+	// After the pair, not before: the preview now lights up the active die too, and that glow has to
+	// land on top of its sprite rather than behind it. The stacked dice it also lights sit lower on
+	// the grid than the pair does, so nothing gets covered by the swap.
+	scr_pair_draw_match_preview();
 	scr_ui_draw();
 	scr_countdown_draw();
 	scr_screen_fade_draw();

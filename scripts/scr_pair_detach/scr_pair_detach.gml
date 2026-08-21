@@ -1,4 +1,6 @@
-function scr_pair_detach() {
+// _drop_type only feeds the landing impact's weight (see scr_grid_shake_impact) — it never changes
+// where anything lands or how it resolves.
+function scr_pair_detach(_drop_type) {
 	var _master_col = global.pair_col;
 	var _master_row = global.pair_row;
 	var _slave_col = _master_col + global.pair_offset_col;
@@ -44,40 +46,32 @@ function scr_pair_detach() {
 		_solo_val = global.pair_val2;
 	}
 
-	// Solo die: check dying join first, otherwise snap to lowest position
+	// Solo die: always fall to a real resting position first, then check join at that position —
+	// same order as a landed pair die and a Junk Drop die (see scr_grid_check_join below). A join
+	// is a consequence of where the die actually lands, never a reason to skip the fall.
 	if (_solo_col >= 0) {
-		var _should_join = false;
-		var _neighbors = [
-			[_solo_col - 1, _solo_row],
-			[_solo_col + 1, _solo_row],
-			[_solo_col, _solo_row - 1],
-			[_solo_col, _solo_row + 1]
-		];
-
-		for (var _i = 0; _i < 4; _i++) {
-			var _nc = _neighbors[_i][0];
-			var _nr = _neighbors[_i][1];
-			if (_nc < 0 || _nc >= GRID_COLS || _nr < 0 || _nr > GRID_ROWS) continue;
-			if (global.grid_dying[_nc][_nr] > 0 && !global.grid_dying_clear[_nc][_nr]) {
-				if (global.grid[_nc][_nr] == _solo_val || _solo_val == 1) {
-					_should_join = true;
-					break;
-				}
-			}
+		while (!scr_grid_cell_blocked(_solo_col, _solo_row - 1)) {
+			_solo_row -= 1;
 		}
 
-		if (_should_join) {
-			scr_die_place(_solo_col, _solo_row, _solo_val);
+		// The grid only exists up to DEAD_ZONE_ROW — scr_grid_cell_blocked deliberately reports
+		// everything above it as free so a pair can spawn and move up there, but there is no cell
+		// to land in. A vertical pair locking with its lower die in the dead zone leaves the upper
+		// one resting one row past the end of the column: writing it anyway created a phantom row
+		// that nothing draws, nothing applies gravity to and nothing ever clears, and every read
+		// that followed it (the join check, a Clear R/C sweep scanning that row) reached past the
+		// end of the arrays. Discard the die instead — its partner is sitting in the dead zone at
+		// this point, so the run is ending on the next update either way (see scr_game_update).
+		// Clearing _solo_col also skips the Clear trigger further below, for the same reason.
+		if (_solo_row > DEAD_ZONE_ROW) {
+			_solo_col = -1;
 		} else {
-			while (!scr_grid_cell_blocked(_solo_col, _solo_row - 1)) {
-				_solo_row -= 1;
-			}
 			scr_die_place(_solo_col, _solo_row, _solo_val);
-		}
-		global.game_score += SCORE_STACK;
+			global.game_score += SCORE_STACK;
 
-		scr_grid_check_join(_solo_col, _solo_row);
-		scr_grid_match();
+			scr_grid_check_join(_solo_col, _solo_row);
+			scr_grid_match();
+		}
 	}
 
 	// Clear R/C trigger checks run last, once every die from this detach (master, slave, and any
@@ -89,5 +83,21 @@ function scr_pair_detach() {
 	if (_solo_col >= 0) scr_die_clear_try_trigger(_solo_col, _solo_row);
 
 	scr_audio_play_sfx(snd_dice_stack);
+
+	// Player-driven landings only. The punch and the rumble are feedback for something the player
+	// DID — a hard drop lands the frame it hits, a soft drop commits after the much shorter
+	// LOCK_DELAY_SOFT, so in both cases the hit arrives while the contact is still being read as
+	// the player's own action. A NORMAL landing gets nothing: it detaches at the end of the full
+	// LOCK_DELAY, with the pair already sitting visibly at rest on the stack, so the punch would
+	// read as a random jolt rather than an impact. For the same reason a Junk Drop never punches at
+	// all — the player didn't do it.
+	// One impact per detach, not per die: both dice of a pair land as a single event, and it fires
+	// with the stack SFX so the punch, the rumble and the sound are all the same beat.
+	if (_drop_type == DROP_TYPE.HARD || _drop_type == DROP_TYPE.SOFT) {
+		var _impact_scale = (_drop_type == DROP_TYPE.HARD) ? 1 : GRID_IMPACT_SOFT_SCALE;
+		scr_grid_shake_impact(_impact_scale);
+		scr_pad_rumble_impact(_impact_scale);
+	}
+
 	global.last_pair_col = _master_col;
 }

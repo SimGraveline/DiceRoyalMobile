@@ -13,7 +13,7 @@ function scr_junk_drop_roll_target() {
 // Called on every pair spawn — counts toward the next Junk Drop trigger
 function scr_junk_drop_track_spawn() {
 	if (global.level < DICE_JUNK_UNLOCK_LEVEL) return;
-	if (global.junk_state != "none") return;
+	if (global.junk_state != JUNK_STATE.NONE) return;
 
 	global.junk_spawn_counter += 1;
 	if (global.junk_spawn_counter >= global.junk_spawn_target) {
@@ -80,12 +80,12 @@ function scr_junk_drop_queue() {
 		array_push(global.junk_queue, { col: _col, val: _val });
 	}
 
-	global.junk_state = "telegraph";
+	global.junk_state = JUNK_STATE.TELEGRAPH;
 }
 
 // Waits for the grid to be fully idle, then starts the fall
 function scr_junk_drop_check_start() {
-	if (global.junk_state != "telegraph") return;
+	if (global.junk_state != JUNK_STATE.TELEGRAPH) return;
 	if (global.pair_active) return;
 
 	for (var _c = 0; _c < GRID_COLS; _c++) {
@@ -100,13 +100,13 @@ function scr_junk_drop_check_start() {
 		global.junk_falling[_i].row = DEAD_ZONE_ROW;
 	}
 	global.junk_drop_timer = 0;
-	global.junk_state = "falling";
-	global.combo_count = 0;
+	global.junk_state = JUNK_STATE.FALLING;
+	scr_chain_finalize();
 }
 
 // Animates the fall at a fixed pace (does not scale with level), lands each die individually
 function scr_junk_drop_update() {
-	if (global.junk_state != "falling") return;
+	if (global.junk_state != JUNK_STATE.FALLING) return;
 
 	global.junk_drop_timer += delta_time / DELTA_TO_SECONDS;
 	if (global.junk_drop_timer < JUNK_DROP_SPEED) return;
@@ -128,18 +128,18 @@ function scr_junk_drop_update() {
 	}
 
 	if (array_length(global.junk_falling) == 0) {
-		global.junk_state = "none";
+		global.junk_state = JUNK_STATE.NONE;
 	}
 }
 
 // Draws the telegraph (dead zone, 0.5 alpha) and the falling dice (1.0 alpha) — no ghost
 function scr_junk_drop_draw() {
-	if (global.junk_state == "telegraph") {
+	if (global.junk_state == JUNK_STATE.TELEGRAPH) {
 		for (var _i = 0; _i < array_length(global.junk_queue); _i++) {
 			var _d = global.junk_queue[_i];
 			scr_die_draw(_d.col, DEAD_ZONE_ROW, _d.val, JUNK_PREVIEW_ALPHA);
 		}
-	} else if (global.junk_state == "falling") {
+	} else if (global.junk_state == JUNK_STATE.FALLING) {
 		for (var _i = 0; _i < array_length(global.junk_falling); _i++) {
 			var _d = global.junk_falling[_i];
 			scr_die_draw(_d.col, _d.row, _d.val, 1.0, true);

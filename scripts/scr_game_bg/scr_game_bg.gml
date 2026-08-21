@@ -76,7 +76,9 @@ function scr_game_bg_draw() {
 			var _idx = _i mod _count;
 			var _xs = _base;
 			var _ys = _base;
-			if (global.bg_shake_active[_idx]) {
+			// Never re-roll the jitter while paused — the simulation is frozen, the background
+			// shouldn't still look alive underneath the menu (same rule as scr_die_draw's shake).
+			if (global.bg_shake_active[_idx] && !global.paused) {
 				_xs = _base * random_range(global.bg_shake_min, global.bg_shake_max);
 				_ys = _base * random_range(global.bg_shake_min, global.bg_shake_max);
 			}

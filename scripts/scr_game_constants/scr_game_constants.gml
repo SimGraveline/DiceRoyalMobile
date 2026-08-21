@@ -1,21 +1,35 @@
-// --- Display ---
-// GAME_WIDTH/HEIGHT/CELL_SIZE are aliases to globals (see scr_display_mode) so the
-// PC fullscreen mode can resize them at runtime — mobile mode keeps the values below.
-#macro GAME_WIDTH  global.__game_width
-#macro GAME_HEIGHT global.__game_height
-#macro MOBILE_GAME_WIDTH   384
-#macro MOBILE_GAME_HEIGHT  832
-#macro MOBILE_CELL_SIZE    50
-#macro PC_GRID_HEIGHT_RATIO  0.9
-#macro PC_MARGIN  global.__cell_size
+// --- Enums ---
+// Typed states instead of bare strings: a typo in an enum member is a compile error, where a typo
+// in a string is a state that silently never matches.
 
-// Title/body/button fonts swap to their _pc variant in PC mode (see scr_display_mode)
-#macro FONT_TITLE    global.__font_title
-#macro FONT_BODY     global.__font_body
-#macro FONT_BUTTONS  global.__font_buttons
+// Junk Drop lifecycle: idle -> telegraphed in the dead zone -> actually falling -> idle again.
+enum JUNK_STATE { NONE, TELEGRAPH, FALLING }
+
+// What confirming a pause menu row does. The row list itself lives in scr_pause_menu_items.
+enum PAUSE_ACTION { RESUME, RESTART, HELP, MUTE_MUSIC, MUTE_SFX, SHOW_GRID, SHOW_QUEUE, HOLD_SWAP, GHOST, QUIT }
+
+// Same idea for the Game Over menu — see scr_game_over_menu_items.
+enum GAME_OVER_ACTION { RESTART, QUIT }
+
+// How a pair reached the stack. Only drives the weight of the landing impact (see scr_grid_shake_impact) —
+// nothing about the actual placement changes.
+enum DROP_TYPE { NORMAL, SOFT, HARD }
+
+// --- Display ---
+// GAME_WIDTH/HEIGHT follow the room's own size directly (the fullscreen render target —
+// see scr_game_update, which resizes application_surface to this or WINDOW_WIDTH/HEIGHT
+// depending on window_get_fullscreen()). Window mode itself (windowed vs fullscreen,
+// default at launch) is managed by Sim via GameMaker's project options, not GML.
+#macro GAME_WIDTH  room_width
+#macro GAME_HEIGHT room_height
+// Fixed windowed size — matches the room's 16:9 aspect at a smaller scale.
+#macro WINDOW_WIDTH   1600
+#macro WINDOW_HEIGHT  900
+#macro LOGO_SCALE_REFERENCE_WIDTH  400
+#macro GRID_HEIGHT_RATIO  0.75
 
 // --- Grid ---
-#macro CELL_SIZE   global.__cell_size
+#macro CELL_SIZE   floor((GAME_HEIGHT * GRID_HEIGHT_RATIO) / (GRID_ROWS + 1))
 #macro GRID_COLS   7
 #macro GRID_ROWS   7
 #macro GRID_WIDTH  (GRID_COLS * CELL_SIZE)
@@ -24,37 +38,64 @@
 // --- Grid position (centered horizontally) ---
 #macro GRID_X      ((GAME_WIDTH - GRID_WIDTH) / 2)
 #macro GRID_Y      ((GAME_HEIGHT - GRID_HEIGHT) / 2)
+// Where grid CONTENT actually gets drawn: the resting position plus the current shake offset.
+// Anything that belongs to the grid — its frame, the stacked dice, the falling pair, the ghost —
+// draws from these. Anything anchored to the grid but not part of it (HUD columns, the pause and
+// game over panels) keeps using the static GRID_X/GRID_Y above so it never shakes along.
+#macro GRID_DRAW_X  (GRID_X + global.grid_shake_x)
+#macro GRID_DRAW_Y  (GRID_Y + global.grid_shake_y)
 
 // --- Dead zone ---
 #macro DEAD_ZONE_ROW  GRID_ROWS
 
 // --- Pair spawn ---
 #macro SPAWN_COL_LEFT   2
-#macro SPAWN_COL_RIGHT  3
 #macro SPAWN_ROW        GRID_ROWS
 
 // --- Level system ---
 #macro LEVEL_COUNT  20
 #macro LEVEL_THRESHOLDS  global.__level_thresholds
 #macro LEVEL_SPEEDS     global.__level_speeds
+// Single knob to scale drop speed across every level (and the endless tier) without
+// reshaping the per-level curve — 1.0 = values below as-is, <1 faster, >1 slower.
+#macro DROP_SPEED_MULTIPLIER  1
 // Beyond LEVEL_COUNT, level/threshold become an open-ended progression (see scr_level_update)
 #macro LEVEL_ENDLESS_BASE_SCORE  1000000
 #macro LEVEL_ENDLESS_SCORE_STEP  100000
-#macro LEVEL_ENDLESS_SPEED       0.01
+#macro LEVEL_ENDLESS_SPEED       (0.01)
 
 // --- Gameplay ---
 #macro SOFT_DROP_MULTIPLIER  10.00
 #macro DAS_DELAY  0.2
 #macro DAS_REPEAT 0.05
 #macro LOCK_DELAY  0.5
+// Shorter lock delay while the player is holding Down. Driving a pair into the stack is a
+// deliberate act, so it should commit close to the moment of contact — and that gap is exactly
+// what decides whether the landing punch reads as an impact or as a random jolt some time after
+// the dice visibly settled. Keep it short enough that the punch lands with the contact, but not
+// so short that the player loses the window to nudge or rotate once down.
+#macro LOCK_DELAY_SOFT  0.15
 #macro LOCK_RESETS_MAX  10
-#macro DYING_DURATION   1.0
-#macro DYING_ALPHA_MIN  0.05
+#macro DYING_DURATION   1.1
+#macro DYING_ALPHA_MIN  0.1
+// Lowest value that forms a matchable color group. 1 sits below it because it's wild: it dies by
+// its own rule (any chain-dying neighbor clears every 1 on the board), never by grouping, and it
+// has no color of its own to drive the background tint with.
+#macro MATCH_MIN_VALUE  2
+// Shortest run of consecutive values that counts as a suite. Doubles as the gate: if the highest
+// unlocked value is below this, no suite can exist at all (see scr_grid_check_suite).
+#macro SUITE_MIN_LENGTH  6
 
 // --- Spawn restrictions ---
 #macro PAIR_MIN_VALUE   1
 #macro PAIR_MAX_VALUE   9
 #macro SPAWN_RETRY_MAX  20
+// A pair of identical dice at or below this value gets rerolled at spawn — a pair of 2's is
+// already a finished match the moment it lands, and 1's are wild.
+#macro PAIR_NO_DOUBLE_MAX_VALUE  2
+// How many columns a pair occupies while horizontal — used to clamp the master column so the
+// slave still has a column to sit in.
+#macro PAIR_WIDTH  2
 
 // --- Special die values ---
 #macro DIE_BOMB      10
@@ -66,16 +107,16 @@
 
 // --- Dice unlock levels ---
 // Dice 7-8-9 are fully wired but kept dormant — see DICE_HIGH_VALUES_ENABLED below.
+#macro DICE_RANDOM_UNLOCK_LEVEL   1
+#macro DICE_CLEAR_R_UNLOCK_LEVEL  2
+#macro DICE_CLEAR_C_UNLOCK_LEVEL  2
+#macro DICE_BOMB_UNLOCK_LEVEL     3
+#macro DICE_JUNK_UNLOCK_LEVEL     4
+#macro DICE_BRICK_UNLOCK_LEVEL    5
+#macro DICE_MIMIC_UNLOCK_LEVEL    6
 #macro DICE_7_UNLOCK_LEVEL        7
 #macro DICE_8_UNLOCK_LEVEL        8
 #macro DICE_9_UNLOCK_LEVEL        9
-#macro DICE_MIMIC_UNLOCK_LEVEL    5
-#macro DICE_BOMB_UNLOCK_LEVEL     3
-#macro DICE_RANDOM_UNLOCK_LEVEL   1
-#macro DICE_BRICK_UNLOCK_LEVEL    4
-#macro DICE_JUNK_UNLOCK_LEVEL     4
-#macro DICE_CLEAR_R_UNLOCK_LEVEL  2
-#macro DICE_CLEAR_C_UNLOCK_LEVEL  2
 
 // Intentional fallback switch — dice 7-8-9 are fully implemented (unlock levels,
 // colors, scoring, suites) but deliberately never activated. Flip to re-enable;
@@ -83,12 +124,15 @@
 #macro DICE_HIGH_VALUES_ENABLED  false
 
 // --- Special dice spawn chances (1 in N) --- constant for life once unlocked, no endless-tier change
-#macro DICE_MIMIC_CHANCE     20
-#macro DICE_BOMB_CHANCE      20
-#macro DICE_RANDOM_CHANCE    20
-#macro DICE_BRICK_CHANCE     20
-#macro DICE_CLEAR_R_CHANCE   20
-#macro DICE_CLEAR_C_CHANCE   20
+#macro DICE_MIMIC_CHANCE     33
+#macro DICE_BOMB_CHANCE      33
+#macro DICE_RANDOM_CHANCE    44
+#macro DICE_BRICK_CHANCE     33
+#macro DICE_CLEAR_R_CHANCE   33
+#macro DICE_CLEAR_C_CHANCE   33
+// How fast a Random die cycles its face, as a fraction of the current drop period — 0.5 means it
+// flips twice for every step the pair falls, so it tracks the level's speed automatically.
+#macro DICE_RANDOM_CYCLE_FACTOR  0.5
 
 // --- Junk Drop ---
 // Trigger interval is randomized per cycle (see scr_junk_drop_roll_target) instead of a fixed count,
@@ -100,56 +144,93 @@
 #macro JUNK_DROP_SPEED                0.1
 #macro JUNK_DROP_STEP                 1
 
-// --- Dice colors ---
+// --- Dice colors --- The one palette per die value, served by scr_die_color: used by both the
+// DXR background tint during a chain and the ghost trail/preview. GML literals are $BBGGRR,
+// reversed from the CSS #RRGGBB Sim tunes these against.
+#macro COLOR_DIE_2      $00FFFF
+#macro COLOR_DIE_3      $0000FF
+#macro COLOR_DIE_4      $00FF00
+#macro COLOR_DIE_5      $FF0000
+#macro COLOR_DIE_6      $000000
 #macro COLOR_DIE_7      $00A5FF
 #macro COLOR_DIE_8      $90536F
 #macro COLOR_DIE_9      $6B25E3
-#macro COLOR_DIE_BOMB   $606060
-#macro COLOR_DIE_MIMIC  $D3D3D3
-#macro COLOR_DIE_BRICK  $2222B2
-
-// --- Level up VFX ---
-#macro LEVEL_PULSE_DURATION     1.0
-#macro LEVEL_PULSE_SCALE_BOOST  0.4
 
 // --- Audio ---
 #macro MUSIC_VOLUME              0.4
 #macro SPLASH_MUSIC_FADE_MS      700
 
-// --- Animation ---
-#macro DIE_BOMB_ANIM_MS          500
-
 // --- Special dice sheet (spr_dice_specials) ---
-#macro DICE_SPECIALS_SUB_GHOST    0
 #macro DICE_SPECIALS_SUB_CLEAR_R  1
 #macro DICE_SPECIALS_SUB_CLEAR_C  2
 #macro DICE_SPECIALS_SUB_BOMB     3
 #macro DICE_SPECIALS_SUB_BRICK    4
 #macro DICE_SPECIALS_SUB_MIMIC    5
+// HUD-only icons (Unlocks Tracker) — never used for the actual in-game die, only to represent it
+// in the box: Random's live cycling animation is distracting there, Junk Drop has no die value of
+// its own, and Clear R/Clear C unlock together so they share one combined icon.
+#macro DICE_SPECIALS_SUB_RANDOM_ICON  6
+#macro DICE_SPECIALS_SUB_JUNK_ICON    7
+#macro DICE_SPECIALS_SUB_CLEAR_ICON   8
 
 // --- Score ---
 #macro SCORE_STACK       10
+// A regular die is worth SCORE_BASE x its face value (1-9). Anything still holding a special
+// value when it dies (Bomb, Brick, Clear R/C, an unresolved Mimic) is worth SCORE_SPECIAL flat —
+// see scr_die_score_value. Deliberately NOT derived from the DIE_* constants: what a special pays
+// out is a design decision, not a side effect of the order they happen to be declared in.
 #macro SCORE_BASE        100
-#macro COMBO_MULTIPLIER  0.10
+#macro SCORE_SPECIAL     1000
+// Chain reward, one entry per wave within a single chain (index = waves already resolved, so
+// wave 1 = x1, wave 2 = x1.5, wave 3 = x2.25...). A deep chain is the hardest thing to pull off
+// in the game, so the reward climbs — and the step between entries grows as it goes (+0.5, +0.75,
+// +1.0, +1.25...), which accelerates without the runaway of a straight doubling. Hand-tunable on
+// purpose: change any single entry without reshaping the rest of the curve.
+// Values live in scr_game_init — a macro can't hold an array literal, same pattern as
+// LEVEL_THRESHOLDS. Past the last entry the table holds; see scr_combo_multiplier.
+#macro COMBO_MULTIPLIERS  global.__combo_multipliers
+// Flat bonus for completing a run of every unlocked value in order (1-2-3-...-N, ascending or
+// descending, in a line). Awarded on top of what the dice themselves score when they die — a suite
+// is the hardest formation in the game to build on purpose, so it can't just pay like an ordinary
+// group of the same size. Which one applies depends on the highest unlocked value (see
+// scr_grid_check_suite); with dice 7-9 dormant, SCORE_SUITE_6 is the live one.
+#macro SCORE_SUITE_6     6000
 #macro SCORE_SUITE_7     7000
 #macro SCORE_SUITE_8     8000
 #macro SCORE_SUITE_9     10000
 
-// --- Touch ---
-#macro SWIPE_MIN_DISTANCE  15
-#macro DRAG_THRESHOLD  5
-#macro DRAG_SENSITIVITY  (CELL_SIZE * 1.5)
-#macro TAP_ZONE_SPLIT  0.80
-#macro ROTATE_SPLIT  0.5
-#macro RESTART_ZONE  0.1
-
 // --- Ghost ---
+// Trail/preview color for special dice only (regular 1-9 dice keep their own die color instead).
+// GML color literals are $BBGGRR (reversed from CSS #RRGGBB) — this is #FF9D00 (orange).
+#macro GHOST_COLOR  $009DFF
 #macro GHOST_TRAIL_ALPHA  0.08
 #macro GHOST_PREVIEW_ALPHA  0.2
+
+// --- Match preview (chain the pair is about to complete lights up) ---
+// Separate from the ghost toggle on purpose: this is a readability aid, not a landing preview, and
+// they're worth evaluating independently. Border thickness is a fraction of CELL_SIZE like the rest
+// of the grid visuals, so it holds up at any desktop resolution.
+#macro MATCH_PREVIEW_ENABLED       true
+// Drawn in additive blend: the dice about to go LIGHT UP rather than getting boxed in. A bright core
+// over each die, then a few progressively larger, fainter passes around it for a soft halo. No
+// shader involved — this is only a blend mode, unrelated to the abandoned glow shader.
+#macro MATCH_PREVIEW_CORE_ALPHA    0.075
+#macro MATCH_PREVIEW_GLOW_ALPHA    0.05
+#macro MATCH_PREVIEW_GLOW_LAYERS   2
+#macro MATCH_PREVIEW_GLOW_SPREAD   0.125   // how far each halo layer grows, as a fraction of CELL_SIZE
+#macro MATCH_PREVIEW_CORNER_FACTOR 0.25    // corner radius, fraction of CELL_SIZE — matches the dice
+// Slow breathing so the group reads as "pending" instead of "selected". Frozen while paused, like
+// every other effect that resamples per frame.
+// Minimum perceived brightness a die's color is lifted to before being used as glow light — see
+// scr_match_preview_glow_color. Raise it if the dark values still read as too faint, lower it if the
+// glow washes their hue out.
+#macro MATCH_PREVIEW_MIN_LUMA      0.7
+#macro MATCH_PREVIEW_PULSE_SPEED   3.0
+#macro MATCH_PREVIEW_PULSE_AMOUNT  0.25
 // Fixed corner radius for the trail — draw_roundrect_ext keeps this constant regardless of the
 // trail's aspect ratio, unlike plain draw_roundrect whose auto radius makes short/near-square
 // trails (small drop distance) look almost circular.
-#macro GHOST_TRAIL_CORNER_RADIUS  20
+#macro GHOST_TRAIL_CORNER_RADIUS  22
 
 // --- Squash & Stretch (purely visual, no effect on grid/collision) ---
 #macro SQUASH_STRETCH_ENABLED  true
@@ -159,12 +240,58 @@
 #macro SQUASH_SCALE_Y   0.5   // shorter at the instant of landing
 #macro SQUASH_DURATION  0.12  // seconds to ease back to normal after landing
 
+// --- Grid shake (purely visual — the grid's DRAWN position only, never its logic or collision) ---
+// Only grid content moves (frame, dice, ghost). The HUD boxes and the pause/help/game over panels
+// keep reading the static GRID_X/GRID_Y, so they stay put while the grid shakes underneath them.
+#macro GRID_SHAKE_ENABLED  true
+// Landing impact: the grid punches DOWN (+Y is down) the instant a die stacks, then eases back to
+// rest over the duration. Hard and soft drops only — a NORMAL landing (the lock timer simply
+// running out) still gets no punch at all, see scr_pair_detach.
+// Expressed as a fraction of CELL_SIZE, not raw pixels: an early pass used 1-2px, which is ~1% of
+// a cell and was invisible in play. A fraction also keeps the punch feeling the same on any
+// desktop resolution, since CELL_SIZE derives from screen height. A stack is small feedback, not
+// a celebration, so this stays well under a fifth of a cell.
+#macro GRID_IMPACT_OFFSET    (CELL_SIZE * 0.085)
+#macro GRID_IMPACT_DURATION  0.75
+// How much of a full impact a soft-drop landing is worth. One scale for both the visual punch and
+// the pad rumble (scr_pair_detach passes it to each), so "a soft drop lands lighter than a hard
+// drop" stays a single number and the motor can't drift away from what's on screen.
+#macro GRID_IMPACT_SOFT_SCALE  0.5
+// Chain rumble: the whole grid jitters on both axes for as long as a chain is firing. Retriggered
+// by every new chain wave, so a long cascade keeps the grid shaking throughout.
+// A fraction of CELL_SIZE like the impact above, for the same reason — this one was raw pixels
+// until the feel settled. Far smaller than the impact offset because it re-randomizes every frame:
+// a constant two-axis jitter reads as much bigger movement than a single static offset of the
+// same size.
+#macro GRID_RUMBLE_AMOUNT    (CELL_SIZE * 0.010)
+#macro GRID_RUMBLE_DURATION  0.75
+
+// --- Gamepad rumble ---
+// Deliberately mirrors the grid shake: same two triggers, same moments, and the durations are the
+// grid's own constants so the motor can never drift out of sync with what's on screen. Only the
+// strengths are separate, because a motor and a pixel offset don't scale the same way.
+// The impact ramps down on the same squared curve as the visual punch; the chain rumble holds a
+// flat, lower strength for as long as the grid is jittering.
+#macro PAD_RUMBLE_ENABLED           true
+#macro PAD_RUMBLE_IMPACT_STRENGTH   0.25
+#macro PAD_RUMBLE_IMPACT_DURATION   GRID_IMPACT_DURATION
+#macro PAD_RUMBLE_CHAIN_STRENGTH    0.14
+#macro PAD_RUMBLE_CHAIN_DURATION    GRID_RUMBLE_DURATION
+
+// The match preview tic. Deliberately far weaker and shorter than the other two: this is a hint
+// that a chain is lined up, not an event that happened, so it must never compete with the real
+// chain rumble it's pointing at. No grid shake twin — the glow is already the visual channel.
+#macro PAD_RUMBLE_PREVIEW_STRENGTH  0.5
+#macro PAD_RUMBLE_PREVIEW_DURATION  0.25
+
 // --- Background combo feel (bg dice tint to the active dying chain's color) ---
 #macro BG_COMBO_ENABLED  true
 #macro BG_COMBO_ALPHA    1.0  // full opacity while a chain is dying (vs. the default BG_ALPHA)
 
 // --- Colors ---
 #macro COLOR_BG           $662300
+// #F5A600 (CSS) — GML color literals are $BBGGRR, reversed from CSS #RRGGBB.
+#macro COLOR_GOLD         $00A6F5
 #macro COLOR_GRID_BG      $CF8964
 #macro COLOR_GRID_OUTLINE $04BFEF
 #macro COLOR_BOX_FILL     $8FE6FD
@@ -172,9 +299,9 @@
 
 // --- Background ---
 #macro BG_SPEED           0.5
-#macro BG_SCALE           0.5
-#macro BG_SPACING_X       80
-#macro BG_SPACING_Y       90
+#macro BG_SCALE           0.6
+#macro BG_SPACING_X       90
+#macro BG_SPACING_Y       100
 #macro BG_ALPHA           0.25
 #macro BG_CHANGE_RATE     3
 #macro BG_SHAKE_ODDS      100
@@ -191,12 +318,17 @@
 #macro RAIN_FADE_RATE      0.005
 #macro RAIN_SPEED_MIN      1
 #macro RAIN_SPEED_MAX      5
-#macro RAIN_SCALE           1.0
+#macro RAIN_SCALE           1.5
 #macro RAIN_SHAKE_ODDS     100
 #macro RAIN_SHAKE_CHANCE   20
 #macro RAIN_SHAKE_MIN      0.90
 #macro RAIN_SHAKE_MAX      1.10
 #macro RAIN_DESTROY_BUFFER 100
+// Faces available on spr_dice_rain — the rain is decorative, so it stays on real 1-6 die faces
+// regardless of which values are unlocked in the actual game.
+#macro RAIN_DICE_FACES     6
+// "Press Any Key" blink: full cycles per second of sin(t * pi * this).
+#macro SPLASH_BLINK_SPEED  2
 
 // --- Splash credits ---
 #macro CREDITS_MARGIN_BOTTOM  20
@@ -219,6 +351,9 @@
 
 // --- Game over ---
 #macro GAME_OVER_TAP_DELAY  1.0
+// "NEW BEST!" pulse rate, same sin(t * pi * this) form as SPLASH_BLINK_SPEED — faster than the
+// splash blink so it reads as excitement rather than an idle prompt.
+#macro GAME_OVER_PULSE_SPEED  3
 
 // --- Countdown ---
 #macro COUNTDOWN_STEPS      3
@@ -231,7 +366,6 @@
 #macro GAMEPAD_DEADZONE  0.5
 
 // --- Drawing ---
-#macro DIE_PADDING  2
 #macro DELTA_TO_SECONDS  1000000
 #macro UI_SHADOW_OFFSET    5
 #macro GRID_OUTLINE_WIDTH  6
@@ -239,32 +373,23 @@
 #macro BOX_OUTLINE_WIDTH   4
 
 // --- UI ---
-#macro UI_TITLE_Y      36
-#macro UI_SCORE_Y      80
-// UI_BTN_SIZE/MARGIN are dynamic (see scr_display_mode) so pause/help stay readable at PC scale
-#macro UI_BTN_SIZE     global.__ui_btn_size
-#macro UI_BTN_MARGIN   global.__ui_btn_margin
-#macro MOBILE_UI_BTN_SIZE    32
-#macro MOBILE_UI_BTN_MARGIN  8
-// PC mode nudges pause/help a few pixels off their mobile corner anchor — mobile is unaffected.
-#macro UI_BTN_PAUSE_OFFSET_X  (global.pc_mode ? -5 : 0)
-#macro UI_BTN_PAUSE_OFFSET_Y  (global.pc_mode ? -10 : 0)
-#macro UI_BTN_HELP_OFFSET_X   (global.pc_mode ? 5 : 0)
-#macro UI_BTN_HELP_OFFSET_Y   (global.pc_mode ? -10 : 0)
-#macro UI_BTN_PAUSE_X  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_X)
-#macro UI_BTN_PAUSE_Y  (UI_BTN_MARGIN + UI_BTN_PAUSE_OFFSET_Y)
-// PC mode: manual nudge to bring the Next box closer to Hold, and push the QR block down to compensate
-#macro PC_NEXT_NUDGE_Y  -(CELL_SIZE * 0.25)
-#macro PC_QR_NUDGE_Y     (CELL_SIZE * 0.25)
-#macro UI_BTN_HELP_X   (GAME_WIDTH - UI_BTN_SIZE - UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_X)
-#macro UI_BTN_HELP_Y   (UI_BTN_MARGIN + UI_BTN_HELP_OFFSET_Y)
 #macro BOX_WIDTH       (CELL_SIZE * 3)
-#macro BOX_HEIGHT      (CELL_SIZE * 1.5)
-#macro BOX_Y           (GRID_Y + GRID_HEIGHT + CELL_SIZE)
-#macro BOX_HOLD_X      (GRID_X)
-#macro BOX_NEXT_X      (GRID_X + GRID_WIDTH - BOX_WIDTH)
-#macro BOX_LABEL_OFFSET  8
+// --- HUD side-column boxes (Score/High Score/Level/Chains left, Next/Hold/Unlocks right) ---
+#macro UI_BOX_PADDING        (CELL_SIZE * 0.15)
+#macro UI_BOX_TITLE_GAP      (CELL_SIZE * 0.08)
+#macro UI_HUD_BOX_GAP        (CELL_SIZE * 0.35)
+#macro UI_UNLOCKS_TILE_SIZE  (CELL_SIZE * 0.55)
+#macro UI_UNLOCKS_TILE_GAP   (CELL_SIZE * 0.12)
+#macro UI_UNLOCKS_COLS       4
+#macro UI_UNLOCKS_LOCKED_ALPHA  0.35
 #macro UI_MENU_LINE_H_FACTOR      1.8
+// "-space-" gap between menu groups — smaller than an actual line, shared by Pause/Help/Game Over.
+#macro UI_MENU_BLANK_LINE_FACTOR  0.8
 #macro MENU_OVERLAY_ALPHA         0.9
 #macro UI_SCORE_LINE_H_FACTOR     1.5
-#macro UI_GAME_OVER_GAP_FACTOR    0.3
+// Tighter gap used only between a score label and its own value (Game Over), so the value sits
+// closer to its label than to the next label below it.
+#macro UI_SCORE_VALUE_GAP_FACTOR  0.9
+// Minimum pixel delta before mouse movement counts as "the player is using the mouse" in a menu —
+// filters out sensor jitter from a resting hand so it never fights keyboard/gamepad navigation.
+#macro MENU_MOUSE_MOVE_THRESHOLD  4

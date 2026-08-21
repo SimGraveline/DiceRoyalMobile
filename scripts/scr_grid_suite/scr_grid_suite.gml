@@ -4,10 +4,11 @@ function scr_grid_check_suite() {
 	for (var _i = PAIR_MIN_VALUE; _i <= PAIR_MAX_VALUE; _i++) {
 		if (global.spawn_weights[_i] > 0) _n = _i;
 	}
-	if (_n < 6) return false;
+	if (_n < SUITE_MIN_LENGTH) return false;
 
-	// A 6-suite scores through the normal per-die resolve, same as any other chain — no flat bonus.
-	var _suite_score = 0;
+	// Flat bonus on top of what the dice score individually when they die, scaled to how long the
+	// suite had to be — see SCORE_SUITE_6.
+	var _suite_score = SCORE_SUITE_6;
 	if      (_n == 7) _suite_score = SCORE_SUITE_7;
 	else if (_n == 8) _suite_score = SCORE_SUITE_8;
 	else if (_n == 9) _suite_score = SCORE_SUITE_9;
@@ -29,6 +30,7 @@ function scr_grid_check_suite() {
 			if (_asc || _desc) {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col + _i][_row] = DYING_DURATION;
+					global.grid_dying_chain[_col + _i][_row] = true;
 				}
 				global.game_score += _suite_score;
 				_found = true;
@@ -51,6 +53,7 @@ function scr_grid_check_suite() {
 			if (_asc || _desc) {
 				for (var _i = 0; _i < _n; _i++) {
 					global.grid_dying[_col][_row + _i] = DYING_DURATION;
+					global.grid_dying_chain[_col][_row + _i] = true;
 				}
 				global.game_score += _suite_score;
 				_found = true;
@@ -60,6 +63,8 @@ function scr_grid_check_suite() {
 
 	if (_found) {
 		scr_audio_play_sfx(snd_chain_dying);
+		scr_grid_shake_chain();
+		scr_pad_rumble_chain();
 		scr_grid_propagate_dying();
 	}
 
